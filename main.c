@@ -41,9 +41,8 @@ void parse_matrix(struct Matrix *M) {
     char buf[BUF_SIZE];
     int i = 0;
     char *line, *value, *brkt, *brkb;
-
     printf("---PARSING %s\n", M->path);
-    while (read(M->fd, buf, BUF_SIZE) != EOF) {
+    while (read(M->fd, buf, BUF_SIZE) != 0) {
 
         for (line = strtok_r(buf, "\n", &brkt); line; line = strtok_r(NULL, "\n", &brkt)) {
 
