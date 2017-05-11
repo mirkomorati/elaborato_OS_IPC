@@ -34,3 +34,6 @@
 
 # Vim swp
 *.swp
+
+# Bin folder
+bin
