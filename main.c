@@ -98,7 +98,7 @@ int load_matrix(Matrix_t *M, int N) {
     return 0;
 }
 
-void sigint_handler(int sig, void *arg) {
+void signal_handler(int sig, void *arg) {
     static shm_utils_t *curr = NULL;
     int i = 0;
 
@@ -201,11 +201,11 @@ int main(int argc, char **argv) {
         tmp[3].shmaddr = NULL;
 
         // inizializzo l'handler per il sigint
-        signal(SIGINT, (void (*)(int))sigint_handler);
-        signal(SIGHUP, (void (*)(int))sigint_handler);
-        signal(SIGKILL, (void (*)(int))sigint_handler);
-        signal(SIGTERM, (void (*)(int))sigint_handler);
-        sigint_handler(-1,(void *)tmp);
+        signal(SIGINT, (void (*)(int))signal_handler);
+        signal(SIGHUP, (void (*)(int))signal_handler);
+        signal(SIGKILL, (void (*)(int))signal_handler);
+        signal(SIGTERM, (void (*)(int))signal_handler);
+        signal_handler(-1,(void *)tmp);
     }
 
     printf("attendo ctrl-c..\n");
