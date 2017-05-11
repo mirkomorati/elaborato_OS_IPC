@@ -16,13 +16,13 @@
 
 #define BUF_SIZE 4096
 
-struct Matrix {
+typedef struct {
     char *path;
     int shmid;
     key_t key;
     int fd;
     long *shmaddr;
-};
+}Matrix_t;
 
 typedef struct {
     int shmid;
@@ -42,7 +42,7 @@ static struct option long_options[] = {
 };
 
 
-void parse_matrix(struct Matrix *M) {
+void parse_matrix(Matrix_t *M) {
     char buf[BUF_SIZE];
     int i = 0;
     char *line, *value, *brkt, *brkb;
@@ -63,7 +63,7 @@ void parse_matrix(struct Matrix *M) {
 }
 
 
-int load_matrix(struct Matrix *M, int N) {
+int load_matrix(Matrix_t *M, int N) {
     key_t key;
     int size = N * N * sizeof(long);
     int flag = O_CREAT | 0644;
@@ -127,7 +127,7 @@ int main(int argc, char **argv) {
 
     // Leggi A e B
     int opt;
-    struct Matrix A, B, C;
+    Matrix_t A, B, C;
 
     long * sum = NULL; // indirizzo alla zona di memoria condivisa che serve per contenere la somma
     int N;
