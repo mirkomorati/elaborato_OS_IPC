@@ -24,6 +24,11 @@ struct Matrix {
     long *shmaddr;
 };
 
+typedef struct {
+    int shmid;
+    void *shmaddr;
+} shm_utils_t;
+
 static struct option long_options[] = {
     /* These options don’t set a flag.
      We distinguish them by their indices. */
@@ -93,28 +98,37 @@ int load_matrix(struct Matrix *M, int N) {
     return 0;
 }
 
-void sigint_handler(int sig, long **addr, ...) {
-    va_list ptr;
-    long **curr;
-    va_start(ptr, addr);
-    for (curr = va_arg(ptr, long **); curr != NULL; curr = va_arg(ptr, long**)) {
-        if (shmdt(curr) == -1) {
-            perror("shmdt");
-            exit(1);
+void sigint_handler(int sig, void *arg) {
+    static shm_utils_t *curr = NULL;
+    int i = 0;
+
+    if (curr == NULL) curr = arg; 
+    if (sig != -1) // se non sono in fase di inizializzazione
+    {
+        while(curr->shmid != 0 && curr->shmaddr != NULL){
+            if (shmdt(curr->shmaddr) == -1) {
+                perror("shmdt");
+                exit(1);
+            }
+            if (shmctl(curr->shmid, IPC_RMID, NULL) == -1){
+                perror("shmctl");
+                exit(2);
+            }
+            curr++;
         }
+       
+        free(curr - i);
+        exit(sig);
     }
-    exit(sig);
 }
-
-
-
 
 int main(int argc, char **argv) {
 
     // Leggi A e B
     int opt;
-    
     struct Matrix A, B, C;
+
+    long * sum = NULL; // indirizzo alla zona di memoria condivisa che serve per contenere la somma
     int N;
     int P;
 
@@ -164,11 +178,35 @@ int main(int argc, char **argv) {
         exit(1);
     }
 
-/* l'idea è di gestire un eventuale CTRL-C per eliminare anche le shm
- * come ?
+    // signal initializer
+    {
+        /* array di 4 puntatori alla zona di memoria condivisa da 
+        liberare in caso di segnali, più un campo che dovrà essere
+        NULL per evitare di dover passare la dimensione dell'array
+        all'handler */
+        shm_utils_t *tmp = malloc(sizeof(shm_utils_t) * 5);
+        printf("tmp = %p\n", tmp);
 
-    signal(SIGINT, (void (*)(int))sigint_handler);
-    sigint_handler(SIGINT, &mA_addr, &mB_addr, NULL);
+        // inizializzo tmp con i suoi valori
+        tmp[4].shmid = 0;
+        tmp[4].shmaddr = NULL;
+        tmp[0].shmid = A.shmid;
+        tmp[0].shmaddr = A.shmaddr;
+        tmp[1].shmid = B.shmid;
+        tmp[1].shmaddr = B.shmaddr;
+        tmp[2].shmid = 0;
+        tmp[2].shmaddr = NULL;
+        tmp[3].shmid = 0;
+        tmp[3].shmaddr = NULL;
 
-*/
+        // inizializzo l'handler per il sigint
+        signal(SIGINT, (void (*)(int))sigint_handler);
+        sigint_handler(-1,(void *)tmp);
+    }
+
+    printf("attendo ctrl-c..\n");
+    while (1){
+      usleep(10000);
+    }
+
 }
