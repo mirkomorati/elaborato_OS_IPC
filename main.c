@@ -115,6 +115,7 @@ void sigint_handler(int sig, void *arg) {
                 exit(2);
             }
             curr++;
+            i++;
         }
        
         free(curr - i);
@@ -201,6 +202,9 @@ int main(int argc, char **argv) {
 
         // inizializzo l'handler per il sigint
         signal(SIGINT, (void (*)(int))sigint_handler);
+        signal(SIGHUP, (void (*)(int))sigint_handler);
+        signal(SIGKILL, (void (*)(int))sigint_handler);
+        signal(SIGTERM, (void (*)(int))sigint_handler);
         sigint_handler(-1,(void *)tmp);
     }
 
