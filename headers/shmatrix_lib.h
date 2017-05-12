@@ -2,6 +2,12 @@
 #define SHMATRIX_LIB_H
 #include <sys/ipc.h>
 
+
+/*!
+ * \file        shmatrix_lib.h
+ *\
+
+
 /*! 
  * \struct      Struttura per rappresentare una matrice in memoria condivisa
  */

@@ -2,6 +2,12 @@
 #define ENDING_UTILS_H
 #include <stdbool.h>
 
+
+/*!
+ * \file        ending_utils.h
+ *\
+
+
 /*!
  * \struct      Struttura che permette di liberare un'area di memoria condivisa
  */
