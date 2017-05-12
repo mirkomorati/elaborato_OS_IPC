@@ -34,7 +34,7 @@ $(OBJDIR)/%.o: $(SRCDIR)/%.c
 $(OBJDIR)/main.o : $(MAIN) 
 	$(CC) -c $(CFLAGS) $< -o $@
 
-$(OBJECTS) : $(OBJDIR)
+$(OBJECTS) : | $(OBJDIR)
 
 $(OBJDIR) :
 	mkdir -p $(BINDIR)
