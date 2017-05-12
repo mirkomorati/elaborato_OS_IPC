@@ -58,27 +58,12 @@ void sig_add(int n, ...){
 }
 
 void sig_handler(int sig, void *arg){
-	static sig_shmem_list_t *list = NULL;
-
-	if (list == NULL) list = arg;
-
-	if (sig != -1) // se non sono in fase di inizializzazione
+	if (sig == -1) 
+		sig_free_memory(true, (sig_shmem_list_t *)arg);
+	else if (sig != -1)
     {
-    	sig_shmem_list_t *head = list;
-        while(list != NULL){
-            if (shmdt(list->obj.shmaddr) == -1) {
-                perror("shmdt");
-                exit(-1);
-            }
-            if (shmctl(list->obj.shmid, IPC_RMID, NULL) == -1){
-                perror("shmctl");
-                exit(-2);
-            }
-            list = list->next;
-        }
-       
-        free_list(head);
-        exit(sig);
+    	sig_free_memory(false, NULL);
+    	exit(sig);
     }
 }
 
@@ -89,10 +74,10 @@ void sig_init(sig_shmem_list_t *list){
     signal(SIGKILL, (void (*)(int))sig_handler);
     signal(SIGTERM, (void (*)(int))sig_handler);
     sig_handler(-1,(void *)list);
-    end(true, list);
+    sig_free_memory(true, list);
 }
 
-void end(bool setting, sig_shmem_list_t *arg){
+void sig_free_memory(bool setting, sig_shmem_list_t *arg){
 	static sig_shmem_list_t *list = NULL;
 
 	if(setting) list = arg;
@@ -111,6 +96,10 @@ void end(bool setting, sig_shmem_list_t *arg){
         }
        
         free_list(head);
-        exit(0);
 	}
+}
+
+void sig_end(int code){
+	sig_free_memory(false, NULL);
+	exit(code);
 }

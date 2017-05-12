@@ -41,7 +41,14 @@ void sig_add(int n, ...);
  * \brief		if setting is false the program free the memory
  * 				end exit with exit code 0
  *
- * \param[in]  setting 	if true the program will not exit.
- * 	
+ * \param[in]  	setting 	if true the program will not exit.
+ * \param		arg			The head of the list of shared object to remove	
  */
-void end(bool setting, sig_shmem_list_t *list);
+void sig_free_memory(bool setting, sig_shmem_list_t *arg);
+
+/*!
+ * \brief		function that frees the memory before exit		
+ *
+ * \param[in]  code  The exit code
+ */
+void sig_end(int code);

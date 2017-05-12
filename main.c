@@ -99,6 +99,6 @@ int main(int argc, char **argv) {
     for (int i = 0; i < 10; i++){
       usleep(1e6);
     }
-    end(false, NULL);
+    sig_end(0);
 
 }
