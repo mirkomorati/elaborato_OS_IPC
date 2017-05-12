@@ -1,45 +1,47 @@
 #ifndef SHMATRIX_LIB_H
 #define SHMATRIX_LIB_H
 #include <sys/ipc.h>
-/*! \brief Matrix loaded like shared memory type
- * 
- * inserire una descrizione decente.
+
+/*! 
+ * \brief       Struttura per rappresentare una matrice in memoria condivisa
  */
 typedef struct {
-    char *path;
-    int shmid;
-    key_t key;
-    int fd;
-    long *shmaddr;
+    char *path;     //!< Path del file contenente la matrice
+    int fd;         //!< File Descriptor
+    int shmid;      //!< ID della memoria condivisa
+    key_t key;      //!< Chiave generata dal sistema
+    long *shmaddr;  //!< Indirizzo di attacco della memoria condivisa
 }shmatrix_t;
 
 
 /*!
- * \brief 	function that parse a .csv file and load the matrix in the shmaddr 
- * 			field of the M struct					
+ * \brief       Funzione per parsare il file contenente la matrice e caricarla
+ *              in memoria condivisa
  *
- * \param   	M 	shmatrix_t object
+ * \param       M   puntatore a un oggetto shmatrix_t
  */
 void shmatrix_parse(shmatrix_t *M);
 
-/*
- * \brief      Creates an empty shmatrix and parse it in one function.
+
+/*!
+ * \brief       Chiama le funzioni utili a creare un nuovo oggetto vuoto
+ *              shmatrix, parsarlo e caricarlo in memoria condivisa
  *
- * \param      M	shmatrix_t object
- * \param[in]  N	order of the matrix
+ * \param       M	puntatore a un oggetto shmatrix_t
+ * \param[in]   N	grado della matrice
  *
- * \return     -1 in case of error 0 otherwise
+ * \return      -1 in caso di errore, 0 altrimenti
  */
 int shmatrix_load(shmatrix_t *M, int N);
 
 
 /*!
- * \brief      Creates an empty shmatrix.
+ * \brief       Crea un oggetto vuoto shmatrix
  *
- * \param      M	shmatrix_t object
- * \param[in]  N	order of the matrix
+ * \param       M	puntatore a un oggetto shmatrix_t
+ * \param[in]   N	grado della matrice
  *
- * \return     -1 in case of error 0 otherwise
+ * \return      -1 in caso di errore, 0 altrimenti
  */
 int shmatrix_create(shmatrix_t *M, int N);
 
