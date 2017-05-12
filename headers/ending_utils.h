@@ -7,7 +7,9 @@ typedef struct {
     void *shmaddr;
 } sig_utils_t;
 
-
+/*!
+ * list that contains the the object of the shared memory
+ */
 typedef struct sig_shmem_list{
 	sig_utils_t obj;
 
