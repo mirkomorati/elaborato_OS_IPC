@@ -1,6 +1,6 @@
 # elaborato_OS_IPC
 
-Elaborato di Sistemi Operatici sulla comunicazione interprocesso. 
+Elaborato di Sistemi Operativi sulla comunicazione interprocesso. 
 Studenti:
 
 - [Mirko Morati](https://github.com/mirkomorati);
