@@ -60,8 +60,10 @@ Ogni figlio ha due modalità di esecuzione:
 Il padre invierà i comandi ai figli mediante delle pipe.
 Il padre riceverà le comunicazioni da parte di tutti figli mediate una singola coda di messaggi: tutti i processi invieranno le informazioni utilizzando questa coda di messaggi, il processo padre dovrà filtrarli per capire, per ogni messaggio, quale figlio si è liberato.
    
-Il padre non potrà compiere NESSUNA operazione aritmetica sulle matrici. Le uniche operazioni permesse sono quelle implementate dalle modalità “Moltiplicazione” e “Somma” dei processi figli. Il padre dovrà limitarsi a coordinare/schedulare le operazioni dei figli.
-Note:
+Il padre non potrà compiere __NESSUNA__ operazione aritmetica sulle matrici. Le uniche operazioni permesse sono quelle implementate dalle modalità “Moltiplicazione” e “Somma” dei processi figli. Il padre dovrà limitarsi a coordinare/schedulare le operazioni dei figli.
+
+### Note
+
 - Il formato dei file di input contenenti le matrici è libero.
 - I “formati” di dati utilizzati nella comunicazione tra padre e figli (e viceversa), ossia il formato delle stringe passanti per la pipe e dei messaggi, sono libera scelta dello studente.
 - La corretta sincronizzazione tra letture e scritture su aree di memoria condivisa deve essere garantita, dove necessario, utilizzando semafori.
@@ -74,7 +76,8 @@ Note:
 - Tutte le stampe a video, le letture e le scritture su file devono avvenire tramite system call (quindi ad esempio non si possono utilizzare printf, fprintf, scanf, fscanf, perror).
 - Il programma deve gestire correttamente a prescindere dal numero N di processi (1, 2, uguale, minore o maggiore dell’ordine delle matrici).
 - Il programma deve essere in grado di gestire matrici quadrate di qualsiasi Ordine.
-FACOLTATIVO: Implementazione mediante thread
+
+### FACOLTATIVO: Implementazione mediante thread
 Si implementi una SECONDA VERSIONE del programma che si avvalga di thread anziché processi per risolvere il medesimo problema.
 In questo caso P non viene passato da linea di comando: il programma è libero di utilizzare liberamente le thread, oltre che di decidere dinamicamente il numero di thread da utilizzare.
 Tutte le operazioni aritmetiche che utilizzano le matrici dovranno essere svolte da thread.
@@ -82,7 +85,7 @@ Nota:
 Le thread saranno materia di esame orale. Dunque, per chi svolgerà la parte facoltativa, la parte di esame orale riguardante le thread si baserà principalmente sulla presentazione di questa.
 A chi non svolgerà la parte facoltativa verrà chiesto di rispondere ad alcune domande in merito alle thread e di svolgere durante l’interrogazione alcuni esercizi che utilizzano le thread.
  
-FAQ
+### FAQ
 1. E’ possibile inserire il codice su file separati?
 Questa decisione e' lasciata allo studente, che puo' scegliere il modo piu' opportuno. L'importante e' che il codice sia ben strutturato e leggibile.
 2. Si possono usare funzioni quali la printf, fscanf, etc.?
