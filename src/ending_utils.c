@@ -1,4 +1,4 @@
-#include "../headers/sig_utils.h"
+#include "../headers/ending_utils.h"
 
 #include <stdarg.h>
 #include <unistd.h>
@@ -89,4 +89,28 @@ void sig_init(sig_shmem_list_t *list){
     signal(SIGKILL, (void (*)(int))sig_handler);
     signal(SIGTERM, (void (*)(int))sig_handler);
     sig_handler(-1,(void *)list);
+    end(true, list);
+}
+
+void end(bool setting, sig_shmem_list_t *arg){
+	static sig_shmem_list_t *list = NULL;
+
+	if(setting) list = arg;
+	else{
+		sig_shmem_list_t *head = list;
+        while(list != NULL){
+            if (shmdt(list->obj.shmaddr) == -1) {
+                perror("shmdt");
+                exit(-1);
+            }
+            if (shmctl(list->obj.shmid, IPC_RMID, NULL) == -1){
+                perror("shmctl");
+                exit(-2);
+            }
+            list = list->next;
+        }
+       
+        free_list(head);
+        exit(0);
+	}
 }

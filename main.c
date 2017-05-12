@@ -11,7 +11,7 @@
 #include <sys/ipc.h>
 
 #include "headers/shmatrix_lib.h"
-#include "headers/sig_utils.h"
+#include "headers/ending_utils.h"
 
 static struct option long_options[] = {
     /* These options don’t set a flag.
@@ -96,8 +96,9 @@ int main(int argc, char **argv) {
     }
 
     printf("attendo ctrl-c..\n");
-    while (1){
-      usleep(10000);
+    for (int i = 0; i < 10; i++){
+      usleep(1e6);
     }
+    end(false, NULL);
 
 }

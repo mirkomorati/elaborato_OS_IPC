@@ -1,3 +1,4 @@
+#include <stdbool.h>
 /*!
  * struct that permits to free a shared memory area.
  */
@@ -29,9 +30,18 @@ void sig_handler(int sig, void *arg);
 void sig_init(sig_shmem_list_t *list);
 
 /*!
- * \brief      add to the list of shared memory object to free the object passed
+ * \brief      	add to the list of shared memory object to free the object passed
  *
- * \param[in]  n        number of elements
- * \param[in]  args 	list of objects
+ * \param[in] 	n		number of elements
+ * \param[in]  	args 	list of objects
  */
 void sig_add(int n, ...);
+
+/*!
+ * \brief		if setting is false the program free the memory
+ * 				end exit with exit code 0
+ *
+ * \param[in]  setting 	if true the program will not exit.
+ * 	
+ */
+void end(bool setting, sig_shmem_list_t *list);
