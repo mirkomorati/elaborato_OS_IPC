@@ -13,25 +13,23 @@
 #include "headers/shmatrix_lib.h"
 #include "headers/ending_utils.h"
 
+/** \brief Struttura da passare a getopt() per l'alias delle opzioni */
 static struct option long_options[] = {
-    /* These options don’t set a flag.
-     We distinguish them by their indices. */
-    {"matrixA", required_argument, 0, 'A'},
-    {"matrixB", required_argument, 0, 'B'},
-    {"matrixC", required_argument, 0, 'C'},
-    {"order", required_argument, 0, 'N'},
+    {"matrixA",   required_argument, 0, 'A'},
+    {"matrixB",   required_argument, 0, 'B'},
+    {"matrixC",   required_argument, 0, 'C'},
+    {"order",     required_argument, 0, 'N'},
     {"processes", required_argument, 0, 'P'},
-    {"help", no_argument, 0, 'h'},
-    {0, 0, 0, 0}
+    {"help",      no_argument,       0, 'h'},
+    {0,           0,                 0,  0 }
 };
 
-int main(int argc, char **argv) {
 
-    // Leggi A e B
+int main(int argc, char **argv) {
     int opt;
     shmatrix_t A, B, C;
 
-    long * sum = NULL; // indirizzo alla zona di memoria condivisa che serve per contenere la somma
+    long * sum; // indirizzo alla zona di memoria condivisa che serve per contenere la somma
     int N;
     int P;
 
