@@ -1,3 +1,5 @@
+#ifndef ENDING_UTILS_H
+#define ENDING_UTILS_H
 #include <stdbool.h>
 /*!
  * struct that permits to free a shared memory area.
@@ -54,3 +56,5 @@ void sig_free_memory(bool setting, sig_shmem_list_t *arg);
  * \param[in]  code  The exit code
  */
 void sig_end(int code);
+
+#endif

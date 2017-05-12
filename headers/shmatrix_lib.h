@@ -1,3 +1,5 @@
+#ifndef SHMATRIX_LIB_H
+#define SHMATRIX_LIB_H
 #include <sys/ipc.h>
 /*! \brief Matrix loaded like shared memory type
  * 
@@ -41,4 +43,4 @@ int shmatrix_load(shmatrix_t *M, int N);
  */
 int shmatrix_create(shmatrix_t *M, int N);
 
-
+#endif
