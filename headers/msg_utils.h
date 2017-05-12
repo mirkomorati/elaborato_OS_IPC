@@ -5,14 +5,12 @@
  * utilità per i messaggi scambiati tra padre e figli 
  * o viceversa attraverso code di messaggi e pipe
  */
-
 #ifndef MSG_UTILS_H
 #define MSG_UTILS_H
 #include <stdbool.h>
 #include <stdint.h>
 
-/*!
- * Rappresenta il ruolo di un figlio.
+/*! \brief Rappresenta il ruolo di un figlio.
  * 
  * Il ruolo è variabile ed è parte di un comando 
  * che può essere inviato da un padre ad un figlio.
@@ -25,23 +23,25 @@ typedef enum{
 	SUM
 }role_t;
 
-/*!
- * Rappresenta un comando inviato dal padre ad uno dei suoi figli.
+/*! \brief Comando inviato dal padre ai figli.
  * 
+ * Rappresenta un comando inviato dal padre ad uno dei suoi figli.
  */
 typedef struct{
-	role_t role; //!< Ruolo che il figlio deve svolgere;
+	role_t role; //!< Ruolo che il figlio deve svolgere.
 	union data {
 		struct point{
 			uint32_t i;	
 			uint32_t j;
 		} c;
 		uint64_t row;
-	} x; //!< Dati del comando, in caso di somma va tenuto conto della
+	} x; //!< \brief Dati del comando. 
+	     //! In caso di somma va tenuto conto della
 	     //! valore di row, altrimenti va tenuto conto del valore di c.
 }cmd_t;
 
-/*!
+/*! \brief Messaggio dei figli al padre 
+ * 
  * Rappresenta un messaggio per la coda di messaggi utilizzata dai 
  * figli per comunicare con il padre.
  */

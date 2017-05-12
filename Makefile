@@ -48,7 +48,7 @@ $(OBJDIR) :
 	mkdir -p $(BINDIR)
 	mkdir -p $(OBJDIR)
 
-doc:
+doc: $(HDR)
 	$(DOXY) $(DOXYFILE)
 
 clean:
