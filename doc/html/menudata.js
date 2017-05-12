@@ -8,4 +8,7 @@ var menudata={children:[
 {text:"Tutto",url:"functions.html"},
 {text:"Variabili",url:"functions_vars.html"}]}]},
 {text:"File",url:"files.html",children:[
-{text:"Elenco dei file",url:"files.html"}]}]}
+{text:"Elenco dei file",url:"files.html"},
+{text:"Elementi globali",url:"globals.html",children:[
+{text:"Tutto",url:"globals.html"},
+{text:"Funzioni",url:"globals_func.html"}]}]}]}

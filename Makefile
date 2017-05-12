@@ -29,7 +29,7 @@ TARGET:=$(BINDIR)/elaborato_IPC
 
 #-----------------------rules----------------------------
 
-all : build doc
+all : doc build
 
 build : $(TARGET)
 
