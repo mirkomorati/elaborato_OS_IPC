@@ -3,7 +3,7 @@
 #include <sys/ipc.h>
 
 /*! 
- * \brief       Struttura per rappresentare una matrice in memoria condivisa
+ * \struct      Struttura per rappresentare una matrice in memoria condivisa
  */
 typedef struct {
     char *path;     //!< Path del file contenente la matrice
