@@ -12,11 +12,12 @@ SRCDIR:=src
 
 #files
 MAIN:=main.c
-SRC:=$(addprefix $(SRCDIR)/, ending_utils.c shmatrix_lib.c)
-HDR:=headers/ending_utils.h headers/shmatrix_lib.h
+SRC:=$(addprefix $(SRCDIR)/, ending_utils.c shmatrix_lib.c msg_utils.c)
+HDR:=headers/ending_utils.h headers/shmatrix_lib.h \
+	headers/msg_utils.h
 
 #object files
-OBJECTS=$(addprefix $(OBJDIR)/, main.o ending_utils.o shmatrix_lib.o)
+OBJECTS=$(addprefix $(OBJDIR)/, main.o ending_utils.o shmatrix_lib.o msg_utils.o)
 
 #target
 TARGET:=$(BINDIR)/elaborato_IPC
