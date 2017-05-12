@@ -38,3 +38,6 @@
 # Bin folder
 bin
 doc
+
+# vecchi file tenuti temporaneamente
+*.old
