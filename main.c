@@ -73,6 +73,9 @@ int main(int argc, char **argv) {
         }
     }
 
+// todo da qui in poi secondo le specifiche dobbiamo spostare tutto 
+// nella funzione gestita dal padre. 
+
 #ifdef DEBUG   
     printf("Loading matrix\n");
 #endif
@@ -129,10 +132,12 @@ int main(int argc, char **argv) {
         sig_add(1, &tmp);
     }
 
+#ifdef DEBUG
     printf("attendo ctrl-c..\n");
     for (int i = 0; i < 10; i++){
       usleep(1e6);
     }
+#endif
     sig_end(0);
 
 }
