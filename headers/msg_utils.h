@@ -79,6 +79,8 @@ int rcv_msg(msg_t * restrict  msg, const int * restrict id);
 
 /*!
  * \brief      	Scrive un comando nella pipe che collega il padre con i figli.
+ *				L'operazione è __safe__.
+ *				
  * \param[in]  	cmd		Il comando.
  * \param	  	id    	Se diverso da NULL modifica il file descriptor della pipe.
  * 						viene usato in fase di setting.
