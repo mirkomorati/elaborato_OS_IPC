@@ -6,7 +6,7 @@ LD:=gcc
 DOXY:=doxygen
 
 #FLAGS
-CFLAGS:=-Wall -DDEBUG 
+CFLAGS:=-Wall -DDEBUG -g
 
 #directories
 BINDIR:=bin

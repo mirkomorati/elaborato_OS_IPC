@@ -29,7 +29,7 @@ int main(int argc, char **argv) {
 
     if (argc < 10) {
         char *buf = "Error: too few arguments.\n";
-        write(STDOUT, buf, sizeof(buf));
+        write(STDOUT, buf, sizeof(char) * strlen(buf));
         exit(1);
     }
 

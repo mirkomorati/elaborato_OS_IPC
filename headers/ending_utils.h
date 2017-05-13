@@ -31,7 +31,7 @@ typedef struct sig_shmem_list{
  * \brief      	Funzione che elimina tutte le memorie condivise del processo
  *
  * \param[in]  	sig   Il segnale
- * \param      	arg   L'array di argomenti
+ * \param[in]     	arg   L'array di argomenti
  */
 void sig_handler(int sig, void *arg);
 
@@ -39,7 +39,7 @@ void sig_handler(int sig, void *arg);
 /*!
  * \brief      	Assegna il corretto handler ad ogni segnale
  * 
- * \param		list   La testa della lista degli oggetti da rimuovere
+ * \param[in]	list   La testa della lista degli oggetti da rimuovere
  */
 void sig_init(sig_shmem_list_t *list);
 
@@ -59,7 +59,7 @@ void sig_add(int n, ...);
  *              con codice 0
  *
  * \param[in]  	setting 	Se true il programma non termina
- * \param		arg			La head della lista degli oggetti da rimuovere
+ * \param[in]	arg			La head della lista degli oggetti da rimuovere
  */
 void sig_free_memory(bool setting, sig_shmem_list_t *arg);
 

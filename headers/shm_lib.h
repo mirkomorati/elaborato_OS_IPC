@@ -28,7 +28,7 @@ typedef shmatrix_t shsum_t;
  *
  * \param       M   Puntatore a un oggetto shmatrix_t
  */
-void shmatrix_parse(shmatrix_t *M);
+void shmatrix_parse(shmatrix_t * M);
 
 /*!
  * \brief       Chiama le funzioni utili a creare un nuovo oggetto vuoto
@@ -39,7 +39,7 @@ void shmatrix_parse(shmatrix_t *M);
  *
  * \return      -1 in caso di errore, 0 altrimenti
  */
-int shmatrix_load(shmatrix_t *M, int N);
+int shmatrix_load(shmatrix_t * M, int N);
 
 /*!
  * \brief       Crea un oggetto vuoto shmatrix_t
@@ -49,13 +49,13 @@ int shmatrix_load(shmatrix_t *M, int N);
  *
  * \return      -1 in caso di errore, 0 altrimenti
  */
-int shmatrix_create(shmatrix_t *M, int N);
+int shmatrix_create(shmatrix_t * M, int N);
 
 /*!
  * \brief       Crea un oggetto vuoto shsum_t
  * 
  * \param[out]  S   Puntatore a un oggetto shsum_t
  */
-int shsum_create(shsum_t *S);
+int shsum_create(shsum_t * S);
 
 #endif

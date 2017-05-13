@@ -75,7 +75,7 @@ int send_msg(const msg_t * restrict msg, const int * restrict id);
  *
  * \return     	0 in caso di successo, -1 altrimenti.
  */
-int rcv_msg(msg_t * restrict  msg, const int * restrict id);
+int rcv_msg(msg_t * restrict msg, const int * restrict id);
 
 /*!
  * \brief      	Scrive un comando nella pipe che collega il padre con i figli.
