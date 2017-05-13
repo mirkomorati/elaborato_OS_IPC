@@ -44,10 +44,15 @@ int main(int argc, char **argv) {
                 B.path = optarg;
                 break;
 
-            case 'C':
+            case 'C':{
+                // controllo se esiste il file altrimenti lo creo.
+                struct stat st;
+                if(stat(optarg, &st) == -1 && errno == ENOENT)
+                    if(creat(optarg, S_IRUSR) == -1)
+                        perror("Error creating matrixC file: ");
                 C.path = optarg;
                 break;
-
+            }
             case 'N':
                 N = atoi(optarg);
                 break;

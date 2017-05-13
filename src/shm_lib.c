@@ -27,7 +27,8 @@ int shmatrix_create(shmatrix_t * M, int N) {
         perror("shmget");
         return -1;
     }
-    
+
+
     if ((M->fd = open(M->path, O_RDONLY, S_IRUSR)) == -1) {
         perror("open");
         return -1;
@@ -40,7 +41,8 @@ int shmatrix_create(shmatrix_t * M, int N) {
 
 #ifdef DEBUG   
     printf("---INFO2\n");
-    printf("path: %s\nkey: %x\nid: %i\nfd: %i\naddr: %li\n", M->path, key, M->shmid, M->fd, *M->shmaddr);
+    printf("path: %s\nkey: %x\nid: %i\nfd: %i\naddr: %li\n",
+            M->path, key, M->shmid, M->fd, *M->shmaddr);
 #endif
 
     return 0;

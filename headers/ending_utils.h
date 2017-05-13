@@ -2,7 +2,6 @@
 #define ENDING_UTILS_H
 #include <stdbool.h>
 
-
 /*!
  * \file        ending_utils.h
  */
