@@ -1,14 +1,5 @@
+#include "../headers/std_lib.h"
 #include "../headers/ending_utils.h"
-
-#include <stdarg.h>
-#include <unistd.h>
-#include <sys/shm.h>
-#include <sys/types.h>
-#include <sys/ipc.h>
-#include <fcntl.h>
-#include <unistd.h>
-#include <stdlib.h>
-#include <stdio.h>
 
 static inline void free_list(sig_shmem_list_t *list){
 	if(list->next != NULL) free_list(list->next);

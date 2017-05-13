@@ -1,20 +1,13 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <stdarg.h>
-#include <fcntl.h>
-#include <getopt.h>
-#include <string.h>
-#include <signal.h>
-#include <sys/shm.h>
-#include <sys/types.h>
-#include <sys/ipc.h>
-
-#include "headers/shmatrix_lib.h"
+#include "headers/std_lib.h"
+#include "headers/shm_lib.h"
 #include "headers/ending_utils.h"
 
-/** \brief Struttura da passare a getopt() per l'alias delle opzioni */
-static struct option long_options[] = {
+#define STDOUT 1
+
+/*! 
+ * \struct Struttura da passare a getopt() per l'alias delle opzioni
+ */
+static struct option long_opt[] = {
     {"matrixA",   required_argument, 0, 'A'},
     {"matrixB",   required_argument, 0, 'B'},
     {"matrixC",   required_argument, 0, 'C'},
@@ -27,50 +20,60 @@ static struct option long_options[] = {
 
 int main(int argc, char **argv) {
     int opt;
-    shmatrix_t A, B, C;
+    char *short_opt = "A:B:C:N:P:h";
 
-    long * sum; // indirizzo alla zona di memoria condivisa che serve per contenere la somma
+    shmatrix_t A, B, C;
+    shsum_t S;
     int N;
     int P;
 
-    while ((opt = getopt_long(argc, argv, "A:B:C:N:P:h", long_options, NULL)) != -1) {
+    if (argc < 10) {
+        char *buf = "Error: too few arguments.\n";
+        write(STDOUT, buf, sizeof(buf));
+        exit(1);
+    }
+
+    while ((opt = getopt_long(argc, argv, short_opt, long_opt, NULL)) != -1) {
         if (opt == -1) break;
         switch (opt) {
             case 'A': 
-                    A.path = optarg;
+                A.path = optarg;
                 break;
 
             case 'B':
-                    B.path = optarg;
+                B.path = optarg;
                 break;
 
             case 'C':
-                    C.path = optarg;
+                C.path = optarg;
                 break;
 
             case 'N':
-                    N = atoi(optarg);
+                N = atoi(optarg);
                 break;
             
             case 'P':
-                    P = atoi(optarg);
+                P = atoi(optarg);
                 break;
 
-            case 'h':
-                    printf("Usage: \n");
+            case 'h': {
+                char *buf = "Usage: \n";
+                write(STDOUT, buf, sizeof(buf));
                 break;
-            
+            }
             default:
                 printf("Wrong arguments\n");
                 printf("Usage: \n");
                 exit(1);
         }
     }
-   
+
+#ifdef DEBUG   
     printf("Loading matrix\n");
+#endif
 
     if (shmatrix_load(&A, N) == -1) {
-        perror("load_shmatrix");
+        perror("shmatrix_load A");
         exit(1);
     }
 
@@ -82,7 +85,7 @@ int main(int argc, char **argv) {
     }
 
     if (shmatrix_load(&B, N) == -1) {
-        perror("load_shmatrix");
+        perror("shmatrix_load B");
         exit(1);
     }
     
@@ -91,6 +94,34 @@ int main(int argc, char **argv) {
     	tmp.shmid = B.shmid;
     	tmp.shmaddr = B.shmaddr;
     	sig_add(1, &tmp);
+    }
+
+    if (shmatrix_create(&C, N) == -1) {
+        perror("shmatrix_create C");
+        exit(1);
+    }
+
+    {
+        sig_utils_t tmp;
+        tmp.shmid = C.shmid;
+        tmp.shmaddr = C.shmaddr;
+        sig_add(1, &tmp);
+    }
+
+#ifdef DEBUG
+    printf("Creating shm for sum\n");
+#endif
+    S.path = "/dev/urandom";
+    if (shsum_create(&S) == -1) {
+        perror("shsum_create S");
+        exit(1);
+    }
+
+    {
+        sig_utils_t tmp;
+        tmp.shmid = S.shmid;
+        tmp.shmaddr = S.shmaddr;
+        sig_add(1, &tmp);
     }
 
     printf("attendo ctrl-c..\n");

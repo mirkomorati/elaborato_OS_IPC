@@ -5,7 +5,7 @@
 
 /*!
  * \file        ending_utils.h
- *\
+ */
 
 
 /*!

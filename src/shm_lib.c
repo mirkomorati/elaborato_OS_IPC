@@ -1,24 +1,17 @@
-#include "../headers/shmatrix_lib.h"
-
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <stdarg.h>
-#include <fcntl.h>
-#include <getopt.h>
-#include <string.h>
-#include <signal.h>
-#include <sys/shm.h>
-#include <sys/types.h>
-
-#include <stdio.h>
+#include "../headers/std_lib.h"
+#include "../headers/shm_lib.h"
 
 #define BUF_SIZE 4096
 
-int shmatrix_create(shmatrix_t *M, int N){
+int shmatrix_create(shmatrix_t *M, int N) {
 	key_t key;
     int size = N * N * sizeof(long);
     int flag = O_CREAT | 0644;
+
+#ifdef DEBUG
+    printf("---SHM OBJ\n");
+    printf("PATH: %s\n", M->path);
+#endif
 
     if ((key = ftok(M->path, 'A')) == -1) {
         perror("ftok");
@@ -54,7 +47,7 @@ int shmatrix_create(shmatrix_t *M, int N){
 }
 
 
-void shmatrix_parse(shmatrix_t *M){
+void shmatrix_parse(shmatrix_t *M) {
 	char buf[BUF_SIZE];
     int i = 0;
     char *line, *value, *brkt, *brkb;
@@ -82,9 +75,16 @@ void shmatrix_parse(shmatrix_t *M){
 }
 
 
-int shmatrix_load(shmatrix_t *M, int N){
+int shmatrix_load(shmatrix_t *M, int N) {
 	if(shmatrix_create(M, N) == -1) return -1;
 
-	shmatrix_parse(M);
+    shmatrix_parse(M);
 	return 0;
+}
+
+
+int shsum_create(shsum_t *S) {
+    if (shmatrix_create(S, 1) == -1) return -1;
+
+    return 0;
 }

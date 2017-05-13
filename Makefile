@@ -12,17 +12,19 @@ CFLAGS:=-Wall -DDEBUG
 BINDIR:=bin
 OBJDIR:=$(BINDIR)/obj
 SRCDIR:=src
+HDRDIR:=headers
 DOCDIR:=doc
 
 #files
 MAIN:=main.c
-SRC:=$(addprefix $(SRCDIR)/, ending_utils.c shmatrix_lib.c msg_utils.c)
-HDR:=headers/ending_utils.h headers/shmatrix_lib.h \
-	headers/msg_utils.h
+SRC:=$(addprefix $(SRCDIR)/, ending_utils.c shm_lib.c \
+	msg_utils.c)
+HDR:=$(addprefix $(HDRDIR)/, ending_utils.h shm_lib.h \
+	msg_utils.h std_lib.h)
 DOXYFILE:=Doxyfile 
 
 #object files
-OBJECTS=$(addprefix $(OBJDIR)/, main.o ending_utils.o shmatrix_lib.o msg_utils.o)
+OBJECTS=$(addprefix $(OBJDIR)/, main.o ending_utils.o shm_lib.o msg_utils.o)
 
 #target
 TARGET:=$(BINDIR)/elaborato_IPC
