@@ -51,4 +51,50 @@ typedef struct{
 	cmd_t cmd;			//!< Comando che doveva essere eseguito.
 }msg_t;
 
+
+/*!
+ * \brief      	Mette il messaggio msg nella coda di messaggi che devono essere letti
+ * 				dal padre. L'operazione è __safe__.
+ *
+ * \param[in]  	msg   	Il messaggio.
+ * \param		id 		Se diverso da NULL modifica l'id della coda. 
+ * 						viene utilizzato in fase di setting.
+ *
+ * \return     	0 in caso di successo, -1 altrimenti.
+ */
+int send_msg(const msg_t * restrict msg, const int * restrict id);
+
+
+/*!
+ * \brief      	Preleva un messaggio dalla coda di messaggi diretti al padre.
+ * 				L'operazione è __safe__.
+ *
+ * \param[in]  	msg   	Zona di memoria in cui memorizzare il messaggio.
+ * \param		id 		Se diverso da NULL modifica l'id della coda. 
+ * 						viene utilizzato in fase di setting.
+ *
+ * \return     	0 in caso di successo, -1 altrimenti.
+ */
+int rcv_msg(msg_t * restrict  msg, const int * restrict id);
+
+/*!
+ * \brief      	Scrive un comando nella pipe che collega il padre con i figli.
+ * \param[in]  	cmd		Il comando.
+ * \param	  	id    	Se diverso da NULL modifica il file descriptor della pipe.
+ * 						viene usato in fase di setting.
+ *
+ * \return    	0 in caso di successo, -1 altrimenti.
+ */
+int send_cmd(const cmd_t * restrict cmd, const int * restrict id);
+
+/*!
+ * \brief      	Legge un comando scritto dal padre nella pipe che lo collega ai figli
+ * 
+ * \param[in]  	cmd		Zona di memoria in cui memorizzare il comando.
+ * \param	  	id    	Se diverso da NULL modifica il file descriptor della pipe.
+ * 						viene usato in fase di setting.
+ *
+ * \return    	0 in caso di successo, -1 altrimenti.
+ */
+int rcv_cmd(cmd_t * restrict cmd, const int * restrict id);
 #endif
