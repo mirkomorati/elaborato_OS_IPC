@@ -84,7 +84,5 @@ int shmatrix_load(shmatrix_t *M, int N) {
 
 
 int shsum_create(shsum_t *S) {
-    if (shmatrix_create(S, 1) == -1) return -1;
-
-    return 0;
+    return shmatrix_create(S, 1);
 }
