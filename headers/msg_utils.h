@@ -57,7 +57,7 @@ typedef struct{
  * 				dal padre. L'operazione è __safe__.
  *
  * \param[in]  	msg   	Il messaggio.
- * \param		id 		Se diverso da NULL modifica l'id della coda. 
+ * \param[in]		id 		Se diverso da NULL modifica l'id della coda. 
  * 						viene utilizzato in fase di setting.
  *
  * \return     	0 in caso di successo, -1 altrimenti.
@@ -69,8 +69,8 @@ int send_msg(const msg_t * restrict msg, const int * restrict id);
  * \brief      	Preleva un messaggio dalla coda di messaggi diretti al padre.
  * 				L'operazione è __safe__.
  *
- * \param[in]  	msg   	Zona di memoria in cui memorizzare il messaggio.
- * \param		id 		Se diverso da NULL modifica l'id della coda. 
+ * \param[out]  	msg   	Zona di memoria in cui memorizzare il messaggio.
+ * \param[in]		id 		Se diverso da NULL modifica l'id della coda. 
  * 						viene utilizzato in fase di setting.
  *
  * \return     	0 in caso di successo, -1 altrimenti.
@@ -82,7 +82,7 @@ int rcv_msg(msg_t * restrict  msg, const int * restrict id);
  *				L'operazione è __safe__.
  *				
  * \param[in]  	cmd		Il comando.
- * \param	  	id    	Se diverso da NULL modifica il file descriptor della pipe.
+ * \param[in] 	id    	Se diverso da NULL modifica il file descriptor della pipe.
  * 						viene usato in fase di setting.
  *
  * \return    	0 in caso di successo, -1 altrimenti.
@@ -92,8 +92,8 @@ int send_cmd(const cmd_t * restrict cmd, const int * restrict id);
 /*!
  * \brief      	Legge un comando scritto dal padre nella pipe che lo collega ai figli
  * 
- * \param[in]  	cmd		Zona di memoria in cui memorizzare il comando.
- * \param	  	id    	Se diverso da NULL modifica il file descriptor della pipe.
+ * \param[out]  	cmd		Zona di memoria in cui memorizzare il comando.
+ * \param[in]  	id    	Se diverso da NULL modifica il file descriptor della pipe.
  * 						viene usato in fase di setting.
  *
  * \return    	0 in caso di successo, -1 altrimenti.
