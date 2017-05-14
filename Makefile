@@ -20,7 +20,7 @@ MAIN:=main.c
 SRC:=$(addprefix $(SRCDIR)/, ending_utils.c shm_lib.c \
 	msg_utils.c)
 HDR:=$(addprefix $(HDRDIR)/, ending_utils.h shm_lib.h \
-	msg_utils.h std_lib.h)
+	msg_utils.h std_lib.h sem_lib.h)
 DOXYFILE:=Doxyfile 
 
 #object files
