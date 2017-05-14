@@ -1,10 +1,10 @@
-#ifndef ENDING_UTILS_H
-#define ENDING_UTILS_H
-#include <stdbool.h>
-
 /*!
- * \file        ending_utils.h
+ * \file        ending_lib.h
  */
+
+#ifndef ENDING_LIB_H
+#define ENDING_LIB_H
+#include <stdbool.h>
 
 /*!
  * \struct      Struttura che permette di liberare un'area di memoria condivisa
@@ -20,13 +20,12 @@ typedef struct {
  */
 typedef struct sig_shmem_list{
 	sig_utils_t obj;
-
 	struct sig_shmem_list *next;
 } sig_shmem_list_t;
 
 /*!
- * \struct 		Permette di memorizzare i dati necessari all'eliminazione di un 
- * 				set di semafori.
+ * \struct 		Permette di memorizzare i dati necessari all'eliminazione di 
+ * 				un set di semafori.
  */
 typedef struct{
 	int semid;
@@ -34,8 +33,9 @@ typedef struct{
 } sig_sem_t;
 
 /**
- * \struct 		Lista che verrà utilizzata per tenere traccia di tutti i semafori
- * 				presenti da liberare alla terminazione del programma.
+ * \struct 		Lista che verrà utilizzata per tenere traccia di tutti
+ *              i semafori presenti da liberare alla terminazione
+ *              del programma.
  */
 typedef struct sig_sem_list{
 	sig_sem_t obj;
@@ -48,7 +48,7 @@ typedef struct sig_sem_list{
  * \brief      	Funzione che elimina tutte le memorie condivise del processo
  *
  * \param[in]  	sig   Il segnale
- * \param[in]     	arg   L'array di argomenti
+ * \param[in]   arg   L'array di argomenti
  */
 void sig_handler(int sig, void *arg);
 

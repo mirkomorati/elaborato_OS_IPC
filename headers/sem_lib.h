@@ -1,11 +1,12 @@
-#ifndef SEM_UTILS_H
-#define SEM_UTILS_H
-#include "std_lib.h"
-
 /*!
- *	\file Contiene i prototipi di alcune funzioni che risultano utili
- *	nell'utilizzo dei semafori.
-*/
+ * \file        sem_lib.h
+ * Contiene i prototipi di alcune funzioni che risultano utili
+ * nell'utilizzo dei semafori
+ */
+
+#ifndef SEM_LIB_H
+#define SEM_LIB_H
+#include "std_lib.h"
 
 /*!
  * \brief      	Raccoglie le istruzioni per decrementare il semaforo id

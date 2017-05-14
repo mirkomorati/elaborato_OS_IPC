@@ -1,16 +1,18 @@
-/*! \file msg_utils.h
+/*! 
+ * \file 		msg_lib.h
  * Raccolta di funzioni e strutture dati per lo scambio di messaggi.
  * 
  * Conterrà tutte le funzioni ed i dati di
  * utilità per i messaggi scambiati tra padre e figli 
  * o viceversa attraverso code di messaggi e pipe
  */
-#ifndef MSG_UTILS_H
-#define MSG_UTILS_H
+
+#ifndef MSG_LIB_H
+#define MSG_LIB_H
 #include <stdbool.h>
 #include <stdint.h>
 
-/*! \brief Rappresenta il ruolo di un figlio.
+/*! \brief 		Rappresenta il ruolo di un figlio.
  * 
  * Il ruolo è variabile ed è parte di un comando 
  * che può essere inviato da un padre ad un figlio.
@@ -23,7 +25,7 @@ typedef enum{
 	SUM
 }role_t;
 
-/*! \brief Comando inviato dal padre ai figli.
+/*! \brief 		Comando inviato dal padre ai figli.
  * 
  * Rappresenta un comando inviato dal padre ad uno dei suoi figli.
  */
@@ -36,7 +38,7 @@ typedef struct{
 		} c;
 		uint64_t row;
 	} x; //!< \brief Dati del comando. 
-	     //! In caso di somma va tenuto conto della
+	     //! In caso di somma va tenuto conto del
 	     //! valore di row, altrimenti va tenuto conto del valore di c.
 }cmd_t;
 
