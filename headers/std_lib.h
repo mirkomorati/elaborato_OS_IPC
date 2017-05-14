@@ -19,6 +19,7 @@
 #include <signal.h>		// gestione dei segnali come SIGINT
 #include <sys/shm.h>	// per la memoria condivisa.
 #include <sys/types.h>
+#include <sys/msg.h> 	// per le code di messaggi.
 #include <sys/sem.h> 	// gestione dei semafori.
 #include <sys/ipc.h>  	// gestione di tutto cio che riguarda la comunicazione tra i processi.
 #include <sys/stat.h> 	// funzione stat per ottenere lo status di un file.

@@ -12,14 +12,14 @@
 typedef struct {
     int shmid;
     void *shmaddr;
-} sig_utils_t;
+} sig_shmem_t;
 
 
 /*!
  * \struct      Lista che contiene le memorie condivise
  */
 typedef struct sig_shmem_list{
-	sig_utils_t obj;
+	sig_shmem_t obj;
 	struct sig_shmem_list *next;
 } sig_shmem_list_t;
 
@@ -43,6 +43,17 @@ typedef struct sig_sem_list{
 	struct sig_sem_list *next;
 } sig_sem_list_t;
 
+/*!
+ * \struct 		Rappresenta una lista di interi, che verrà utilizzata per 
+ * 				memorizzare tutti gli id di tutte le code di messaggi che 
+ * 				verranno create dal programma, così che possano essere 
+ * 				liberate prima della terminazione.
+ */
+typedef struct sig_queue_list{
+	int obj;
+
+	struct sig_queue_list *next;
+} sig_queue_list_t;
 
 /*!
  * \brief      	Funzione che elimina tutte le memorie condivise del processo
@@ -59,8 +70,10 @@ void sig_handler(int sig, void *arg);
  * \param[in]	shm_list   	La testa della lista della memoria condivisa da 
  * 							rimuovere.
  * \param[in]	sem_list	La testa della lista dei semafori da rimuovere.
+ * \param[in]	queue_list	La testa della lista delle code da rimuovere.
+
  */
-void sig_init(sig_shmem_list_t *shm_list, sig_sem_list_t *sem_list);
+void sig_init(sig_shmem_list_t *shm_list, sig_sem_list_t *sem_list, sig_queue_list_t *queue_list);
 
 
 /*!
@@ -80,6 +93,15 @@ void sig_add_shmem(int n, ...);
  * \param[in]  	args 	Gli oggetti
  */
 void sig_add_sem(int n, ...);
+
+/*!
+ * \brief      	Aggiunge un alemento alla lista delle code di messaggi da
+ * 				eliminare.
+ *
+ * \param[in] 	n       Numero di elementi
+ * \param[in]  	args 	Elementi.
+ */
+void sig_add_queue(int n, ...);
 
 /*!
  * \brief		Se \setting è false il programma libera la memoria condivisa
@@ -102,6 +124,17 @@ void sig_free_memory(bool setting, sig_shmem_list_t *arg);
  * \param[in]	arg			La head della lista dei semafori da rimuovere
  */
 void sig_free_sem(bool setting, sig_sem_list_t *arg);
+
+/*!
+ * \brief		Se \setting è false il vengono eliminate tutte le code 
+ * 				di messaggi presenti nel programma.
+ *
+ * \param[in]  	setting 	Se true il valore di arg viene valutato e 
+ * 							inizializzato.
+ * 							
+ * \param[in]	arg			La head della lista delle code da rimuovere
+ */
+void sig_free_queue(bool setting, sig_queue_list_t *arg);
 
 /*!
  * \brief		Funzione per liberare la memoria prima della terminazione
