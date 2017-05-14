@@ -89,7 +89,7 @@ int main(int argc, char **argv) {
     	sig_utils_t tmp;
     	tmp.shmid = A.shmid;
     	tmp.shmaddr = A.shmaddr;
-    	sig_add(1, &tmp);
+    	sig_add_shmem(1, &tmp);
     }
 
     if (shmatrix_load(&B, N) == -1) {
@@ -101,7 +101,7 @@ int main(int argc, char **argv) {
     	sig_utils_t tmp;
     	tmp.shmid = B.shmid;
     	tmp.shmaddr = B.shmaddr;
-    	sig_add(1, &tmp);
+    	sig_add_shmem(1, &tmp);
     }
 
     if (shmatrix_create(&C, N) == -1) {
@@ -113,7 +113,7 @@ int main(int argc, char **argv) {
         sig_utils_t tmp;
         tmp.shmid = C.shmid;
         tmp.shmaddr = C.shmaddr;
-        sig_add(1, &tmp);
+        sig_add_shmem(1, &tmp);
     }
 
 #ifdef DEBUG
@@ -129,7 +129,7 @@ int main(int argc, char **argv) {
         sig_utils_t tmp;
         tmp.shmid = S.shmid;
         tmp.shmaddr = S.shmaddr;
-        sig_add(1, &tmp);
+        sig_add_shmem(1, &tmp);
     }
 
 #ifdef DEBUG
