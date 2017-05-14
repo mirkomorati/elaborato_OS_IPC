@@ -1,6 +1,6 @@
 #include "headers/std_lib.h"
 #include "headers/shm_lib.h"
-#include "headers/ending_utils.h"
+#include "headers/ending_lib.h"
 
 #define STDOUT 1
 

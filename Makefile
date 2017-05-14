@@ -17,15 +17,15 @@ DOCDIR:=doc
 
 #files
 MAIN:=main.c
-SRC:=$(addprefix $(SRCDIR)/, ending_utils.c shm_lib.c \
-	msg_utils.c, sem_lib.c)
-HDR:=$(addprefix $(HDRDIR)/, ending_utils.h shm_lib.h \
-	msg_utils.h std_lib.h sem_lib.h)
+SRC:=$(addprefix $(SRCDIR)/, ending_lib.c shm_lib.c \
+	msg_lib.c, sem_lib.c)
+HDR:=$(addprefix $(HDRDIR)/, ending_lib.h shm_lib.h \
+	msg_lib.h std_lib.h sem_lib.h)
 DOXYFILE:=Doxyfile 
 
 #object files
-OBJECTS=$(addprefix $(OBJDIR)/, main.o ending_utils.o \
-	shm_lib.o msg_utils.o sem_lib.o)
+OBJECTS=$(addprefix $(OBJDIR)/, main.o ending_lib.o \
+	shm_lib.o msg_lib.o sem_lib.o)
 
 #target
 TARGET:=$(BINDIR)/elaborato_IPC
