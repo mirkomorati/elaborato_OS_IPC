@@ -3,9 +3,9 @@
 
 #define BUF_SIZE 4096
 
-int shmatrix_create(shmatrix_t * M, int N) {
+int shm_create(shm_t *M) {
 	key_t key;
-    int size = N * N * sizeof(long);
+    int size = M->N * M->N * sizeof(long);
     int flag = O_CREAT | 0644;
 
 #ifdef DEBUG
@@ -49,7 +49,7 @@ int shmatrix_create(shmatrix_t * M, int N) {
 }
 
 
-void shmatrix_parse(shmatrix_t * M) {
+void shmatrix_parse(shm_t * M) {
 	char buf[BUF_SIZE];
     int i = 0;
     char *line, *value, *brkt, *brkb;
@@ -77,14 +77,9 @@ void shmatrix_parse(shmatrix_t * M) {
 }
 
 
-int shmatrix_load(shmatrix_t *M, int N) {
-	if(shmatrix_create(M, N) == -1) return -1;
+int shmatrix_load(shm_t *M) {
+	if(shm_create(M) == -1) return -1;
 
     shmatrix_parse(M);
 	return 0;
-}
-
-
-int shsum_create(shsum_t * S) {
-    return shmatrix_create(S, 1);
 }

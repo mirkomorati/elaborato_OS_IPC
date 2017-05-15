@@ -26,4 +26,8 @@
 #include <stdbool.h>	// per avere i booleani in C.
 #include <errno.h>		// gestione degli errori, vedesi ENOENT.
 
+#define STDIN 0
+#define STDOUT 1
+#define STDERR 2
+
 #endif

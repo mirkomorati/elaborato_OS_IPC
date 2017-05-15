@@ -16,15 +16,15 @@ HDRDIR:=headers
 DOCDIR:=doc
 
 #files
-MAIN:=main.c
-SRC:=$(addprefix $(SRCDIR)/, ending_lib.c shm_lib.c \
+#MAIN:=$.c
+SRC:=$(addprefix $(SRCDIR)/, father.c ending_lib.c shm_lib.c \
 	msg_lib.c, sem_lib.c)
-HDR:=$(addprefix $(HDRDIR)/, ending_lib.h shm_lib.h \
+HDR:=$(addprefix $(HDRDIR)/, father.h ending_lib.h shm_lib.h \
 	msg_lib.h std_lib.h sem_lib.h)
 DOXYFILE:=Doxyfile 
 
 #object files
-OBJECTS=$(addprefix $(OBJDIR)/, main.o ending_lib.o \
+OBJECTS=$(addprefix $(OBJDIR)/, father.o ending_lib.o \
 	shm_lib.o msg_lib.o sem_lib.o)
 
 #target
@@ -42,8 +42,8 @@ $(TARGET) : $(OBJECTS)
 $(OBJDIR)/%.o: $(SRCDIR)/%.c
 	$(CC) -c $(CFLAGS) $< -o $@
 
-$(OBJDIR)/main.o : $(MAIN) 
-	$(CC) -c $(CFLAGS) $< -o $@
+#$(OBJDIR)/main.o : $(MAIN) 
+#	$(CC) -c $(CFLAGS) $< -o $@
 
 $(OBJECTS) : | $(OBJDIR)
 

@@ -1,35 +1,29 @@
-#include "headers/std_lib.h"
-#include "headers/shm_lib.h"
-#include "headers/ending_lib.h"
-#include "headers/sem_lib.h"
-
-#define STDOUT 1
-
-/*! 
- * \struct Struttura da passare a getopt() per l'alias delle opzioni
- */
-static struct option long_opt[] = {
-    {"matrixA",   required_argument, 0, 'A'},
-    {"matrixB",   required_argument, 0, 'B'},
-    {"matrixC",   required_argument, 0, 'C'},
-    {"order",     required_argument, 0, 'N'},
-    {"processes", required_argument, 0, 'P'},
-    {"help",      no_argument,       0, 'h'},
-    {0,           0,                 0,  0 }
-};
-
+#include "../headers/father.h"
 
 int main(int argc, char **argv) {
+    /*! 
+     * \struct Struttura da passare a getopt() per l'alias delle opzioni
+     */
+    static struct option long_opt[] = {
+        {"matrixA",   required_argument, 0, 'A'},
+        {"matrixB",   required_argument, 0, 'B'},
+        {"matrixC",   required_argument, 0, 'C'},
+        {"order",     required_argument, 0, 'N'},
+        {"processes", required_argument, 0, 'P'},
+        {"help",      no_argument,       0, 'h'},
+        {0,           0,                 0,  0 }
+    };
+
     int opt;
     char *short_opt = "A:B:C:N:P:h";
 
-    shmatrix_t A, B, C;
-    shsum_t S;
+    shm_t A, B, C;
+    shm_t S;
     int N;
     int P;
 
     if (argc < 10) {
-        char *buf = "Error: too few arguments.\nusage: ./elaborato_OS_IPC -A matrix -B matrix -C matrix -N order -P #processes\n";
+        char *buf = "Error: too few arguments.\nusage: ./elaborato_IPC -A matrix -B matrix -C matrix -N order -P #processes\n";
         write(STDOUT, buf, sizeof(char) * strlen(buf));
         exit(1);
     }
@@ -63,7 +57,7 @@ int main(int argc, char **argv) {
                 break;
 
             case 'h': {
-                char *buf = "usage: ./elaborato_OS_IPC -A matrix -B matrix -C matrix -N order -P #processes\n";
+                char *buf = "usage: ./elaborato_IPC -A matrix -B matrix -C matrix -N order -P #processes\n";
                 write(STDOUT, buf, sizeof(char) * strlen(buf));
                 break;
             }
@@ -73,10 +67,24 @@ int main(int argc, char **argv) {
                 exit(1);
         }
     }
+    A.N = N;
+    B.N = N;
+    C.N = N;
 
+    shm_t *shm_array[5] = {&A, &B, &C, &S, NULL};
+    int pipe_fd, queue_id;
+
+    if(init(shm_array) == -1);
+
+    if (make_child(shm_array, P, &pipe_fd, &queue_id) == -1){
+        perror("make_child");
+        sig_end(-1);
+    }
+
+    sig_end(run(P, pipe_fd, queue_id));
 // todo da qui in poi secondo le specifiche dobbiamo spostare tutto 
 // nella funzione gestita dal padre. 
-
+/*
 #ifdef DEBUG   
     printf("Loading matrix\n");
 #endif
@@ -105,8 +113,8 @@ int main(int argc, char **argv) {
     	sig_add_shmem(1, &tmp);
     }
 
-    if (shmatrix_create(&C, N) == -1) {
-        perror("shmatrix_create C");
+    if (shm_create(&C, N) == -1) {
+        perror("shm_create C");
         exit(1);
     }
 
@@ -121,7 +129,7 @@ int main(int argc, char **argv) {
     printf("Creating shm for sum\n");
 #endif
     S.path = "/dev/urandom";
-    if (shsum_create(&S) == -1) {
+    if (shm_create(&S, 1) == -1) {
         perror("shsum_create S");
         exit(1);
     }
@@ -146,5 +154,6 @@ int main(int argc, char **argv) {
     }
 #endif
     sig_end(0);
+*/
 
 }
