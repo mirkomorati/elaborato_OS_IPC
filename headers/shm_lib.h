@@ -4,6 +4,7 @@
 
 #ifndef SHM_LIB_H
 #define SHM_LIB_H
+#include "ending_lib.h"
 
 /*! 
  * \struct      Struttura per rappresentare una memoria condivisa

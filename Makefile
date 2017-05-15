@@ -18,14 +18,14 @@ DOCDIR:=doc
 #files
 #MAIN:=$.c
 SRC:=$(addprefix $(SRCDIR)/, father.c ending_lib.c shm_lib.c \
-	msg_lib.c, sem_lib.c)
+	msg_lib.c, sem_lib.c child.c)
 HDR:=$(addprefix $(HDRDIR)/, father.h ending_lib.h shm_lib.h \
-	msg_lib.h std_lib.h sem_lib.h)
+	msg_lib.h std_lib.h sem_lib.h child.h)
 DOXYFILE:=Doxyfile 
 
 #object files
 OBJECTS=$(addprefix $(OBJDIR)/, father.o ending_lib.o \
-	shm_lib.o msg_lib.o sem_lib.o)
+	shm_lib.o msg_lib.o sem_lib.o child.o)
 
 #target
 TARGET:=$(BINDIR)/elaborato_IPC

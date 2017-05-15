@@ -112,7 +112,50 @@ int init(shm_t **shm_array) {
 }
 
 int make_child(shm_t **shm_array , int P, int *pipe_fd, int *queue_id) {
-    return 0;
+    int tmp_pipe[2];
+    int tmp_queue_id;
+    int pids[P];
+#ifdef DEBUG
+    printf("creating pipe\n");
+#endif
+    if(pipe(tmp_pipe) == -1){
+        perror("creating pipe");
+        sig_end(-1);
+    }
+    *pipe_fd = tmp_pipe[1];
+
+#ifdef DEBUG
+    printf("creating queue\n");
+#endif
+    if((tmp_queue_id =msgget(IPC_PRIVATE, (IPC_CREAT | IPC_EXCL | 0400))) == -1){
+        perror("creating queue..");
+        sig_end(-1);
+    }
+    sig_add_queue(1, tmp_queue_id);
+    *queue_id = tmp_queue_id;
+    
+#ifdef DEBUG
+    printf("creating childs\n");
+#endif
+
+    for (int i = 0; i < P; ++i){
+        if((pids[i] = fork()) < 0){
+            perror("creating child");
+            sig_end(-1);
+        }
+        else if (pids[i] == 0){
+            child(shm_array, tmp_pipe[0], tmp_queue_id);
+            exit(0);
+        }
+    }
+
+#ifdef DEBUG
+    printf("%i childs created:\n", P);
+    for (int i = 0; i < P; ++i){
+        printf("child %i: pid = %i\n",i, pids[i]);
+    }
+#endif
+    return 0;   
 }
 
 int run(int P, int pipe, int queue) {
