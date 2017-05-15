@@ -7,6 +7,7 @@ int shm_create(shm_t *M) {
 	key_t key;
     int size = M->N * M->N * sizeof(long);
     int flag = O_CREAT | 0644;
+    sig_shmem_t to_delete;
 
 #ifdef DEBUG
     printf("---SHM OBJ\n");
@@ -44,6 +45,11 @@ int shm_create(shm_t *M) {
     printf("path: %s\nkey: %x\nid: %i\nfd: %i\naddr: %li\n",
             M->path, key, M->shmid, M->fd, *M->shmaddr);
 #endif
+    to_delete.shmid = M->shmid;
+    to_delete.shmaddr = M->shmaddr;
+
+    sig_add_shmem(1, &to_delete);
+
 
     return 0;
 }
