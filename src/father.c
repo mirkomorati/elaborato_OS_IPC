@@ -129,7 +129,7 @@ int make_child(shm_t **shm_array , int P, int *pipe_fd, int *queue_id) {
 #endif
     if((tmp_queue_id =msgget(IPC_PRIVATE, (IPC_CREAT | IPC_EXCL | 0400))) == -1){
         perror("creating queue..");
-        sig_end(-1);
+        return -1;
     }
     sig_add_queue(1, tmp_queue_id);
     *queue_id = tmp_queue_id;
@@ -141,7 +141,7 @@ int make_child(shm_t **shm_array , int P, int *pipe_fd, int *queue_id) {
     for (int i = 0; i < P; ++i){
         if((pids[i] = fork()) < 0){
             perror("creating child");
-            sig_end(-1);
+            return -1;
         }
         else if (pids[i] == 0){
             child(shm_array, tmp_pipe[0], tmp_queue_id);
