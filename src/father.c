@@ -71,6 +71,7 @@ int main(int argc, char **argv) {
     B.N = N;
     C.N = N;
     S.N = 1;
+    S.path = "/dev/urandom";
 
     shm_t *shm_array[5] = {&A, &B, &C, &S, NULL};
     int pipe_fd, queue_id;
@@ -107,72 +108,6 @@ int init(shm_t **shm_array) {
             return -1;
         }
     }
-/*
-    if (shmatrix_load(&A, N) == -1) {
-        perror("shmatrix_load A");
-        exit(1);
-    }
-
-    {
-        sig_shmem_t tmp;
-        tmp.shmid = A.shmid;
-        tmp.shmaddr = A.shmaddr;
-        sig_add_shmem(1, &tmp);
-    }
-
-    if (shmatrix_load(&B, N) == -1) {
-        perror("shmatrix_load B");
-        exit(1);
-    }
-    
-    {
-        sig_shmem_t tmp;
-        tmp.shmid = B.shmid;
-        tmp.shmaddr = B.shmaddr;
-        sig_add_shmem(1, &tmp);
-    }
-
-    if (shm_create(&C, N) == -1) {
-        perror("shm_create C");
-        exit(1);
-    }
-
-    {
-        sig_shmem_t tmp;
-        tmp.shmid = C.shmid;
-        tmp.shmaddr = C.shmaddr;
-        sig_add_shmem(1, &tmp);
-    }
-
-#ifdef DEBUG
-    printf("Creating shm for sum\n");
-#endif
-    S.path = "/dev/urandom";
-    if (shm_create(&S, 1) == -1) {
-        perror("shsum_create S");
-        exit(1);
-    }
-
-    {
-        sig_shmem_t tmp;
-        tmp.shmid = S.shmid;
-        tmp.shmaddr = S.shmaddr;
-        sig_add_shmem(1, &tmp);
-    }
-
-#ifdef DEBUG
-    int sem_id = sem_create();
-    sem_lock(sem_id);
-    sem_unlock(sem_id);
-#endif
-
-#ifdef DEBUG
-    printf("attendo ctrl-c..\n");
-    for (int i = 0; i < 10; i++){
-      usleep(1e6);
-    }
-#endif
-*/
     return 0;
 }
 
