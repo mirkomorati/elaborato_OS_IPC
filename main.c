@@ -29,7 +29,7 @@ int main(int argc, char **argv) {
     int P;
 
     if (argc < 10) {
-        char *buf = "Error: too few arguments.\n";
+        char *buf = "Error: too few arguments.\nusage: ./elaborato_OS_IPC -A matrix -B matrix -C matrix -N order -P #processes\n";
         write(STDOUT, buf, sizeof(char) * strlen(buf));
         exit(1);
     }
@@ -63,8 +63,8 @@ int main(int argc, char **argv) {
                 break;
 
             case 'h': {
-                char *buf = "Usage: \n";
-                write(STDOUT, buf, sizeof(buf));
+                char *buf = "usage: ./elaborato_OS_IPC -A matrix -B matrix -C matrix -N order -P #processes\n";
+                write(STDOUT, buf, sizeof(char) * strlen(buf));
                 break;
             }
             default:
@@ -87,7 +87,7 @@ int main(int argc, char **argv) {
     }
 
     {
-    	sig_utils_t tmp;
+    	sig_shmem_t tmp;
     	tmp.shmid = A.shmid;
     	tmp.shmaddr = A.shmaddr;
     	sig_add_shmem(1, &tmp);
@@ -99,7 +99,7 @@ int main(int argc, char **argv) {
     }
     
     {
-    	sig_utils_t tmp;
+    	sig_shmem_t tmp;
     	tmp.shmid = B.shmid;
     	tmp.shmaddr = B.shmaddr;
     	sig_add_shmem(1, &tmp);
@@ -111,7 +111,7 @@ int main(int argc, char **argv) {
     }
 
     {
-        sig_utils_t tmp;
+        sig_shmem_t tmp;
         tmp.shmid = C.shmid;
         tmp.shmaddr = C.shmaddr;
         sig_add_shmem(1, &tmp);
@@ -127,7 +127,7 @@ int main(int argc, char **argv) {
     }
 
     {
-        sig_utils_t tmp;
+        sig_shmem_t tmp;
         tmp.shmid = S.shmid;
         tmp.shmaddr = S.shmaddr;
         sig_add_shmem(1, &tmp);
