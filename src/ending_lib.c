@@ -161,6 +161,9 @@ void sig_init(sig_shmem_list_t *shm_list, sig_sem_list_t *sem_list, sig_queue_li
 void sig_free_memory(bool setting, sig_shmem_list_t *arg){
 	static sig_shmem_list_t *list = NULL;
 
+#ifdef DEBUG
+    printf("---Freeing shm\n");
+#endif
 	if(setting) list = arg;
 	else if(list != NULL) {
 		sig_shmem_list_t *head = list;
@@ -183,6 +186,9 @@ void sig_free_memory(bool setting, sig_shmem_list_t *arg){
 void sig_free_sem(bool setting, sig_sem_list_t *arg){
 	static sig_sem_list_t *list = NULL;
 
+#ifdef DEBUG
+    printf("---Freeing sem\n");
+#endif
 	if(setting) list = arg;
 	else if(list != NULL) {
 		sig_sem_list_t *head = list;
@@ -201,6 +207,9 @@ void sig_free_sem(bool setting, sig_sem_list_t *arg){
 void sig_free_queue(bool setting, sig_queue_list_t *arg){
 	static sig_queue_list_t *list = NULL;
 
+#ifdef DEBUG
+    printf("---Freeing queue\n");
+#endif
 	if(setting) list = arg;
 	else if(list != NULL) {
 		sig_queue_list_t *head = list;
