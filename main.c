@@ -1,6 +1,7 @@
 #include "headers/std_lib.h"
 #include "headers/shm_lib.h"
 #include "headers/ending_lib.h"
+#include "headers/sem_lib.h"
 
 #define STDOUT 1
 
@@ -131,6 +132,12 @@ int main(int argc, char **argv) {
         tmp.shmaddr = S.shmaddr;
         sig_add_shmem(1, &tmp);
     }
+
+#ifdef DEBUG
+    int sem_id = sem_create();
+    sem_lock(sem_id);
+    sem_unlock(sem_id);
+#endif
 
 #ifdef DEBUG
     printf("attendo ctrl-c..\n");
