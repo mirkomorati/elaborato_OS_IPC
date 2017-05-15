@@ -23,17 +23,18 @@ typedef struct {
  *
  * \param       M   Puntatore a un oggetto shm_t
  */
-void shmatrix_parse(shm_t * M);
+void shmatrix_parse(shm_t *M);
 
 /*!
  * \brief       Chiama le funzioni utili a creare un nuovo oggetto vuoto
  *              shm_t, parsarlo e caricarlo in memoria condivisa
  *
  * \param[out]  M	Puntatore a un oggetto shm_t
- *
+ * \param       parse   Booleano per capire se la matrice dev'essere
+ *                      parsata o solo creata
  * \return      -1 in caso di errore, 0 altrimenti
  */
-int shmatrix_load(shm_t * M);
+int shm_load(shm_t *M, bool parse);
 
 /*!
  * \brief       Crea un oggetto vuoto shm_t
@@ -42,6 +43,6 @@ int shmatrix_load(shm_t * M);
  *
  * \return      -1 in caso di errore, 0 altrimenti
  */
-int shm_create(shm_t * M);
+int shm_create(shm_t *M);
 
 #endif

@@ -49,7 +49,7 @@ int shm_create(shm_t *M) {
 }
 
 
-void shmatrix_parse(shm_t * M) {
+void shmatrix_parse(shm_t *M) {
 	char buf[BUF_SIZE];
     int i = 0;
     char *line, *value, *brkt, *brkb;
@@ -77,9 +77,13 @@ void shmatrix_parse(shm_t * M) {
 }
 
 
-int shmatrix_load(shm_t *M) {
-	if(shm_create(M) == -1) return -1;
+int shm_load(shm_t *M, bool parse) {
+	if(shm_create(M) == -1) {
+        perror("shm_create");
+        return -1;
+    }
 
-    shmatrix_parse(M);
+    if (parse)
+        shmatrix_parse(M);
 	return 0;
 }
