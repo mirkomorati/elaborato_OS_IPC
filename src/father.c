@@ -114,6 +114,7 @@ int init(shm_t **shm_array, int *sem_id_array) {
 
     for (int i = 0; sem_id_array[i] != -1; i++) {
         sem_id_array[i] = sem_create();
+        printf("\n\t --- %i ---\n", sem_id_array[i]);
     }
     return 0;
 }

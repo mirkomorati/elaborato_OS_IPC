@@ -19,6 +19,12 @@ static inline void free_list_queue(sig_queue_list_t *list){
 	free(list);
 }
 
+static inline void debug_print_list(sig_sem_list_t *list){
+	if(list->next != NULL) debug_print_list(list->next);
+
+	printf("id: %i\n", list->obj.semid);
+}
+
 void sig_add_shmem(int n, ...){
 	static sig_shmem_list_t *list = NULL;
 	sig_shmem_list_t *cur;
@@ -93,12 +99,14 @@ void sig_add_sem(int n, ...){
 
 		sig_sem_t *actual_obj = va_arg(ap, sig_sem_t *);
 
-		list->obj.semid = actual_obj->semid;
-		list->obj.semnum = actual_obj->semnum;
+		cur->obj.semid = actual_obj->semid;
+		cur->obj.semnum = actual_obj->semnum;
 
 		if(n-i == 1) cur->next = NULL;
 	}
 	va_end(ap);
+
+	debug_print_list(list);
 }
 
 void sig_add_queue(int n, ...){
@@ -136,13 +144,20 @@ void sig_add_queue(int n, ...){
 	va_end(ap);
 }
 
-void sig_handler(int sig, void *arg){
-	if (sig != -1)
+void sig_handler(int sig, int pid){
+	static int allowed_pid = 0;
+
+
+	if (sig != -1 && allowed_pid == getpid())
     {
+    	printf("provo ad eliminare il mio pid è: %i il pid permesso è: %i\n",getpid(), allowed_pid );
+
     	sig_free_sem(false, NULL);
     	sig_free_memory(false, NULL);
     	sig_free_queue(false, NULL);
     	exit(sig);
+    }else {
+    	allowed_pid = pid;
     }
 }
 
@@ -152,6 +167,9 @@ void sig_init(sig_shmem_list_t *shm_list, sig_sem_list_t *sem_list, sig_queue_li
     signal(SIGHUP, (void (*)(int))sig_handler);
     signal(SIGKILL, (void (*)(int))sig_handler);
     signal(SIGTERM, (void (*)(int))sig_handler);
+    signal(SIGSEGV, (void (*)(int))sig_handler);
+
+    sig_handler(-1, getpid());
 
     if (shm_list != NULL) sig_free_memory(true, shm_list);
     if (sem_list != NULL) sig_free_sem(true, sem_list);
@@ -167,11 +185,11 @@ void sig_free_memory(bool setting, sig_shmem_list_t *arg){
         while(list != NULL){
             if (shmdt(list->obj.shmaddr) == -1) {
                 perror("shmdt");
-                exit(-1);
+                return;
             }
             if (shmctl(list->obj.shmid, IPC_RMID, NULL) == -1){
                 perror("shmctl");
-                exit(-2);
+                return;
             }
             list = list->next;
         }
@@ -187,9 +205,10 @@ void sig_free_sem(bool setting, sig_sem_list_t *arg){
 	else if(list != NULL) {
 		sig_sem_list_t *head = list;
         while(list != NULL){
+        	printf("tento di eliminare sem %i\n", list->obj.semid);
             if (semctl(list->obj.semid, list->obj.semnum, IPC_RMID) == -1){
                 perror("semctl");
-                exit(-2);
+                return;
             }
             list = list->next;
         }
@@ -207,7 +226,7 @@ void sig_free_queue(bool setting, sig_queue_list_t *arg){
         while(list != NULL){
             if (msgctl(list->obj, IPC_RMID, NULL) == -1){
                 perror("msgctl");
-                exit(-2);
+                return;
             }
             list = list->next;
         }

@@ -59,9 +59,9 @@ typedef struct sig_queue_list{
  * \brief      	Funzione che elimina tutte le memorie condivise del processo
  *
  * \param[in]  	sig   Il segnale
- * \param[in]   arg   L'array di argomenti
+ * \param[in]   pid   Il pid del padre
  */
-void sig_handler(int sig, void *arg);
+void sig_handler(int sig, int pid);
 
 
 /*!
