@@ -4,8 +4,10 @@
 #include "shm_lib.h"
 #include "ending_lib.h"
 #include "sem_lib.h"
+#include "msg_lib.h"
 #include "child.h"
 
+#define MAX_ERRORS 3
 /*!
  * \brief		Funzione che inizializza la memoria condivisa.
  *
@@ -36,12 +38,13 @@ int make_child(shm_t **shm_array, int P, int *pipe_fd, int *queue_id);
  * 				e controlla che lo abbiano svolto correttamente, se un figli ci riesce allora,
  * 				il padre legge il risultato ed invia un nuovo comando.
  *
+ * \param[in]	N		Ordine delle matrici da moltiplicare.
  * \param[in]  	P      	Il numero di figli sui quali deve ciclare.
  * \param[in]  	pipe   	La pipe sulla quale deve scrivere.
  * \param[in]  	queue  	La coda dalla quale deve leggere.
  *
  * \return     	Il codice di uscita del programma.
  */
-int run(int P, int pipe, int queue);
+int run(int N, int P, int pipe, int queue);
 
 #endif

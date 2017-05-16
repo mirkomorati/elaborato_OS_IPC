@@ -4,27 +4,11 @@
 #define BUF_SIZE 4096
 
 int shm_create(shm_t *M) {
-	key_t key;
     int size = M->N * M->N * sizeof(long);
     int flag = O_CREAT | 0644;
     sig_shmem_t to_delete;
 
-#ifdef DEBUG
-    printf("---SHM OBJ\n");
-    printf("PATH: %s\n", M->path);
-#endif
-
-    if ((key = ftok(M->path, 'A')) == -1) {
-        perror("ftok");
-        return -1;
-    }
-
-#ifdef DEBUG
-    printf("---INFO\n");
-    printf("key: %x\tsize: %i\tflag: %i\n", key, size, flag);
-#endif
-
-    if ((M->shmid = shmget(key, size, flag)) == -1) {
+    if ((M->shmid = shmget(IPC_PRIVATE, size, flag)) == -1) {
         perror("shmget");
         return -1;
     }
@@ -40,11 +24,6 @@ int shm_create(shm_t *M) {
         return -1;
     }
 
-#ifdef DEBUG   
-    printf("---INFO2\n");
-    printf("path: %s\nkey: %x\nid: %i\nfd: %i\naddr: %li\n",
-            M->path, key, M->shmid, M->fd, *M->shmaddr);
-#endif
     to_delete.shmid = M->shmid;
     to_delete.shmaddr = M->shmaddr;
 

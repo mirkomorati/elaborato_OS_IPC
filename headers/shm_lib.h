@@ -14,7 +14,6 @@ typedef struct {
     int N;			//!< Ordine della matrice. 1 nel caso che sia il campo somma.
     int fd;         //!< File Descriptor
     int shmid;      //!< ID della memoria condivisa
-    key_t key;      //!< Chiave generata dal sistema
     long *shmaddr;  //!< Indirizzo di attacco della memoria condivisa
 }shm_t;
 

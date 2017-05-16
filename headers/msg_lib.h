@@ -31,15 +31,15 @@ typedef enum{
  */
 typedef struct{
 	role_t role; //!< Ruolo che il figlio deve svolgere.
-	union data {
-		struct point{
-			uint32_t i;	
-			uint32_t j;
+	union data_u {
+		struct point_u {
+			int i;	
+			int j;
 		} c;
-		uint64_t row;
-	} x; //!< \brief Dati del comando. 
-	     //! In caso di somma va tenuto conto del
-	     //! valore di row, altrimenti va tenuto conto del valore di c.
+		int row;
+	} data; //!< \brief Dati del comando. 
+	     	//! In caso di somma va tenuto conto del
+	     	//! valore di row, altrimenti va tenuto conto del valore di c.
 }cmd_t;
 
 /*! \brief Messaggio dei figli al padre 
@@ -64,7 +64,7 @@ typedef struct{
  *
  * \return     	0 in caso di successo, -1 altrimenti.
  */
-int send_msg(const msg_t * restrict msg, const int * restrict id);
+int send_msg(const msg_t * restrict msg, const int id);
 
 
 /*!
@@ -77,7 +77,7 @@ int send_msg(const msg_t * restrict msg, const int * restrict id);
  *
  * \return     	0 in caso di successo, -1 altrimenti.
  */
-int rcv_msg(msg_t * restrict msg, const int * restrict id);
+int rcv_msg(msg_t * restrict msg, const int id);
 
 /*!
  * \brief      	Scrive un comando nella pipe che collega il padre con i figli.
@@ -89,7 +89,7 @@ int rcv_msg(msg_t * restrict msg, const int * restrict id);
  *
  * \return    	0 in caso di successo, -1 altrimenti.
  */
-int send_cmd(const cmd_t * restrict cmd, const int * restrict id);
+int send_cmd(const cmd_t * restrict cmd, const int fd);
 
 /*!
  * \brief      	Legge un comando scritto dal padre nella pipe che lo collega ai figli
@@ -100,5 +100,6 @@ int send_cmd(const cmd_t * restrict cmd, const int * restrict id);
  *
  * \return    	0 in caso di successo, -1 altrimenti.
  */
-int rcv_cmd(cmd_t * restrict cmd, const int * restrict id);
+int rcv_cmd(cmd_t * restrict cmd, const int fd);
+
 #endif
