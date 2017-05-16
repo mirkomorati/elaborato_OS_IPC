@@ -86,7 +86,7 @@ int main(int argc, char **argv) {
         sig_end(-1);
     }
 
-    sig_end(run(P, pipe_fd, queue_id));
+    sig_end(run(N, P, pipe_fd, queue_id));
 }
 
 int init(shm_t **shm_array) {
@@ -145,8 +145,7 @@ int make_child(shm_t **shm_array , int P, int *pipe_fd, int *queue_id) {
             return -1;
         }
         else if (pids[i] == 0){
-            child(shm_array, tmp_pipe[0], tmp_queue_id);
-            exit(0);
+            exit(child(shm_array, tmp_pipe[0], tmp_queue_id));
         }
     }
 
@@ -159,6 +158,66 @@ int make_child(shm_t **shm_array , int P, int *pipe_fd, int *queue_id) {
     return 0;   
 }
 
-int run(int P, int pipe, int queue) {
+int run(int N, int P, int pipe, int queue) {
+    int completed_rows[N];
+    int i = 0, j = 0, errors = 0;
+    for (int p = 0; p < P; ++p){
+        cmd_t cmd;
+        cmd.role = MULTIPLY;
+        cmd.data.c.i = i;
+        cmd.data.c.j = j;
+        if (send_cmd(&cmd, pipe) == -1){
+            if(++errors > MAX_ERRORS){
+                perror("too much erros");
+                return -1;
+            }
+        } else {
+            i += ++j/N;
+            j %= N;
+        }
+    }
+
+    errors = 0;
+
+    while(true){
+        cmd_t cmd;
+        msg_t msg;
+        if (rcv_msg(&msg, queue) == -1){
+            if(++errors > MAX_ERRORS){
+                perror("too mutch errors");
+                return -1;
+            }
+        }
+        if(msg.success){
+            if(++completed_rows[msg.cmd.data.c.i] == N){
+                cmd.role = SUM;
+                cmd.data.row = msg.cmd.data.c.i;   
+            } else {
+                i += ++j/N;
+                j %= N;
+                cmd.role = MULTIPLY;
+                cmd.data.c.i = i;
+                cmd.data.c.j = j;
+            }
+
+            if (send_cmd(&cmd, pipe) == -1){
+                if(++errors > MAX_ERRORS){
+                    perror("too much errors");
+                    return -1;
+                } else {
+                    j = --j % N;
+                    i -= j/N;
+                }
+            }
+        } else {
+            while (send_cmd(&msg.cmd, pipe) == -1){
+                if(++errors > MAX_ERRORS){
+                    perror("too much errors");
+                    return -1;
+                } 
+            }
+        }
+        if(i == j == N) break;
+    }
     return 0;
 }
