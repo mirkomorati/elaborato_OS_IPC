@@ -64,7 +64,7 @@ typedef struct{
  *
  * \return     	0 in caso di successo, -1 altrimenti.
  */
-int send_msg(const msg_t * restrict msg, const int id);
+int send_msg(const msg_t * restrict msg, const int id, const int sem_id);
 
 
 /*!
@@ -100,6 +100,6 @@ int send_cmd(const cmd_t * restrict cmd, const int fd);
  *
  * \return    	0 in caso di successo, -1 altrimenti.
  */
-int rcv_cmd(cmd_t * restrict cmd, const int fd);
+int rcv_cmd(cmd_t * restrict cmd, const int fd, const int sem_id);
 
 #endif

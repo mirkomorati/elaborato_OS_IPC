@@ -74,14 +74,16 @@ int main(int argc, char **argv) {
     S.path = "/dev/urandom";
 
     shm_t *shm_array[5] = {&A, &B, &C, &S, NULL};
+    int sem_id_array[3] = {0, 0, -1};
+
     int pipe_fd, queue_id;
 
-    if(init(shm_array) == -1) {
+    if(init(shm_array, sem_id_array) == -1) {
         perror("init");
         sig_end(-1);
     }
 
-    if (make_child(shm_array, P, &pipe_fd, &queue_id) == -1){
+    if (make_child(shm_array, sem_id_array, P, &pipe_fd, &queue_id) == -1){
         perror("make_child");
         sig_end(-1);
     }
@@ -89,7 +91,7 @@ int main(int argc, char **argv) {
     sig_end(run(N, P, pipe_fd, queue_id));
 }
 
-int init(shm_t **shm_array) {
+int init(shm_t **shm_array, int *sem_id_array) {
 
     #ifdef DEBUG   
     printf("Loading matrix\n");
@@ -109,10 +111,14 @@ int init(shm_t **shm_array) {
             return -1;
         }
     }
+
+    for (int i = 0; sem_id_array[i] != -1; i++) {
+        sem_id_array[i] = sem_create();
+    }
     return 0;
 }
 
-int make_child(shm_t **shm_array , int P, int *pipe_fd, int *queue_id) {
+int make_child(shm_t **shm_array , int *sem_id_array, int P, int *pipe_fd, int *queue_id) {
     int tmp_pipe[2];
     int tmp_queue_id;
     int pids[P];
@@ -128,7 +134,7 @@ int make_child(shm_t **shm_array , int P, int *pipe_fd, int *queue_id) {
     #ifdef DEBUG
     printf("creating queue\n");
     #endif
-    if((tmp_queue_id =msgget(IPC_PRIVATE, (IPC_CREAT | IPC_EXCL | 0400))) == -1){
+    if((tmp_queue_id =msgget(IPC_PRIVATE, (IPC_CREAT | IPC_EXCL | 0600))) == -1){
         perror("creating queue..");
         return -1;
     }
@@ -145,7 +151,7 @@ int make_child(shm_t **shm_array , int P, int *pipe_fd, int *queue_id) {
             return -1;
         }
         else if (pids[i] == 0){
-            exit(child(shm_array, tmp_pipe[0], tmp_queue_id));
+            exit(child(shm_array, tmp_pipe[0], tmp_queue_id, sem_id_array));
         }
     }
 
@@ -188,7 +194,7 @@ int run(int N, int P, int pipe, int queue) {
                 return -1;
             }
         }
-        if(msg.success){
+        else if(msg.success){
             if(++completed_rows[msg.cmd.data.c.i] == N){
                 cmd.role = SUM;
                 cmd.data.row = msg.cmd.data.c.i;   

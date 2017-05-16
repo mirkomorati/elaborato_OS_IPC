@@ -14,10 +14,7 @@ int send_cmd(const cmd_t * restrict cmd, const int fd){
 	return 0;
 }
 
-int rcv_cmd(cmd_t * restrict cmd, const int fd){
-	static int sem_id = -1;
-
-	if (sem_id == -1) sem_id = sem_create();
+int rcv_cmd(cmd_t * restrict cmd, const int fd, const int sem_id){
 
 	if (cmd != NULL){
 		sem_lock(sem_id);
@@ -32,10 +29,7 @@ int rcv_cmd(cmd_t * restrict cmd, const int fd){
 	return 0;
 }
 
-int send_msg(const msg_t * restrict msg, const int id){
-	static int sem_id = -1;
-
-	if (sem_id == -1) sem_id = sem_create();
+int send_msg(const msg_t * restrict msg, const int id, const int sem_id){
 
 	if (msg != NULL){
 		sem_lock(sem_id);
