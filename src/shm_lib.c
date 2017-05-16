@@ -5,22 +5,22 @@
 
 int shm_create(shm_t *M) {
     int size = M->N * M->N * sizeof(long);
-    int flag = O_CREAT | 0644;
+    int flag = O_CREAT | 0666;
     sig_shmem_t to_delete;
 
     if ((M->shmid = shmget(IPC_PRIVATE, size, flag)) == -1) {
-        perror("shmget");
+        perror("ERROR shm_create - shmget");
         return -1;
     }
 
 
     if ((M->fd = open(M->path, O_RDONLY, S_IRUSR)) == -1) {
-        perror("open");
+        perror("ERROR shm_create - open");
         return -1;
     }
 
     if (*(M->shmaddr = (long *) shmat(M->shmid, NULL, 0)) == -1) {
-        perror("shmat");
+        perror("ERROR shm_create - shmat");
         return -1;
     }
 

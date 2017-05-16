@@ -22,7 +22,13 @@ static inline void free_list_queue(sig_queue_list_t *list){
 static inline void debug_print_list(sig_sem_list_t *list){
 	if(list->next != NULL) debug_print_list(list->next);
 
-	printf("id: %i\n", list->obj.semid);
+	printf("semid: %i\n", list->obj.semid);
+}
+
+static inline void debug_print_shm_list(sig_shmem_list_t *list){
+    if(list->next != NULL) debug_print_shm_list(list->next);
+
+    printf("shmid: %i\n", list->obj.shmid);
 }
 
 void sig_add_shmem(int n, ...){
@@ -64,6 +70,8 @@ void sig_add_shmem(int n, ...){
 		if(n-i == 1) cur->next = NULL;
 	}
 	va_end(ap);
+
+    //debug_print_shm_list(list);
 }
 
 void sig_add_sem(int n, ...){
@@ -106,7 +114,7 @@ void sig_add_sem(int n, ...){
 	}
 	va_end(ap);
 
-	debug_print_list(list);
+	//debug_print_list(list);
 }
 
 void sig_add_queue(int n, ...){
@@ -188,7 +196,8 @@ void sig_free_memory(bool setting, sig_shmem_list_t *arg){
                 return;
             }
             if (shmctl(list->obj.shmid, IPC_RMID, NULL) == -1){
-                perror("shmctl");
+                printf("ERROR: shmid: %i", list->obj.shmid);
+                perror("shmctl sig_free_memory");
                 return;
             }
             list = list->next;
@@ -207,7 +216,7 @@ void sig_free_sem(bool setting, sig_sem_list_t *arg){
         while(list != NULL){
         	printf("tento di eliminare sem %i\n", list->obj.semid);
             if (semctl(list->obj.semid, list->obj.semnum, IPC_RMID) == -1){
-                perror("semctl");
+                perror("semctl sig_free_sem");
                 return;
             }
             list = list->next;
