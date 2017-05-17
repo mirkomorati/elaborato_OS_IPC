@@ -7,12 +7,12 @@ int sem_create() {
 	sig_sem_t tmp_sem;
 
 	if ((id = semget(IPC_PRIVATE, 1, IPC_CREAT | 0666)) == -1){
-		perror("semaphore create: ");
+		perror("semaphore create");
 		return -1;
 	}
 
 	if (semctl(id, 0, SETVAL, 1) == -1){
-		perror("semaphore init: ");
+		perror("semaphore init");
 		return -1;
 	}
 
