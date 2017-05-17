@@ -115,6 +115,17 @@ void sig_add_queue(int n, ...);
 void sig_free_memory(bool setting, sig_shmem_list_t *arg);
 
 /*!
+ * \brief      	Se \setting è false il programma effettua il detach 
+ * 				della memoria condivisa presente nella lista.
+ * 				
+ * \param[in]  	setting  	Se true il valore di arg viene valutato e 
+ * 							inizializzato.
+ * \param      	arg      	La head della lista degli oggetti di memoria 
+ * 							condivisa 
+ */
+void sig_shmdt(bool setting, sig_shmem_list_t *arg);
+
+/*!
  * \brief		Se \setting è false il programma elimina i semafori presenti 
  * 				nella lista dei semafori.
  *

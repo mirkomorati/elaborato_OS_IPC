@@ -153,29 +153,21 @@ void sig_add_queue(int n, ...){
 }
 
 void sig_handler(int sig, int pid){
-	// devo farmi passare il numero di processi figli 
-	// il che significa che devo anche cambiare tre quarti
-	// di questa libreria.
 	static int allowed_pid = 0;
 
-
-	if (sig != -1 && allowed_pid == getpid())
-    {
-    	/*
-    	 * devo aggiungere un for sul numero di processi
-    	 * figli, ed attendere fino che tutti non sono terminati
-    	 * a quel punto posso eliminare la memoria.
-    	 */
+	if (sig != -1 && allowed_pid == getpid()){
+    	int status, wpid;
+    	while((wpid = wait(&status)) > 0)
+    		printf("il figlio %i ha terminato\n", wpid);
 
     	sig_free_sem(false, NULL);
     	sig_free_memory(false, NULL);
     	sig_free_queue(false, NULL);
     	exit(sig);
-    }/*
-      * qui devo aggiungere un else if (sig != -1) allora 
-      * devo fare il detach di tutte le zone di memoria,
-      * ed uscire con il segnale come termine.
-      */
+    }else if (sig != -1){
+    	// siamo nella terminazione del figlio.
+    	sig_shmdt(false, NULL);
+    }
     else {
     	allowed_pid = pid;
     }
@@ -191,12 +183,35 @@ void sig_init(sig_shmem_list_t *shm_list, sig_sem_list_t *sem_list, sig_queue_li
 
     sig_handler(-1, getpid());
 
-    if (shm_list != NULL) sig_free_memory(true, shm_list);
+    if (shm_list != NULL){
+    	sig_shmdt(true, shm_list); 
+    	sig_free_memory(true, shm_list); 
+    }
     if (sem_list != NULL) sig_free_sem(true, sem_list);
     if (queue_list != NULL) sig_free_queue(true, queue_list);
 }
 
 void sig_free_memory(bool setting, sig_shmem_list_t *arg){
+	static sig_shmem_list_t *list = NULL;
+
+	if(setting) list = arg;
+	else if(list != NULL) {
+		sig_shmdt(false, NULL);
+		sig_shmem_list_t *head = list;
+        while(list != NULL){
+            if (shmctl(list->obj.shmid, IPC_RMID, NULL) == -1){
+                printf("ERROR: shmid: %i", list->obj.shmid);
+                perror("shmctl sig_free_memory");
+                return;
+            }
+            list = list->next;
+        }
+       
+        free_list_shm(head);
+	}
+}
+
+void sig_shmdt(bool setting, sig_shmem_list_t *arg){
 	static sig_shmem_list_t *list = NULL;
 
 	if(setting) list = arg;
@@ -207,15 +222,8 @@ void sig_free_memory(bool setting, sig_shmem_list_t *arg){
                 perror("shmdt");
                 return;
             }
-            if (shmctl(list->obj.shmid, IPC_RMID, NULL) == -1){
-                printf("ERROR: shmid: %i", list->obj.shmid);
-                perror("shmctl sig_free_memory");
-                return;
-            }
             list = list->next;
         }
-       
-        free_list_shm(head);
 	}
 }
 
@@ -257,6 +265,9 @@ void sig_free_queue(bool setting, sig_queue_list_t *arg){
 }
 
 void sig_end(int code){
+	int status, wpid;
+    while((wpid = wait(&status)) > 0)
+    	printf("terminazione normale: il figlio %i ha terminato\n", wpid);
 	// stessa cosa di sig_handler
 	sig_free_sem(false, NULL);
 	sig_free_memory(false, NULL);
