@@ -19,18 +19,6 @@ static inline void free_list_queue(sig_queue_list_t *list){
 	free(list);
 }
 
-static inline void debug_print_list(sig_sem_list_t *list){
-	if(list->next != NULL) debug_print_list(list->next);
-
-	printf("semid: %i\n", list->obj.semid);
-}
-
-static inline void debug_print_shm_list(sig_shmem_list_t *list){
-    if(list->next != NULL) debug_print_shm_list(list->next);
-
-    printf("shmid: %i\n", list->obj.shmid);
-}
-
 void sig_add_shmem(int n, ...){
 	static sig_shmem_list_t *list = NULL;
 	sig_shmem_list_t *cur;
@@ -216,7 +204,6 @@ void sig_shmdt(bool setting, sig_shmem_list_t *arg){
 
 	if(setting) list = arg;
 	else if(list != NULL) {
-		sig_shmem_list_t *head = list;
         while(list != NULL){
             if (shmdt(list->obj.shmaddr) == -1) {
                 perror("shmdt");

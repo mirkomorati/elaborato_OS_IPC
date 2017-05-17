@@ -189,9 +189,18 @@ int run(int N, int P, int pipe, int queue) {
     while(true){
         cmd_t cmd;
         msg_t msg;
-    #ifdef DEBUG
-    printf("Father - waiting for msgs\n");
-    #endif
+        if (i >= N || j > N){ 
+            cmd.role = END;
+            for (int p = 0; p < P; ++p)
+            {
+                if (send_cmd(&cmd, pipe) == -1) 
+                    perror("sending end cmd");
+            }
+            break;
+        }
+        #ifdef DEBUG
+        printf("Father - waiting for msgs\n");
+        #endif
         if (rcv_msg(&msg, queue) == -1) {
             if(++errors > MAX_ERRORS) {
                 perror("too many errors");
@@ -222,7 +231,8 @@ int run(int N, int P, int pipe, int queue) {
                     perror("too many errors");
                     return -1;
                 } else {
-                    j = --j % N;
+                    j--; // da tenere così.
+                    j %= N;
                     i -= j / N;
                 }
             }
@@ -237,7 +247,6 @@ int run(int N, int P, int pipe, int queue) {
                 } 
             }
         }
-        if (i >= N || j > N) break;
     }
     return 0;
 }

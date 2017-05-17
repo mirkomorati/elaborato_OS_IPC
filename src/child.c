@@ -5,7 +5,7 @@ int child(shm_t **shm_array, int pipe_fd, int queue_id, int *sem_id_array){
 	while(true){
 		if(rcv_cmd(&cmd, pipe_fd, sem_id_array[0]) == -1)
 			printf("non dovrebbe accadere CMD\n");
-
+		if(cmd.role == END) return 0;
 		printf("sono il figlio %i\n\tcmd:\n\t\trole = %i\n", getpid(), cmd.role);
 		if(cmd.role == MULTIPLY)
 			printf("\t\ti = %i\n\t\tj = %i\n\n", cmd.data.c.i, cmd.data.c.j);
@@ -26,5 +26,4 @@ int child(shm_t **shm_array, int pipe_fd, int queue_id, int *sem_id_array){
 			return -1;
 		}
 	}
-	return 0;
 }

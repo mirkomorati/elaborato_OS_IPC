@@ -27,9 +27,6 @@ int sem_create() {
 void sem_lock(int id) {
 	struct sembuf sem_op;
 
-	#ifdef DEBUG
-	printf("Semaforo %i\tPid %i prova lock\n", id, getpid());
-	#endif
 	sem_op.sem_num = 0;
 	sem_op.sem_op = -1;
 	sem_op.sem_flg = IPC_NOWAIT;
@@ -41,9 +38,6 @@ void sem_lock(int id) {
 void sem_unlock(int id) {
 	struct sembuf sem_op;
 
-	#ifdef DEBUG
-	printf("Semaforo %i\tPid %i prova unlock\n", id, getpid());
-	#endif
 	sem_op.sem_num = 0;
 	sem_op.sem_op = 1;
 	sem_op.sem_flg = IPC_NOWAIT;

@@ -21,7 +21,8 @@
  */
 typedef enum{
 	MULTIPLY, 
-	SUM
+	SUM,
+	END
 }role_t;
 
 /*! 
