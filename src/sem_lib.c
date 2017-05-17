@@ -29,7 +29,7 @@ int sem_lock(int id) {
 
 	sem_op.sem_num = 0;
 	sem_op.sem_op = -1;
-	sem_op.sem_flg = IPC_NOWAIT;
+	sem_op.sem_flg = 0;
 	if (semop(id, &sem_op, 1) == -1) {
 		perror("ERROR semaphore lock");
 		return -1;
@@ -42,7 +42,7 @@ int sem_unlock(int id) {
 
 	sem_op.sem_num = 0;
 	sem_op.sem_op = 1;
-	sem_op.sem_flg = IPC_NOWAIT;
+	sem_op.sem_flg = 0;
 	if (semop(id, &sem_op, 1) == -1) {
 		perror("ERROR semaphore unlock");
 		return -1;
