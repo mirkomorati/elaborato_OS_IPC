@@ -24,7 +24,7 @@ int sem_create() {
 	return id;
 }
 
-void sem_lock(int id) {
+int sem_lock(int id) {
 	struct sembuf sem_op;
 
 	sem_op.sem_num = 0;
@@ -32,10 +32,12 @@ void sem_lock(int id) {
 	sem_op.sem_flg = IPC_NOWAIT;
 	if (semop(id, &sem_op, 1) == -1) {
 		perror("ERROR semaphore lock");
+		return -1;
 	}
+	return 0;
 }
 
-void sem_unlock(int id) {
+int sem_unlock(int id) {
 	struct sembuf sem_op;
 
 	sem_op.sem_num = 0;
@@ -43,5 +45,7 @@ void sem_unlock(int id) {
 	sem_op.sem_flg = IPC_NOWAIT;
 	if (semop(id, &sem_op, 1) == -1) {
 		perror("ERROR semaphore unlock");
+		return -1;
 	}
+	return 0;
 }

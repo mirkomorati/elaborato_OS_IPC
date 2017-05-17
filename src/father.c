@@ -166,9 +166,6 @@ int run(int N, int P, int pipe, int queue) {
     int completed_rows[N];
     int i = 0, j = 0, errors = 0;
     for (int p = 0; p < P; ++p) {
-        #ifdef DEBUG
-        printf("Sending cmd\n");
-        #endif
         cmd_t cmd;
         cmd.role = MULTIPLY;
         cmd.data.c.i = i;
@@ -190,6 +187,8 @@ int run(int N, int P, int pipe, int queue) {
         cmd_t cmd;
         msg_t msg;
         if (i >= N || j > N){ 
+            printf("waiting for ctrl-c...\n");
+            usleep(5e6);
             cmd.role = END;
             for (int p = 0; p < P; ++p)
             {
@@ -198,9 +197,6 @@ int run(int N, int P, int pipe, int queue) {
             }
             break;
         }
-        #ifdef DEBUG
-        printf("Father - waiting for msgs\n");
-        #endif
         if (rcv_msg(&msg, queue) == -1) {
             if(++errors > MAX_ERRORS) {
                 perror("too many errors");
@@ -208,9 +204,6 @@ int run(int N, int P, int pipe, int queue) {
             }
         }
         if(msg.success) {
-            #ifdef DEBUG
-            printf("Message received SUCCESS\n");
-            #endif
             if(++completed_rows[msg.cmd.data.c.i] == N) {
                 cmd.role = SUM;
                 cmd.data.row = msg.cmd.data.c.i;   
@@ -221,10 +214,6 @@ int run(int N, int P, int pipe, int queue) {
                 cmd.data.c.i = i;
                 cmd.data.c.j = j;
             }
-
-            #ifdef DEBUG
-            printf("Sending new cmd\n");
-            #endif
 
             if (send_cmd(&cmd, pipe) == -1) {
                 if(++errors > MAX_ERRORS) {

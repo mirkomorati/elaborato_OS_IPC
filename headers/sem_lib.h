@@ -15,7 +15,7 @@
  *
  * \param[in]  	id		L'identificatore del semaforo.
  */
-void sem_lock(int id);
+int sem_lock(int id);
 
 /*!
  * \brief      	Raccoglie le istruzioni necessarie all'incremento del valore
@@ -23,7 +23,7 @@ void sem_lock(int id);
  *
  * \param[in]  id    	L'identificatore del semaforo.
  */
-void sem_unlock(int id);
+int sem_unlock(int id);
 
 /*!
  * \brief      	Raccoglie le operazioni necessarie alla creazione di un nuovo
