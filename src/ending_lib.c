@@ -153,18 +153,30 @@ void sig_add_queue(int n, ...){
 }
 
 void sig_handler(int sig, int pid){
+	// devo farmi passare il numero di processi figli 
+	// il che significa che devo anche cambiare tre quarti
+	// di questa libreria.
 	static int allowed_pid = 0;
 
 
 	if (sig != -1 && allowed_pid == getpid())
     {
-    	printf("provo ad eliminare il mio pid è: %i il pid permesso è: %i\n",getpid(), allowed_pid );
+    	/*
+    	 * devo aggiungere un for sul numero di processi
+    	 * figli, ed attendere fino che tutti non sono terminati
+    	 * a quel punto posso eliminare la memoria.
+    	 */
 
     	sig_free_sem(false, NULL);
     	sig_free_memory(false, NULL);
     	sig_free_queue(false, NULL);
     	exit(sig);
-    }else {
+    }/*
+      * qui devo aggiungere un else if (sig != -1) allora 
+      * devo fare il detach di tutte le zone di memoria,
+      * ed uscire con il segnale come termine.
+      */
+    else {
     	allowed_pid = pid;
     }
 }
@@ -245,6 +257,7 @@ void sig_free_queue(bool setting, sig_queue_list_t *arg){
 }
 
 void sig_end(int code){
+	// stessa cosa di sig_handler
 	sig_free_sem(false, NULL);
 	sig_free_memory(false, NULL);
 	sig_free_queue(false, NULL);
