@@ -188,7 +188,7 @@ int run(int N, int P, int pipe, int queue) {
         msg_t msg;
         if (i >= N || j > N){ 
             printf("waiting for ctrl-c...\n");
-            usleep(5e6);
+            usleep(2e6);
             cmd.role = END;
             for (int p = 0; p < P; ++p)
             {
