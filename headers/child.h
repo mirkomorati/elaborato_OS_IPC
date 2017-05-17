@@ -3,6 +3,7 @@
 
 #include "std_lib.h"
 #include "shm_lib.h"
+#include "sem_lib.h"
 #include "msg_lib.h"
 
 /*!
@@ -17,5 +18,26 @@
  * \return		0 in caso di successo, -1 altrimenti.
  */
 int child(shm_t **shm_array, int pipe_fd, int queue_id, int *sem_id_array);
+
+/*!
+ * @brief       Funzione che calcola il prodotto tra due matrici e lo
+ *              salva in posizione i j nella matrice destinazione     
+ *
+ * @param[in]  i            Numero di riga
+ * @param[in]  j            Numero di colonna
+ * 
+ * \return      0 in caso di successo, -1 altrimenti.
+ */
+int multiply(int i, int j, shm_t **shm_array, int *sem_id_array);
+
+/*!
+ * @brief       Funzione che calcola la somma di una riga e aggiorna il
+ *              valore nell'area di memoria predefinita
+ *
+ * @param[in]  k     { parameter_description }
+ * 
+ * \return      0 in caso di successo, -1 altrimenti.
+ */
+int sum(int k, shm_t **shm_array, int *sem_id_array);
 
 #endif

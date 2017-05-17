@@ -74,7 +74,7 @@ int main(int argc, char **argv) {
     S.path = "/dev/urandom";
 
     shm_t *shm_array[5] = {&A, &B, &C, &S, NULL};
-    int sem_id_array[3] = {0, 0, -1};
+    int sem_id_array[7] = {0, 0, 0, 0, 0, 0, -1};
 
     int pipe_fd, queue_id;
 
