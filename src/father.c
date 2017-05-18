@@ -177,6 +177,8 @@ int make_child(shm_t **shm_array , lock_t *sem_ids, int P,
 
 int run(int N, int P, pid_to_pipe_t *pid_to_pipe, int queue) {
     int completed_rows[N];
+    for (int i = 0; i < N; ++i)
+        completed_rows[i] = 0;
 
     cmd_t cmd;
     msg_t msg;
@@ -188,6 +190,7 @@ int run(int N, int P, pid_to_pipe_t *pid_to_pipe, int queue) {
         cmd.data.c.i = i;
         cmd.data.c.j = j;
         if (send_cmd(&cmd, pid_to_pipe[p].pipe_fd) == -1) {
+            // QUI SE IL NUMERO DI PROCESSI È MAGGIORE DEL NUMERO DI RIGA È NECESSARIO INVIARE ANCHE UNA SOMMA.
             if(++errors > MAX_ERRORS) {
                 perror("too many errors");
                 return -1;
@@ -239,7 +242,7 @@ int run(int N, int P, pid_to_pipe_t *pid_to_pipe, int queue) {
                 pipe = pid_to_pipe[p].pipe_fd;
 
         if(msg.success) {
-            if(++completed_rows[msg.cmd.data.c.i] == N) {
+            if(msg.cmd.role == MULTIPLY && ++completed_rows[msg.cmd.data.c.i] == N) {
                 cmd.role = SUM;
                 cmd.data.row = msg.cmd.data.c.i;
             } else {
@@ -269,7 +272,7 @@ int run(int N, int P, pid_to_pipe_t *pid_to_pipe, int queue) {
             #ifdef DEBUG
             printf("Message received FAIL\n");
             #endif
-            while (send_cmd(&msg.cmd, pipe) == -1) {
+            if (send_cmd(&msg.cmd, pipe) == -1) {
                 if(++errors > MAX_ERRORS) {
                     perror("too many errors");
                     return -1;
