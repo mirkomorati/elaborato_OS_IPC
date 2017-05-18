@@ -17,7 +17,7 @@
  * 
  * \return		0 in caso di successo, -1 altrimenti.
  */
-int child(shm_t **shm_array, int pipe_fd, int queue_id, int *sem_id_array);
+int child(shm_t **shm_array, int pipe_fd, int queue_id, lock_t *sem_ids);
 
 /*!
  * @brief       Funzione che calcola il prodotto tra due matrici e lo
@@ -28,7 +28,7 @@ int child(shm_t **shm_array, int pipe_fd, int queue_id, int *sem_id_array);
  * 
  * \return      0 in caso di successo, -1 altrimenti.
  */
-int multiply(int i, int j, shm_t **shm_array, int *sem_id_array);
+int multiply(int i, int j, shm_t **shm_array, lock_t *sem_ids);
 
 /*!
  * @brief       Funzione che calcola la somma di una riga e aggiorna il
@@ -38,6 +38,6 @@ int multiply(int i, int j, shm_t **shm_array, int *sem_id_array);
  * 
  * \return      0 in caso di successo, -1 altrimenti.
  */
-int sum(int k, shm_t **shm_array, int *sem_id_array);
+int sum(int k, shm_t **shm_array, lock_t *sem_ids);
 
 #endif

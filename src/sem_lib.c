@@ -2,16 +2,20 @@
 #include "../headers/sem_lib.h"
 #include "../headers/ending_lib.h"
 
-int sem_create() {
+int sem_create(int nsem) {
 	int id;
 	sig_sem_t tmp_sem;
+	unsigned short semctl_arg[nsem];
 
-	if ((id = semget(IPC_PRIVATE, 1, IPC_CREAT | 0666)) == -1){
+	for (int i = 0; i < nsem; ++i)
+		semctl_arg[i] = 1;
+
+	if ((id = semget(IPC_PRIVATE, nsem, IPC_CREAT | 0666)) == -1){
 		perror("semaphore create");
 		return -1;
 	}
 
-	if (semctl(id, 0, SETVAL, 1) == -1){
+	if (semctl(id, 0, SETALL, semctl_arg) == -1){
 		perror("semaphore init");
 		return -1;
 	}
@@ -24,10 +28,10 @@ int sem_create() {
 	return id;
 }
 
-int sem_lock(int id) {
+int sem_lock(int id, int nsem) {
 	struct sembuf sem_op;
 
-	sem_op.sem_num = 0;
+	sem_op.sem_num = nsem;
 	sem_op.sem_op = -1;
 	sem_op.sem_flg = 0;
 	if (semop(id, &sem_op, 1) == -1) {
@@ -37,10 +41,10 @@ int sem_lock(int id) {
 	return 0;
 }
 
-int sem_unlock(int id) {
+int sem_unlock(int id, int nsem) {
 	struct sembuf sem_op;
 
-	sem_op.sem_num = 0;
+	sem_op.sem_num = nsem;
 	sem_op.sem_op = 1;
 	sem_op.sem_flg = 0;
 	if (semop(id, &sem_op, 1) == -1) {

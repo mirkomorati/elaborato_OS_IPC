@@ -1,4 +1,5 @@
 #include "../headers/father.h"
+// devo includere child.h qui altrimenti ho problemi in compilazione.
 
 int main(int argc, char **argv) {
     /*! 
@@ -74,16 +75,16 @@ int main(int argc, char **argv) {
     S.path = "/dev/urandom";
 
     shm_t *shm_array[5] = {&A, &B, &C, &S, NULL};
-    int sem_id_array[7] = {0, 0, 0, 0, 0, 0, -1};
+    lock_t sem_ids;
 
     int pipe_fd, queue_id;
 
-    if(init(shm_array, sem_id_array) == -1) {
+    if(init(shm_array, &sem_ids) == -1) {
         perror("init");
         sig_end(-1);
     }
 
-    if (make_child(shm_array, sem_id_array, P, &pipe_fd, &queue_id) == -1){
+    if (make_child(shm_array, &sem_ids, P, &pipe_fd, &queue_id) == -1){
         perror("make_child");
         sig_end(-1);
     }
@@ -91,7 +92,7 @@ int main(int argc, char **argv) {
     sig_end(run(N, P, pipe_fd, queue_id));
 }
 
-int init(shm_t **shm_array, int *sem_id_array) {
+int init(shm_t **shm_array, lock_t *sem_ids) {
 
     #ifdef DEBUG   
     printf("Loading matrix\n\n");
@@ -109,13 +110,16 @@ int init(shm_t **shm_array, int *sem_id_array) {
         }
     }
 
-    for (int i = 0; sem_id_array[i] != -1; i++) {
-        sem_id_array[i] = sem_create();
-    }
+    if((sem_ids->pipe_sem = sem_create(1)) == -1) return -1;
+    if((sem_ids->queue_sem = sem_create(1)) == -1) return -1;
+    if((sem_ids->A_sem = sem_create(shm_array[0]->N)) == -1) return -1;
+    if((sem_ids->B_sem = sem_create(shm_array[1]->N)) == -1) return -1;
+    if((sem_ids->result_sem = sem_create(2)) == -1) return -1;
+
     return 0;
 }
 
-int make_child(shm_t **shm_array , int *sem_id_array, int P, int *pipe_fd, int *queue_id) {
+int make_child(shm_t **shm_array , lock_t *sem_ids, int P, int *pipe_fd, int *queue_id) {
     int tmp_pipe[2];
     int tmp_queue_id;
     int pids[P];
@@ -148,7 +152,7 @@ int make_child(shm_t **shm_array , int *sem_id_array, int P, int *pipe_fd, int *
             return -1;
         }
         else if (pids[i] == 0){
-            exit(child(shm_array, tmp_pipe[0], tmp_queue_id, sem_id_array));
+            exit(child(shm_array, tmp_pipe[0], tmp_queue_id, sem_ids));
         }
     }
 
