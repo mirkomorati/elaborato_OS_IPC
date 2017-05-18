@@ -24,7 +24,8 @@ int main(int argc, char **argv) {
     int P;
 
     if (argc < 10) {
-        char *buf = "Error: too few arguments.\nusage: ./elaborato_IPC -A matrix -B matrix -C matrix -N order -P #processes\n";
+        char *buf = "Error: too few arguments.\n\
+        usage: ./elaborato_IPC -A matrix -B matrix -C matrix -N order -P #processes\n";
         write(STDOUT, buf, sizeof(char) * strlen(buf));
         exit(1);
     }
@@ -207,7 +208,7 @@ int run(int N, int P, pid_to_pipe_t *pid_to_pipe, int queue) {
 
         if (i >= N){ 
             printf("waiting for ctrl-c...\n");
-            usleep(5e6);
+            //usleep(5e6);
             cmd.role = END;
             for (int p = 0; p < P; ++p)
             {
