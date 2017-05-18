@@ -207,7 +207,7 @@ int run(int N, int P, pid_to_pipe_t *pid_to_pipe, int queue) {
 
         if (i >= N){ 
             printf("waiting for ctrl-c...\n");
-            //usleep(5e6);
+            usleep(5e6);
             cmd.role = END;
             for (int p = 0; p < P; ++p)
             {
