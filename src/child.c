@@ -3,11 +3,13 @@
 int child(shm_t **shm_array, int pipe_fd, int queue_id, lock_t *sem_ids){
 	cmd_t cmd;
 	cmd_t old_cmd;
+	old_cmd.role = -1;
+	
 	while(true){
 		if(rcv_cmd(&cmd, pipe_fd) == -1)
 			perror("read fallita\n");
 		else{
-			if(! cmd_equals(&cmd, &old_cmd)){
+			if(!cmd_equals(&cmd, &old_cmd)){
 				switch (cmd.role) {
 					case MULTIPLY:
 						#ifdef DEBUG
@@ -18,7 +20,7 @@ int child(shm_t **shm_array, int pipe_fd, int queue_id, lock_t *sem_ids){
 					break;
 					case SUM:
 						#ifdef DEBUG
-						printf("FIGLIO %i\tSUM\trow: %i\n", getpid(), cmd.data.row);
+						printf("FIGLIO %i\tSUM\t\trow: %i\n", getpid(), cmd.data.row);
 						#endif
 						sum(cmd.data.row, shm_array, sem_ids);
 						old_cmd = cmd;
@@ -111,8 +113,26 @@ int multiply(int i, int j, shm_t **shm_array, lock_t *sem_ids) {
 }
 
 int sum(int k, shm_t **shm_array, lock_t *sem_ids) {
-	#ifdef DEBUG
-	printf("SUM\t da implementare\n");
-	#endif
+	shm_t *C = shm_array[2];
+	shm_t *S = shm_array[3];
+
+	long res = 0;
+
+	if (sem_lock(sem_ids->result_sem, 0) == -1) {
+		perror("ERROR sum - sem_lock C");
+		return -1;
+	}
+	for (int i = 0; i < C->N; i++) {
+		res += C->shmaddr[i + k * C->N];
+	}
+	sem_unlock(sem_ids->result_sem, 0);
+
+	if (sem_lock(sem_ids->result_sem, 1) == -1) {
+		perror("ERROR sum - sem_lock S");
+		return -1;
+	}
+	S->shmaddr += res;
+	sem_unlock(sem_ids->result_sem, 1);
+
 	return 0;
 }
