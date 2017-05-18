@@ -176,9 +176,13 @@ int make_child(shm_t **shm_array , lock_t *sem_ids, int P,
 
 int run(int N, int P, pid_to_pipe_t *pid_to_pipe, int queue) {
     int completed_rows[N];
+
+    cmd_t cmd;
+    msg_t msg;
+
     int i = 0, j = 0, errors = 0;
+    
     for (int p = 0; p < P; ++p) {
-        cmd_t cmd;
         cmd.role = MULTIPLY;
         cmd.data.c.i = i;
         cmd.data.c.j = j;
@@ -202,10 +206,8 @@ int run(int N, int P, pid_to_pipe_t *pid_to_pipe, int queue) {
     errors = 0;
 
     while(true){
-        cmd_t cmd;
-        msg_t msg;
 
-        if (i >= N){ 
+        if (i == N) { 
             printf("waiting for ctrl-c...\n");
             usleep(5e6);
             cmd.role = END;
@@ -223,7 +225,7 @@ int run(int N, int P, pid_to_pipe_t *pid_to_pipe, int queue) {
             break;
         }
 
-        while(rcv_msg(&msg, queue) == -1) {
+        if (rcv_msg(&msg, queue) == -1) {
             if(++errors > MAX_ERRORS) {
                 perror("too many errors");
                 return -1;
@@ -238,7 +240,7 @@ int run(int N, int P, pid_to_pipe_t *pid_to_pipe, int queue) {
         if(msg.success) {
             if(++completed_rows[msg.cmd.data.c.i] == N) {
                 cmd.role = SUM;
-                cmd.data.row = msg.cmd.data.c.i;   
+                cmd.data.row = msg.cmd.data.c.i;
             } else {
                 j++;
                 i += j / N;
@@ -246,9 +248,11 @@ int run(int N, int P, pid_to_pipe_t *pid_to_pipe, int queue) {
                 cmd.role = MULTIPLY;
                 cmd.data.c.i = i;
                 cmd.data.c.j = j;
-                if (i == N) continue;
             }
-            
+
+            if (i == N)
+                continue;
+
             if (send_cmd(&cmd, pipe) == -1) {
                 printf("comando non mandato a: %i, su pipe %i\n", msg.pid, pipe);
                 if(++errors > MAX_ERRORS) {
@@ -272,5 +276,6 @@ int run(int N, int P, pid_to_pipe_t *pid_to_pipe, int queue) {
             }
         }
     }
+
     return 0;
 }
