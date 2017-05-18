@@ -42,7 +42,8 @@ int multiply(int i, int j, shm_t **shm_array, int *sem_id_array) {
 	shm_t *B = shm_array[1];
 	shm_t *C = shm_array[2];
 
-	long *row, *col;
+	long *row = (long *) malloc(sizeof(long) * A->N);
+	long *col = (long *) malloc(sizeof(long) * B->N);
 
 	if (sem_lock(sem_id_array[2]) == -1) {
 		perror("ERROR multiply - sem_lock A");
@@ -52,7 +53,7 @@ int multiply(int i, int j, shm_t **shm_array, int *sem_id_array) {
 	printf("SEM A LOCK da figlio %i\n", getpid());
 	#endif
 	for (int l = 0; l < A->N; l++) {
-		row[l] = A->shmaddr[i + l];
+		row[l] = A->shmaddr[i * A->N + l];
 		#ifdef DEBUG
 		printf("%i: %li\t", l, row[l]);
 		#endif
@@ -95,6 +96,9 @@ int multiply(int i, int j, shm_t **shm_array, int *sem_id_array) {
 	}
 	C->shmaddr[i + j * C->N] = res;
 	sem_unlock(sem_id_array[4]);
+
+	free(row);
+	free(col);
 
 	return 0;
 }

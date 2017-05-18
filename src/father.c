@@ -174,9 +174,14 @@ int run(int N, int P, int pipe, int queue) {
             if(++errors > MAX_ERRORS) {
                 perror("too many errors");
                 return -1;
+            } else {
+                j--; // da tenere così.
+                j %= N;
+                i -= j / N;
             }
         } else {
-            i += ++j / N;
+            j++;
+            i += j / N;
             j %= N;
         }
     }
@@ -186,7 +191,7 @@ int run(int N, int P, int pipe, int queue) {
     while(true){
         cmd_t cmd;
         msg_t msg;
-        if (i >= N || j > N){ 
+        if (i >= N){ 
             printf("waiting for ctrl-c...\n");
             usleep(2e6);
             cmd.role = END;
@@ -208,13 +213,24 @@ int run(int N, int P, int pipe, int queue) {
                 cmd.role = SUM;
                 cmd.data.row = msg.cmd.data.c.i;   
             } else {
-                i += ++j/N;
+                j++;
+                i += j / N;
                 j %= N;
                 cmd.role = MULTIPLY;
                 cmd.data.c.i = i;
                 cmd.data.c.j = j;
             }
-
+            if (i >= N){ 
+                printf("waiting for ctrl-c...\n");
+                usleep(5e6);
+                cmd.role = END;
+                for (int p = 0; p < P; ++p)
+                {
+                    if (send_cmd(&cmd, pipe) == -1) 
+                        perror("sending end cmd");
+                }
+                break;
+            }
             if (send_cmd(&cmd, pipe) == -1) {
                 if(++errors > MAX_ERRORS) {
                     perror("too many errors");
