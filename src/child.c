@@ -3,7 +3,7 @@
 int child(shm_t **shm_array, int pipe_fd, int queue_id, lock_t *sem_ids){
 	cmd_t cmd;
 	while(true){
-		if(rcv_cmd(&cmd, pipe_fd, sem_ids->pipe_sem) == -1)
+		if(rcv_cmd(&cmd, pipe_fd) == -1)
 			perror("read fallita\n");
 		else{
 			switch (cmd.role) {
@@ -28,6 +28,7 @@ int child(shm_t **shm_array, int pipe_fd, int queue_id, lock_t *sem_ids){
 			msg.type = 1;
 			msg.success = true;
 			msg.cmd = cmd;
+			msg.pid = getpid();
 
 			if(send_msg(&msg, queue_id, sem_ids->queue_sem) == -1) {
 				perror("send_msg child");
@@ -50,46 +51,46 @@ int multiply(int i, int j, shm_t **shm_array, lock_t *sem_ids) {
 		perror("ERROR multiply - sem_lock A");
 		return -1;
 	}
-	#ifdef DEBUG
+	/*#ifdef DEBUG
 	printf("SEM A LOCK da figlio %i, riga %i\n", getpid(), i);
-	#endif
+	#endif*/
 	for (int l = 0; l < A->N; l++) {
 		row[l] = A->shmaddr[i * A->N + l];
-		#ifdef DEBUG
+		/*#ifdef DEBUG
 		printf("%i: %li\t", l, row[l]);
-		#endif
+		#endif*/
 	}
 	sem_unlock(sem_ids->A_sem, i);
-	#ifdef DEBUG
+	/*#ifdef DEBUG
 	printf("\nSEM A UNLOCK da figlio %i, riga %i\n", getpid(), i);
-	#endif
+	#endif*/
 
 	if (sem_lock(sem_ids->B_sem, j) == -1) {
 		perror("ERROR multiply - sem_lock B");
 		return -1;
 	}
-	#ifdef DEBUG
+	/*#ifdef DEBUG
 	printf("SEM B LOCK da figlio %i, riga %i\n", getpid(), j);
-	#endif
+	#endif*/
 	for (int l = 0; l < B->N; l++) {
 		col[l] = B->shmaddr[j + l * B->N];
-		#ifdef DEBUG
+		/*#ifdef DEBUG
 		printf("%i: %li\t", l, col[l]);
-		#endif
+		#endif*/
 	}
 	sem_unlock(sem_ids->B_sem, j);
-	#ifdef DEBUG
+	/*#ifdef DEBUG
 	printf("\nSEM B UNLOCK da figlio %i, riga %i\n", getpid(), j);
-	#endif
+	#endif*/
 
 	long res = 0;
 	for (int l = 0; l < A->N; l++) {
 		res += row[l] * col[l];
 	}
 
-	#ifdef DEBUG
+	/*#ifdef DEBUG
 	printf("MULTIPLY\ti: %i, j: %i = %li\n", i, j, res);
-	#endif
+	#endif*/
 
 	if (sem_lock(sem_ids->result_sem, 0) == -1) {
 		perror("ERROR multiply - sem_lock C");

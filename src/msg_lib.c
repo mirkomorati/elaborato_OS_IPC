@@ -14,42 +14,36 @@ int send_cmd(const cmd_t * restrict cmd, const int fd){
 	return 0;
 }
 
-int rcv_cmd(cmd_t * restrict cmd, const int fd, const int sem_id){
+int rcv_cmd(cmd_t * restrict cmd, const int fd){
 	static char errors = 0;
 	const char max_err = 2;
-	// impostazioni per read con timeout della pipe.
+	// impostazioni per read con timeout della pipe per rendere possibile 
+	// il ctrl-c.
 	fd_set set;
 	struct timeval timeout;
 
 	FD_ZERO(&set);
 	FD_SET(fd, &set);
-
 	timeout.tv_sec = 1;
 	timeout.tv_usec = 0;
 
 	if (cmd != NULL){
-		if(sem_lock(sem_id, 0) != -1){
-			size_t size = sizeof(*cmd);
-			int tv;
-			if((tv = select(fd + 1, &set, NULL, NULL, &timeout)) < 0){
-				perror("timeout error");
-				for(int i = 0; sem_unlock(sem_id,0) == -1 && i < 3; i++)printf("non unlocko\n");
+		size_t size = sizeof(*cmd);
+		int tv;
+		if((tv = select(fd + 1, &set, NULL, NULL, &timeout)) < 0){
+			perror("timeout error");
+			exit(-1);
+		}
+		else if (tv > 0 && read(fd, cmd, size) == -1){
+			perror("ERROR rcv_cmd - reading pipe");
+			return -1;
+		} else if (tv > 0){
+			errors = 0;
+		}else{
+			if (++errors > max_err){
 				exit(-1);
 			}
-			else if (tv > 0 && read(fd, cmd, size) == -1){
-				perror("ERROR rcv_cmd - reading pipe");
-				for(int i = 0; sem_unlock(sem_id,0) == -1 && i < 3; i++)printf("non unlocko\n");
-				return -1;
-			} else if (tv > 0){
-				errors = 0;
-			}else{
-				if (++errors > max_err){
-					sem_unlock(sem_id,0);
-					exit(-1);
-				}
-			}
-			for(int i = 0; sem_unlock(sem_id,0) == -1 && i < 3; i++)printf("non unlocko\n");
-		} else return -1;
+		}
 	}
 	return 0;
 }

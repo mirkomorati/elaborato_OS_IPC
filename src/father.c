@@ -76,20 +76,20 @@ int main(int argc, char **argv) {
 
     shm_t *shm_array[5] = {&A, &B, &C, &S, NULL};
     lock_t sem_ids;
-
-    int pipe_fd, queue_id;
+    pid_to_pipe_t pid_to_pipe[P];
+    int queue_id;
 
     if(init(shm_array, &sem_ids) == -1) {
         perror("init");
         sig_end(-1);
     }
 
-    if (make_child(shm_array, &sem_ids, P, &pipe_fd, &queue_id) == -1){
+    if (make_child(shm_array, &sem_ids, P, pid_to_pipe, &queue_id) == -1){
         perror("make_child");
         sig_end(-1);
     }
 
-    sig_end(run(N, P, pipe_fd, queue_id));
+    sig_end(run(N, P, pid_to_pipe, queue_id));
 }
 
 int init(shm_t **shm_array, lock_t *sem_ids) {
@@ -110,7 +110,6 @@ int init(shm_t **shm_array, lock_t *sem_ids) {
         }
     }
 
-    if((sem_ids->pipe_sem = sem_create(1)) == -1) return -1;
     if((sem_ids->queue_sem = sem_create(1)) == -1) return -1;
     if((sem_ids->A_sem = sem_create(shm_array[0]->N)) == -1) return -1;
     if((sem_ids->B_sem = sem_create(shm_array[1]->N)) == -1) return -1;
@@ -119,19 +118,21 @@ int init(shm_t **shm_array, lock_t *sem_ids) {
     return 0;
 }
 
-int make_child(shm_t **shm_array , lock_t *sem_ids, int P, int *pipe_fd, int *queue_id) {
-    int tmp_pipe[2];
+int make_child(shm_t **shm_array , lock_t *sem_ids, int P,
+               pid_to_pipe_t *pid_to_pipe, int *queue_id) {
+    int *tmp_pipe[P];
     int tmp_queue_id;
     int pids[P];
     #ifdef DEBUG
-    printf("creating pipe\n");
+    printf("creating pipes\n");
     #endif
-    if(pipe(tmp_pipe) == -1){
-        perror("ERROR make_child - creating pipe");
-        return -1;
+    for (int i = 0; i < P; ++i){
+        tmp_pipe[i] = (int *) malloc(2*sizeof(int));
+        if(pipe(tmp_pipe[i]) == -1){
+            perror("ERROR make_child - creating pipe");
+            return -1;
+        }
     }
-    *pipe_fd = tmp_pipe[1];
-
     #ifdef DEBUG
     printf("creating queue\n");
     #endif
@@ -152,21 +153,28 @@ int make_child(shm_t **shm_array , lock_t *sem_ids, int P, int *pipe_fd, int *qu
             return -1;
         }
         else if (pids[i] == 0){
-            exit(child(shm_array, tmp_pipe[0], tmp_queue_id, sem_ids));
+            exit(child(shm_array, tmp_pipe[i][0], tmp_queue_id, sem_ids));
+        }else{
+            pid_to_pipe[i].pid = pids[i];
+            pid_to_pipe[i].pipe_fd = tmp_pipe[i][1]; 
         }
     }
 
     #ifdef DEBUG
     printf("\n%i childs created:\n", P);
     for (int i = 0; i < P; ++i){
-        printf("child %i: pid = %i\n",i, pids[i]);
+        printf("child %i:\tpid = %i\tpipe = (r:%i,w:%i)\n",i, pids[i], tmp_pipe[i][0], tmp_pipe[i][1]);
     }
     printf("\n");
     #endif
+
+    for (int i = 0; i < P; ++i){
+        free(tmp_pipe[i]);
+    }
     return 0;   
 }
 
-int run(int N, int P, int pipe, int queue) {
+int run(int N, int P, pid_to_pipe_t *pid_to_pipe, int queue) {
     int completed_rows[N];
     int i = 0, j = 0, errors = 0;
     for (int p = 0; p < P; ++p) {
@@ -174,11 +182,12 @@ int run(int N, int P, int pipe, int queue) {
         cmd.role = MULTIPLY;
         cmd.data.c.i = i;
         cmd.data.c.j = j;
-        if (send_cmd(&cmd, pipe) == -1) {
+        if (send_cmd(&cmd, pid_to_pipe[p].pipe_fd) == -1) {
             if(++errors > MAX_ERRORS) {
                 perror("too many errors");
                 return -1;
             } else {
+                printf("comando non mandato a: %i, su pipe %i\n", pid_to_pipe[p].pid, pid_to_pipe[p].pipe_fd);
                 j--; // da tenere così.
                 j %= N;
                 i -= j / N;
@@ -195,23 +204,37 @@ int run(int N, int P, int pipe, int queue) {
     while(true){
         cmd_t cmd;
         msg_t msg;
+
         if (i >= N){ 
             printf("waiting for ctrl-c...\n");
-            usleep(2e6);
+            //usleep(5e6);
             cmd.role = END;
             for (int p = 0; p < P; ++p)
             {
-                if (send_cmd(&cmd, pipe) == -1) 
+                if (send_cmd(&cmd, pid_to_pipe[p].pipe_fd) == -1) {
                     perror("sending end cmd");
+                    printf("comando non mandato a: %i, su pipe %i\n", pid_to_pipe[p].pid, pid_to_pipe[p].pipe_fd);
+                } else{
+                    int status;
+                    waitpid(pid_to_pipe[p].pid, &status, 0);
+                    printf("inviato END al figlio: %i sulla pipe: %i\n", pid_to_pipe[p].pid, pid_to_pipe[p].pipe_fd);
+                }
             }
             break;
         }
-        if (rcv_msg(&msg, queue) == -1) {
+
+        while(rcv_msg(&msg, queue) == -1) {
             if(++errors > MAX_ERRORS) {
                 perror("too many errors");
                 return -1;
             }
         }
+
+        int pipe;
+        for (int p = 0; p < P; ++p)
+            if (msg.pid == pid_to_pipe[p].pid)
+                pipe = pid_to_pipe[p].pipe_fd;
+
         if(msg.success) {
             if(++completed_rows[msg.cmd.data.c.i] == N) {
                 cmd.role = SUM;
@@ -223,19 +246,11 @@ int run(int N, int P, int pipe, int queue) {
                 cmd.role = MULTIPLY;
                 cmd.data.c.i = i;
                 cmd.data.c.j = j;
+                if (i == N) continue;
             }
-            if (i >= N){ 
-                printf("waiting for ctrl-c...\n");
-                usleep(5e6);
-                cmd.role = END;
-                for (int p = 0; p < P; ++p)
-                {
-                    if (send_cmd(&cmd, pipe) == -1) 
-                        perror("sending end cmd");
-                }
-                break;
-            }
+            
             if (send_cmd(&cmd, pipe) == -1) {
+                printf("comando non mandato a: %i, su pipe %i\n", msg.pid, pipe);
                 if(++errors > MAX_ERRORS) {
                     perror("too many errors");
                     return -1;

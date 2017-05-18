@@ -53,8 +53,17 @@ typedef struct{
 	long type;		//!< Tipo del messaggio
 	bool success;	//!< True se il comando è stato eseguito correttamente
 	cmd_t cmd;		//!< Comando che doveva essere eseguito
+	pid_t pid;		//!< Il pid del processo che ha eseguito il comando.
 }msg_t;
 
+/*!
+ * \brief 	Crea un dizionario che mette in relazione il pid di un figlio 
+ * 			con il descrittore della pipe su cui scrivere
+ */
+typedef struct{
+	pid_t pid;
+	int pipe_fd;
+}pid_to_pipe_t;
 
 /*!
  * \brief      	Mette il messaggio msg nella coda di messaggi che devono
@@ -99,6 +108,6 @@ int send_cmd(const cmd_t * restrict cmd, const int fd);
  *
  * \return    	0 in caso di successo, -1 altrimenti
  */
-int rcv_cmd(cmd_t * restrict cmd, const int fd, const int sem_id);
+int rcv_cmd(cmd_t * restrict cmd, const int fd);
 
 #endif

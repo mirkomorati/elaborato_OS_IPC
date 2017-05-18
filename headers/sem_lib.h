@@ -9,7 +9,6 @@
 #include "std_lib.h"
 
 typedef struct{
-	int pipe_sem;
 	int queue_sem;
 	int A_sem;
 	int B_sem;

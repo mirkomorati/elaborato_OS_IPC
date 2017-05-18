@@ -30,7 +30,7 @@ int init(shm_t **shm_array, lock_t *sem_ids);
  *
  * \return     	0 in caso di riuscita, -1 altrimenti.
  */
-int make_child(shm_t **shm_array, lock_t *sem_ids, int P, int *pipe_fd, int *queue_id);
+int make_child(shm_t **shm_array, lock_t *sem_ids, int P, pid_to_pipe_t *pid_to_pipe, int *queue_id);
 
 /*!
  * \brief      	La funzione si occupa di tutto quello che avviene nel core del programma: 
@@ -45,6 +45,6 @@ int make_child(shm_t **shm_array, lock_t *sem_ids, int P, int *pipe_fd, int *que
  *
  * \return     	Il codice di uscita del programma.
  */
-int run(int N, int P, int pipe, int queue);
+int run(int N, int P, pid_to_pipe_t *pid_to_pipe, int queue);
 
 #endif
