@@ -14,7 +14,28 @@ int send_cmd(const cmd_t * restrict cmd, const int fd){
 	return 0;
 }
 
-int rcv_cmd(cmd_t * restrict cmd, const int fd){
+
+int rcv_cmd(cmd_t * restrict cmd, const int fd, const int id, const int sem_id){
+	static char errors = 0;
+	const char max_err = 2;
+
+	if (cmd != NULL) {
+		size_t size = sizeof(*cmd);
+		sem_dec(id, sem_id);
+		if (read(fd, cmd, size) == -1) {
+			perror("ERROR rcv_cmd - reading pipe");
+			return -1;
+		} else {
+			if (++errors > max_err) {
+				exit(-1);
+			}
+		}
+	}
+	return 0;
+}
+
+/*
+int rcv_cmd(cmd_t * restrict cmd, const int fd, const int id, const int sem_id){
 	static char errors = 0;
 	const char max_err = 2;
 	// impostazioni per read con timeout della pipe per rendere possibile 
@@ -47,6 +68,7 @@ int rcv_cmd(cmd_t * restrict cmd, const int fd){
 	}
 	return 0;
 }
+*/
 
 int send_msg(const msg_t * restrict msg, const int id, const int sem_id){
 

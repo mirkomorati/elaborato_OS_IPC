@@ -57,15 +57,6 @@ typedef struct{
 }msg_t;
 
 /*!
- * \brief 	Crea un dizionario che mette in relazione il pid di un figlio 
- * 			con il descrittore della pipe su cui scrivere
- */
-typedef struct{
-	pid_t pid;
-	int pipe_fd;
-}pid_to_pipe_t;
-
-/*!
  * \brief      	Mette il messaggio msg nella coda di messaggi che devono
  * 				essere letti dal padre L'operazione è gestita da semafori
  *
@@ -108,7 +99,7 @@ int send_cmd(const cmd_t * restrict cmd, const int fd);
  *
  * \return    	0 in caso di successo, -1 altrimenti
  */
-int rcv_cmd(cmd_t * restrict cmd, const int fd);
+int rcv_cmd(cmd_t * restrict cmd, const int fd, const int id, const int sem_id);
 
 /*!
  * \brief      compara due comandi e ritorna true se sono uguali false altrimenti

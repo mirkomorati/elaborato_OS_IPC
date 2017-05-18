@@ -77,10 +77,10 @@ int main(int argc, char **argv) {
 
     shm_t *shm_array[5] = {&A, &B, &C, &S, NULL};
     lock_t sem_ids;
-    pid_to_pipe_t pid_to_pipe[P];
+    int pid_to_pipe[P];
     int queue_id;
 
-    if(init(shm_array, &sem_ids) == -1) {
+    if(init(shm_array, &sem_ids, P) == -1) {
         perror("init");
         sig_end(-1);
     }
@@ -93,7 +93,8 @@ int main(int argc, char **argv) {
     sig_end(run(N, P, pid_to_pipe, queue_id));
 }
 
-int init(shm_t **shm_array, lock_t *sem_ids) {
+
+int init(shm_t **shm_array, lock_t *sem_ids, int P) {
 
     #ifdef DEBUG   
     printf("Loading matrix\n\n");
@@ -111,16 +112,16 @@ int init(shm_t **shm_array, lock_t *sem_ids) {
         }
     }
 
-    if((sem_ids->queue_sem = sem_create(1)) == -1) return -1;
-    if((sem_ids->A_sem = sem_create(shm_array[0]->N)) == -1) return -1;
-    if((sem_ids->B_sem = sem_create(shm_array[1]->N)) == -1) return -1;
-    if((sem_ids->result_sem = sem_create(2)) == -1) return -1;
+    if ((sem_ids->queue_sem = sem_create(1, 1)) == -1) return -1;
+    if ((sem_ids->A_sem = sem_create(shm_array[0]->N, 1)) == -1) return -1;
+    if ((sem_ids->B_sem = sem_create(shm_array[1]->N, 1)) == -1) return -1;
+    if ((sem_ids->result_sem = sem_create(2, 1)) == -1) return -1;
+    if ((sem_ids->pipe_sem = sem_create(P, 0)) == -1) return -1;
 
     return 0;
 }
 
-int make_child(shm_t **shm_array , lock_t *sem_ids, int P,
-               pid_to_pipe_t *pid_to_pipe, int *queue_id) {
+int make_child(shm_t **shm_array , lock_t *sem_ids, int P, int *pid_to_pipe, int *queue_id) {
     int *tmp_pipe[P];
     int tmp_queue_id;
     int pids[P];
@@ -154,10 +155,9 @@ int make_child(shm_t **shm_array , lock_t *sem_ids, int P,
             return -1;
         }
         else if (pids[i] == 0){
-            exit(child(shm_array, tmp_pipe[i][0], tmp_queue_id, sem_ids));
+            exit(child(i, shm_array, tmp_pipe[i][0], tmp_queue_id, sem_ids));
         }else{
-            pid_to_pipe[i].pid = pids[i];
-            pid_to_pipe[i].pipe_fd = tmp_pipe[i][1]; 
+            pid_to_pipe[i] = i;
         }
     }
 
@@ -175,6 +175,28 @@ int make_child(shm_t **shm_array , lock_t *sem_ids, int P,
     return 0;   
 }
 
+
+int run(int N, int P, pid_to_pipe_t *pid_to_pipe, int queue) {
+    int completed_rows[N];
+    for (int i = 0; i < N; ++i)
+        completed_rows[i] = 0;
+
+    cmd_t cmd;
+    msg_t msg;
+
+    int i = 0, j = 0, errors = 0;
+    int p = 0;
+
+    for (int i = 0; i < N; i++) {
+        for (int j = 0; j < N; j++) {
+                
+        }
+    }
+
+    return 0;
+}
+
+/*
 int run(int N, int P, pid_to_pipe_t *pid_to_pipe, int queue) {
     int completed_rows[N];
     for (int i = 0; i < N; ++i)
@@ -200,7 +222,7 @@ int run(int N, int P, pid_to_pipe_t *pid_to_pipe, int queue) {
                 j %= N;
                 i -= j / N;
             }
-        } else {
+        } else if (p != P - 1) {
             j++;
             i += j / N;
             j %= N;
@@ -209,11 +231,12 @@ int run(int N, int P, pid_to_pipe_t *pid_to_pipe, int queue) {
 
     errors = 0;
 
+
     while(true){
 
         if (i == N) { 
             printf("waiting for ctrl-c...\n");
-            //usleep(5e6);
+            usleep(2e6);
             cmd.role = END;
             for (int p = 0; p < P; ++p)
             {
@@ -242,6 +265,8 @@ int run(int N, int P, pid_to_pipe_t *pid_to_pipe, int queue) {
                 pipe = pid_to_pipe[p].pipe_fd;
 
         if(msg.success) {
+
+            pending--;
             if(msg.cmd.role == MULTIPLY && ++completed_rows[msg.cmd.data.c.i] == N) {
                 cmd.role = SUM;
                 cmd.data.row = msg.cmd.data.c.i;
@@ -283,3 +308,4 @@ int run(int N, int P, pid_to_pipe_t *pid_to_pipe, int queue) {
 
     return 0;
 }
+*/

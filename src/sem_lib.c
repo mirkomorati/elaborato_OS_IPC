@@ -2,13 +2,13 @@
 #include "../headers/sem_lib.h"
 #include "../headers/ending_lib.h"
 
-int sem_create(int nsem) {
+int sem_create(int nsem, int init) {
 	int id;
 	sig_sem_t tmp_sem;
 	unsigned short semctl_arg[nsem];
 
 	for (int i = 0; i < nsem; ++i)
-		semctl_arg[i] = 1;
+		semctl_arg[i] = init;
 
 	if ((id = semget(IPC_PRIVATE, nsem, IPC_CREAT | 0666)) == -1){
 		perror("semaphore create");

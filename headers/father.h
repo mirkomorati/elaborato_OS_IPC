@@ -15,7 +15,7 @@
  *
  * \return     	0 in caso di successo, -1 altrimenti.
  */
-int init(shm_t **shm_array, lock_t *sem_ids);
+int init(shm_t **shm_array, lock_t *sem_ids, int P);
 
 /**
  * \brief      	Crea P figli del padre ed inizializza gli strumenti per permettere
@@ -30,7 +30,7 @@ int init(shm_t **shm_array, lock_t *sem_ids);
  *
  * \return     	0 in caso di riuscita, -1 altrimenti.
  */
-int make_child(shm_t **shm_array, lock_t *sem_ids, int P, pid_to_pipe_t *pid_to_pipe, int *queue_id);
+int make_child(shm_t **shm_array, lock_t *sem_ids, int P, int *pid_to_pipe, int *queue_id);
 
 /*!
  * \brief      	La funzione si occupa di tutto quello che avviene nel core del programma: 
