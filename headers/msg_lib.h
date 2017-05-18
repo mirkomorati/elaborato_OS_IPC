@@ -110,4 +110,13 @@ int send_cmd(const cmd_t * restrict cmd, const int fd);
  */
 int rcv_cmd(cmd_t * restrict cmd, const int fd);
 
+/*!
+ * \brief      compara due comandi e ritorna true se sono uguali false altrimenti
+ *
+ * \param      a   	primo comando
+ * \param      b	secondo comando
+ *
+ * \return     true se i comandi sono uguali
+ */
+bool cmd_equals (const cmd_t *a,const cmd_t *b);
 #endif

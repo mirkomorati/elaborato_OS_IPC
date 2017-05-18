@@ -221,7 +221,6 @@ void sig_free_sem(bool setting, sig_sem_list_t *arg){
 	else if(list != NULL) {
 		sig_sem_list_t *head = list;
         while(list != NULL){
-        	printf("tento di eliminare sem %i\n", list->obj.semid);
             if (semctl(list->obj.semid, list->obj.semnum, IPC_RMID) == -1){
                 perror("semctl sig_free_sem");
                 return;

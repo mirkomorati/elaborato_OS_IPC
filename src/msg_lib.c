@@ -77,3 +77,12 @@ int rcv_msg(msg_t * restrict msg, const int id){
 
 	return 0;
 }
+
+bool cmd_equals (const cmd_t *a,const cmd_t *b){
+	if(a->role != b->role) return false;
+	else if(a->role == MULTIPLY){
+		if (a->data.c.i != b->data.c.i || a->data.c.j != b->data.c.j) return false;
+	}
+	else if (a->data.row != b->data.row) return false;
+	return true;
+}

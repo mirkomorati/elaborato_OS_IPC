@@ -2,37 +2,42 @@
 
 int child(shm_t **shm_array, int pipe_fd, int queue_id, lock_t *sem_ids){
 	cmd_t cmd;
+	cmd_t old_cmd;
 	while(true){
 		if(rcv_cmd(&cmd, pipe_fd) == -1)
 			perror("read fallita\n");
 		else{
-			switch (cmd.role) {
-				case MULTIPLY:
-					#ifdef DEBUG
-					printf("FIGLIO %i\tMULTIPLY\ti: %i, j: %i\n", getpid(), cmd.data.c.i, cmd.data.c.j);
-					#endif
-					multiply(cmd.data.c.i, cmd.data.c.j, shm_array, sem_ids);
-				break;
-				case SUM:
-					#ifdef DEBUG
-					printf("FIGLIO %i\tSUM\trow: %i\n", getpid(), cmd.data.row);
-					#endif
-					sum(cmd.data.row, shm_array, sem_ids);
-				break;
-				case END:
-					return 0;
-			}
-			if(cmd.role == END) return 0;
+			if(! cmd_equals(&cmd, &old_cmd)){
+				switch (cmd.role) {
+					case MULTIPLY:
+						#ifdef DEBUG
+						printf("FIGLIO %i\tMULTIPLY\ti: %i, j: %i\n", getpid(), cmd.data.c.i, cmd.data.c.j);
+						#endif
+						multiply(cmd.data.c.i, cmd.data.c.j, shm_array, sem_ids);
+						old_cmd = cmd;
+					break;
+					case SUM:
+						#ifdef DEBUG
+						printf("FIGLIO %i\tSUM\trow: %i\n", getpid(), cmd.data.row);
+						#endif
+						sum(cmd.data.row, shm_array, sem_ids);
+						old_cmd = cmd;
+					break;
+					case END:
+						return 0;
+				}
+				if(cmd.role == END) return 0;
 
-			msg_t msg;
-			msg.type = 1;
-			msg.success = true;
-			msg.cmd = cmd;
-			msg.pid = getpid();
+				msg_t msg;
+				msg.type = 1;
+				msg.success = true;
+				msg.cmd = cmd;
+				msg.pid = getpid();
 
-			if(send_msg(&msg, queue_id, sem_ids->queue_sem) == -1) {
-				perror("send_msg child");
-				return -1;
+				if(send_msg(&msg, queue_id, sem_ids->queue_sem) == -1) {
+					perror("send_msg child");
+					return -1;
+				}
 			}
 		}
 	}
