@@ -58,7 +58,7 @@ int sem_unlock(int id, int nsem);
  *
  * \return      0 in caso di successo, -1 altrimenti
  */
-inline int sem_inc(int id, int nsem) {return sem_unlock(id, nsem);}
+int sem_inc(int id, int nsem);
 
 /*!
  * \brief       Alias per sem_lock per semafori interi
@@ -68,6 +68,5 @@ inline int sem_inc(int id, int nsem) {return sem_unlock(id, nsem);}
  *
  * \return      0 in caso di successo, -1 altrimenti
  */
-inline int sem_dec(int id, int nsem) {return sem_lock(id, nsem);}
-
+int sem_dec(int id, int nsem);
 #endif

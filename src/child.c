@@ -3,6 +3,7 @@
 int child(int child_id, shm_t **shm_array, int pipe_fd, int queue_id, lock_t *sem_ids){
 	cmd_t cmd;
 	while (true) {
+		sem_dec(sem_ids->pipe_sem, child_id); // dovrei rimanere qua fino a quando il padre non invia qualcosa.
 		if (rcv_cmd(&cmd, pipe_fd, child_id, sem_ids->pipe_sem) == -1)
 			perror("read fallita\n");
 		else {
@@ -12,14 +13,12 @@ int child(int child_id, shm_t **shm_array, int pipe_fd, int queue_id, lock_t *se
 					printf("FIGLIO %i\tMULTIPLY\ti: %i, j: %i\n", getpid(), cmd.data.c.i, cmd.data.c.j);
 					#endif
 					multiply(cmd.data.c.i, cmd.data.c.j, shm_array, sem_ids);
-					old_cmd = cmd;
 				break;
 				case SUM:
 					#ifdef DEBUG
 					printf("FIGLIO %i\tSUM\t\trow: %i\n", getpid(), cmd.data.row);
 					#endif
 					sum(cmd.data.row, shm_array, sem_ids);
-					old_cmd = cmd;
 				break;
 				case END:
 					return 0;
@@ -30,7 +29,7 @@ int child(int child_id, shm_t **shm_array, int pipe_fd, int queue_id, lock_t *se
 			msg.type = 1;
 			msg.success = true;
 			msg.cmd = cmd;
-			msg.pid = getpid();
+			msg.id = child_id;
 
 			if(send_msg(&msg, queue_id, sem_ids->queue_sem) == -1) {
 				perror("send_msg child");

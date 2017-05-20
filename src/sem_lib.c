@@ -53,3 +53,13 @@ int sem_unlock(int id, int nsem) {
 	}
 	return 0;
 }
+
+
+int sem_dec(int id, int nsem) {
+	return sem_lock(id, nsem);
+}
+
+
+int sem_inc(int id, int nsem) {
+	return sem_unlock(id, nsem);
+} 

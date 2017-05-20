@@ -21,7 +21,7 @@ int rcv_cmd(cmd_t * restrict cmd, const int fd, const int id, const int sem_id){
 
 	if (cmd != NULL) {
 		size_t size = sizeof(*cmd);
-		sem_dec(id, sem_id);
+		sem_dec(sem_id, id);
 		if (read(fd, cmd, size) == -1) {
 			perror("ERROR rcv_cmd - reading pipe");
 			return -1;

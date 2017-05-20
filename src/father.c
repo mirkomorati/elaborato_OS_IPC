@@ -1,5 +1,9 @@
 #include "../headers/father.h"
-// devo includere child.h qui altrimenti ho problemi in compilazione.
+
+// dichiaro alcune funzioni statiche 
+
+static inline int first_free(char *a, int dim);
+
 
 int main(int argc, char **argv) {
     /*! 
@@ -90,7 +94,7 @@ int main(int argc, char **argv) {
         sig_end(-1);
     }
 
-    sig_end(run(N, P, pid_to_pipe, queue_id));
+    sig_end(run(N, P, pid_to_pipe, queue_id, &sem_ids));
 }
 
 
@@ -176,23 +180,42 @@ int make_child(shm_t **shm_array , lock_t *sem_ids, int P, int *pid_to_pipe, int
 }
 
 
-int run(int N, int P, pid_to_pipe_t *pid_to_pipe, int queue) {
-    int completed_rows[N];
-    for (int i = 0; i < N; ++i)
-        completed_rows[i] = 0;
-
+int run(int N, int P, int *pid_to_pipe, int queue, lock_t *sem_ids) {
+    cmd_list_t *cmd_list = (cmd_list_t *) malloc(sizeof(cmd_list_t)); // attenzione gestione della lista errata.
+    int number_of_cmd = generate_cmd_list(cmd_list, N);
+    int executed_cmds = 0;
     cmd_t cmd;
-    msg_t msg;
+    char p_free[P];
+    for (int i = 0; i < P; ++i)
+        p_free[i] = 1;
 
-    int i = 0, j = 0, errors = 0;
-    int p = 0;
-
-    for (int i = 0; i < N; i++) {
-        for (int j = 0; j < N; j++) {
-                
+    printf("inizio il ciclo di base di run\n");
+    while(executed_cmds < number_of_cmd){
+        int p;
+        if ((p = first_free(p_free, P))!= -1){
+            printf("invio comando %s al figlio %i\n",cmd_list->cmd.role == MULTIPLY ? "MULTIPLY" : "SUM", p);
+            // ci sono processi liberi
+            send_cmd(&cmd_list->cmd, pid_to_pipe[p]);
+            cmd_list = cmd_list->next;
+            p_free[p] = 0;
+            sem_inc(sem_ids->pipe_sem, p);
+        } else {
+            msg_t msg;
+            rcv_msg(&msg, queue);
+            if(msg.success){
+                p_free[msg.id] = 1;
+                executed_cmds++;
+            }else{
+                send_cmd(&msg.cmd, pid_to_pipe[msg.id]);
+            }
         }
     }
 
+    // ho finito tutti i messaggi da inviare ed ho ricevuto il riscontro da tutti.
+    for (int p = 0; p < P; ++p){
+        cmd.role = END;
+        send_cmd(&cmd, pid_to_pipe[p]);
+    }
     return 0;
 }
 
@@ -309,3 +332,38 @@ int run(int N, int P, pid_to_pipe_t *pid_to_pipe, int queue) {
     return 0;
 }
 */
+static inline int first_free(char *a, int dim){
+    for (int i = 0; i < dim; ++i)
+        if (a[i] == 1) return i;
+    return -1;
+}
+
+int generate_cmd_list(cmd_list_t *head, int N){
+    cmd_t cmd;
+    int cmd_number = 0;
+    for (int i = 0; i < N; ++i){
+        for (int j = 0; j < N; ++j){
+            cmd.role = MULTIPLY;
+            cmd.data.c.i = i;
+            cmd.data.c.j = j;
+            add_to_cmd_list(head, &cmd);
+            cmd_number++;
+        }
+        cmd.role = SUM;
+        cmd.data.row = i;
+        add_to_cmd_list(head, &cmd);
+        cmd_number++;
+    }
+    return cmd_number;
+}
+
+void add_to_cmd_list(cmd_list_t *head, cmd_t *cmd){
+    cmd_list_t *tmp = head;
+    while(tmp->next != NULL)
+        tmp = tmp->next;
+
+    tmp->next = (cmd_list_t *)malloc(sizeof(cmd_list_t));
+    tmp = tmp->next;
+    tmp->cmd = *cmd;
+    tmp->next = NULL;
+}

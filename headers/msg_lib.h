@@ -9,6 +9,7 @@
 #define MSG_LIB_H
 #include <stdbool.h>
 #include <stdint.h>
+#include "sem_lib.h"
 
 /*! 
  * \brief 		Rappresenta il ruolo di un figlio
@@ -53,7 +54,7 @@ typedef struct{
 	long type;		//!< Tipo del messaggio
 	bool success;	//!< True se il comando è stato eseguito correttamente
 	cmd_t cmd;		//!< Comando che doveva essere eseguito
-	pid_t pid;		//!< Il pid del processo che ha eseguito il comando.
+	int id;		//!< l'id del figlio che ha inviato il messaggio.
 }msg_t;
 
 /*!
