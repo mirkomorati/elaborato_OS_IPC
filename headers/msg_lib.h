@@ -1,105 +1,114 @@
 /*! 
  * \file 		msg_lib.h
- * Raccolta di funzioni e strutture dati per lo scambio di messaggi.
+ * Raccolta di funzioni e strutture dati per lo scambio di messaggi
  * 
- * Conterrà tutte le funzioni ed i dati di
- * utilità per i messaggi scambiati tra padre e figli 
- * o viceversa attraverso code di messaggi e pipe
+ * Conterrà tutte le funzioni ed i dati di utilità per i messaggi scambiati tra padre e figli attraverso code di messaggi e pipe
  */
 
 #ifndef MSG_LIB_H
 #define MSG_LIB_H
 #include <stdbool.h>
 #include <stdint.h>
+#include "sem_lib.h"
 
-/*! \brief 		Rappresenta il ruolo di un figlio.
+/*! 
+ * \brief 		Rappresenta il ruolo di un figlio
  * 
- * Il ruolo è variabile ed è parte di un comando 
- * che può essere inviato da un padre ad un figlio.
+ * Il ruolo è variabile ed è parte di un comando che può essere inviato da un
+ * padre ad un figlio
  * Può essere:
- * 	- MULTIPLY: il figlio deve effettuare una moltiplicazione.
- * 	- SUM : il figlio deve effettuare una somma.
+ * 	- MULTIPLY: il figlio deve effettuare una moltiplicazione
+ * 	- SUM: 		il figlio deve effettuare una somma
  */
 typedef enum{
 	MULTIPLY, 
-	SUM
+	SUM,
+	END
 }role_t;
 
-/*! \brief 		Comando inviato dal padre ai figli.
+/*! 
+ * \brief 		Comando inviato dal padre ai figli
  * 
- * Rappresenta un comando inviato dal padre ad uno dei suoi figli.
+ * Rappresenta un comando inviato dal padre ad uno dei suoi figli
  */
 typedef struct{
-	role_t role; //!< Ruolo che il figlio deve svolgere.
+	role_t role; //!< Ruolo che il figlio deve svolgere
 	union data_u {
 		struct point_u {
 			int i;	
 			int j;
 		} c;
 		int row;
-	} data; //!< \brief Dati del comando. 
-	     	//! In caso di somma va tenuto conto del
-	     	//! valore di row, altrimenti va tenuto conto del valore di c.
+	} data; 	//!< \brief Dati del comando 
+	     		//! In caso di somma va tenuto conto del valore di row,
+	     		//! altrimenti va tenuto conto del valore di c
 }cmd_t;
 
-/*! \brief Messaggio dei figli al padre 
+/*! 
+ * \brief Messaggio dei figli al padre 
  * 
  * Rappresenta un messaggio per la coda di messaggi utilizzata dai 
- * figli per comunicare con il padre.
+ * figli per comunicare con il padre
  */
 typedef struct{
-	long type;			//!< Tipo del messaggio.
-	bool success;		//!< True se il comando è stato eseguito correttamente.
-	cmd_t cmd;			//!< Comando che doveva essere eseguito.
+	long type;		//!< Tipo del messaggio
+	bool success;	//!< True se il comando è stato eseguito correttamente
+	cmd_t cmd;		//!< Comando che doveva essere eseguito
+	int id;		//!< l'id del figlio che ha inviato il messaggio.
 }msg_t;
 
-
 /*!
- * \brief      	Mette il messaggio msg nella coda di messaggi che devono essere letti
- * 				dal padre. L'operazione è __safe__.
+ * \brief      	Mette il messaggio msg nella coda di messaggi che devono
+ * 				essere letti dal padre L'operazione è gestita da semafori
  *
- * \param[in]  	msg   	Il messaggio.
- * \param[in]	id 		Se diverso da NULL modifica l'id della coda. 
- * 						viene utilizzato in fase di setting.
+ * \param[in]  	msg   	Il messaggio da inviare
+ * \param[in]	id		ID della coda di messaggi
  *
- * \return     	0 in caso di successo, -1 altrimenti.
+ * \return     	0 in caso di successo, -1 altrimenti
  */
-int send_msg(const msg_t * restrict msg, const int id);
+int send_msg(const msg_t * restrict msg, const int id, const int sem_id);
 
 
 /*!
- * \brief      	Preleva un messaggio dalla coda di messaggi diretti al padre.
- * 				L'operazione è __safe__.
+ * \brief      	Preleva un messaggio dalla coda di messaggi diretti al padre
+ * 				L'operazione è gestita da semafori
  *
- * \param[out]  msg   	Zona di memoria in cui memorizzare il messaggio.
- * \param[in]	id 		Se diverso da NULL modifica l'id della coda. 
- * 						viene utilizzato in fase di setting.
+ * \param[out]  msg   	Puntatore all'oggetto in cui salvare il messaggio
+ * \param[in]	id 		ID della coda di messaggi
  *
- * \return     	0 in caso di successo, -1 altrimenti.
+ * \return     	0 in caso di successo, -1 altrimenti
  */
 int rcv_msg(msg_t * restrict msg, const int id);
 
 /*!
- * \brief      	Scrive un comando nella pipe che collega il padre con i figli.
- *				L'operazione è __safe__.
+ * \brief      	Scrive un comando nella pipe che collega il padre con i figli
+ *				L'operazione è gestita da semafori
  *				
- * \param[in]  	cmd		Il comando.
- * \param[in] 	id    	Se diverso da NULL modifica il file descriptor della pipe.
- * 						viene usato in fase di setting.
+ * \param[in]  	cmd		Il comando da inviare
+ * \param[in] 	fd    	File descriptor della pipe
  *
- * \return    	0 in caso di successo, -1 altrimenti.
+ * \return    	0 in caso di successo, -1 altrimenti
  */
-int send_cmd(const cmd_t * restrict cmd, const int fd);
+int send_cmd(const cmd_t * restrict cmd, const int fd, const int id, const int sem_id);
 
 /*!
- * \brief      	Legge un comando scritto dal padre nella pipe che lo collega ai figli
+ * \brief      	Legge un comando scritto dal padre nella pipe che lo collega
+ * 				ai figli
  * 
- * \param[out]  cmd		Zona di memoria in cui memorizzare il comando.
- * \param[in]  	id    	Se diverso da NULL modifica il file descriptor della pipe.
- * 						viene usato in fase di setting.
+ * \param[out]  cmd		Puntatore all'oggetto in cui salvare il comando
+ * \param[in]  	fd		File descriptor della pipe
  *
- * \return    	0 in caso di successo, -1 altrimenti.
+ * \return    	0 in caso di successo, -1 altrimenti
  */
-int rcv_cmd(cmd_t * restrict cmd, const int fd);
+int rcv_cmd(cmd_t * restrict cmd, const int fd, const int id, const int sem_id);
 
+/*!
+ * \brief      compara due comandi e ritorna true se sono uguali false altrimenti
+ *
+ * \param      a   	primo comando
+ * \param      b	secondo comando
+ *
+ * \return     true se i comandi sono uguali
+ */
+bool cmd_equals (const cmd_t *a,const cmd_t *b);
 #endif

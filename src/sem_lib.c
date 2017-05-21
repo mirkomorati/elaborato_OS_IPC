@@ -2,18 +2,22 @@
 #include "../headers/sem_lib.h"
 #include "../headers/ending_lib.h"
 
-int sem_create() {
+int sem_create(int nsem, int init) {
 	int id;
 	sig_sem_t tmp_sem;
+	unsigned short semctl_arg[nsem];
 
-	if ((id = semget(IPC_PRIVATE, 1, IPC_CREAT | 0600)) == -1){
-		perror("semaphore create: ");
-		sig_end(-1);
+	for (int i = 0; i < nsem; ++i)
+		semctl_arg[i] = init;
+
+	if ((id = semget(IPC_PRIVATE, nsem, IPC_CREAT | 0666)) == -1){
+		perror("semaphore create");
+		return -1;
 	}
 
-	if (semctl(id, 0, SETVAL, 1) == -1){
-		perror("semaphore init: ");
-		sig_end(-1);
+	if (semctl(id, 0, SETALL, semctl_arg) == -1){
+		perror("semaphore init");
+		return -1;
 	}
 
 	tmp_sem.semid = id;
@@ -24,26 +28,38 @@ int sem_create() {
 	return id;
 }
 
-void sem_lock(int id) {
+int sem_lock(int id, int nsem) {
 	struct sembuf sem_op;
 
-	sem_op.sem_num = 0;
+	sem_op.sem_num = nsem;
 	sem_op.sem_op = -1;
 	sem_op.sem_flg = 0;
 	if (semop(id, &sem_op, 1) == -1) {
-		perror("semaphore lock: ");
-		sig_end(-3);
+		perror("ERROR semaphore lock");
+		return -1;
 	}
+	return 0;
 }
 
-void sem_unlock(int id) {
+int sem_unlock(int id, int nsem) {
 	struct sembuf sem_op;
 
-	sem_op.sem_num = 0;
+	sem_op.sem_num = nsem;
 	sem_op.sem_op = 1;
 	sem_op.sem_flg = 0;
 	if (semop(id, &sem_op, 1) == -1) {
-		perror("semaphore unlock: ");
-		sig_end(-3);
+		perror("ERROR semaphore unlock");
+		return -1;
 	}
+	return 0;
 }
+
+
+int sem_dec(int id, int nsem) {
+	return sem_lock(id, nsem);
+}
+
+
+int sem_inc(int id, int nsem) {
+	return sem_unlock(id, nsem);
+} 

@@ -59,9 +59,9 @@ typedef struct sig_queue_list{
  * \brief      	Funzione che elimina tutte le memorie condivise del processo
  *
  * \param[in]  	sig   Il segnale
- * \param[in]   arg   L'array di argomenti
+ * \param[in]   pid   Il pid del padre
  */
-void sig_handler(int sig, void *arg);
+void sig_handler(int sig, int pid);
 
 
 /*!
@@ -113,6 +113,17 @@ void sig_add_queue(int n, ...);
  * \param[in]	arg			La head della lista degli oggetti da rimuovere
  */
 void sig_free_memory(bool setting, sig_shmem_list_t *arg);
+
+/*!
+ * \brief      	Se \setting è false il programma effettua il detach 
+ * 				della memoria condivisa presente nella lista.
+ * 				
+ * \param[in]  	setting  	Se true il valore di arg viene valutato e 
+ * 							inizializzato.
+ * \param      	arg      	La head della lista degli oggetti di memoria 
+ * 							condivisa 
+ */
+void sig_shmdt(bool setting, sig_shmem_list_t *arg);
 
 /*!
  * \brief		Se \setting è false il programma elimina i semafori presenti 

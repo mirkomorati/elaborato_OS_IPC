@@ -58,6 +58,8 @@ void sig_add_shmem(int n, ...){
 		if(n-i == 1) cur->next = NULL;
 	}
 	va_end(ap);
+
+    //debug_print_shm_list(list);
 }
 
 void sig_add_sem(int n, ...){
@@ -93,12 +95,14 @@ void sig_add_sem(int n, ...){
 
 		sig_sem_t *actual_obj = va_arg(ap, sig_sem_t *);
 
-		list->obj.semid = actual_obj->semid;
-		list->obj.semnum = actual_obj->semnum;
+		cur->obj.semid = actual_obj->semid;
+		cur->obj.semnum = actual_obj->semnum;
 
 		if(n-i == 1) cur->next = NULL;
 	}
 	va_end(ap);
+
+	//debug_print_list(list);
 }
 
 void sig_add_queue(int n, ...){
@@ -136,13 +140,24 @@ void sig_add_queue(int n, ...){
 	va_end(ap);
 }
 
-void sig_handler(int sig, void *arg){
-	if (sig != -1)
-    {
+void sig_handler(int sig, int pid){
+	static int allowed_pid = 0;
+
+	if (sig != -1 && allowed_pid == getpid()){
+    	int status, wpid;
+    	while((wpid = wait(&status)) > 0)
+    		printf("il figlio %i ha terminato\n", wpid);
+
     	sig_free_sem(false, NULL);
     	sig_free_memory(false, NULL);
     	sig_free_queue(false, NULL);
     	exit(sig);
+    }else if (sig != -1){
+    	// siamo nella terminazione del figlio.
+    	sig_shmdt(false, NULL);
+    }
+    else {
+    	allowed_pid = pid;
     }
 }
 
@@ -152,8 +167,14 @@ void sig_init(sig_shmem_list_t *shm_list, sig_sem_list_t *sem_list, sig_queue_li
     signal(SIGHUP, (void (*)(int))sig_handler);
     signal(SIGKILL, (void (*)(int))sig_handler);
     signal(SIGTERM, (void (*)(int))sig_handler);
+    signal(SIGSEGV, (void (*)(int))sig_handler);
 
-    if (shm_list != NULL) sig_free_memory(true, shm_list);
+    sig_handler(-1, getpid());
+
+    if (shm_list != NULL){
+    	sig_shmdt(true, shm_list); 
+    	sig_free_memory(true, shm_list); 
+    }
     if (sem_list != NULL) sig_free_sem(true, sem_list);
     if (queue_list != NULL) sig_free_queue(true, queue_list);
 }
@@ -161,20 +182,15 @@ void sig_init(sig_shmem_list_t *shm_list, sig_sem_list_t *sem_list, sig_queue_li
 void sig_free_memory(bool setting, sig_shmem_list_t *arg){
 	static sig_shmem_list_t *list = NULL;
 
-#ifdef DEBUG
-    printf("---Freeing shm\n");
-#endif
 	if(setting) list = arg;
 	else if(list != NULL) {
+		sig_shmdt(false, NULL);
 		sig_shmem_list_t *head = list;
         while(list != NULL){
-            if (shmdt(list->obj.shmaddr) == -1) {
-                perror("shmdt");
-                exit(-1);
-            }
             if (shmctl(list->obj.shmid, IPC_RMID, NULL) == -1){
-                perror("shmctl");
-                exit(-2);
+                printf("ERROR: shmid: %i", list->obj.shmid);
+                perror("shmctl sig_free_memory");
+                return;
             }
             list = list->next;
         }
@@ -183,19 +199,31 @@ void sig_free_memory(bool setting, sig_shmem_list_t *arg){
 	}
 }
 
+void sig_shmdt(bool setting, sig_shmem_list_t *arg){
+	static sig_shmem_list_t *list = NULL;
+
+	if(setting) list = arg;
+	else if(list != NULL) {
+        while(list != NULL){
+            if (shmdt(list->obj.shmaddr) == -1) {
+                perror("shmdt");
+                return;
+            }
+            list = list->next;
+        }
+	}
+}
+
 void sig_free_sem(bool setting, sig_sem_list_t *arg){
 	static sig_sem_list_t *list = NULL;
 
-#ifdef DEBUG
-    printf("---Freeing sem\n");
-#endif
 	if(setting) list = arg;
 	else if(list != NULL) {
 		sig_sem_list_t *head = list;
         while(list != NULL){
             if (semctl(list->obj.semid, list->obj.semnum, IPC_RMID) == -1){
-                perror("semctl");
-                exit(-2);
+                perror("semctl sig_free_sem");
+                return;
             }
             list = list->next;
         }
@@ -207,16 +235,13 @@ void sig_free_sem(bool setting, sig_sem_list_t *arg){
 void sig_free_queue(bool setting, sig_queue_list_t *arg){
 	static sig_queue_list_t *list = NULL;
 
-#ifdef DEBUG
-    printf("---Freeing queue\n");
-#endif
 	if(setting) list = arg;
 	else if(list != NULL) {
 		sig_queue_list_t *head = list;
         while(list != NULL){
             if (msgctl(list->obj, IPC_RMID, NULL) == -1){
                 perror("msgctl");
-                exit(-2);
+                return;
             }
             list = list->next;
         }
@@ -226,6 +251,10 @@ void sig_free_queue(bool setting, sig_queue_list_t *arg){
 }
 
 void sig_end(int code){
+	int status, wpid;
+    while((wpid = wait(&status)) > 0)
+    	printf("terminazione normale: il figlio %i ha terminato\n", wpid);
+	// stessa cosa di sig_handler
 	sig_free_sem(false, NULL);
 	sig_free_memory(false, NULL);
 	sig_free_queue(false, NULL);
