@@ -89,7 +89,7 @@ int rcv_msg(msg_t * restrict msg, const int id);
  *
  * \return    	0 in caso di successo, -1 altrimenti
  */
-int send_cmd(const cmd_t * restrict cmd, const int fd);
+int send_cmd(const cmd_t * restrict cmd, const int fd, const int id, const int sem_id);
 
 /*!
  * \brief      	Legge un comando scritto dal padre nella pipe che lo collega

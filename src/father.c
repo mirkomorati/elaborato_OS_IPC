@@ -190,24 +190,25 @@ int run(int N, int P, int *pid_to_pipe, int queue, lock_t *sem_ids) {
         p_free[i] = 1;
 
     printf("inizio il ciclo di base di run\n");
-    while(executed_cmds < number_of_cmd){
+    while(executed_cmds < number_of_cmd && cmd_list != NULL){
         int p;
         if ((p = first_free(p_free, P))!= -1){
             printf("invio comando %s al figlio %i\n",cmd_list->cmd.role == MULTIPLY ? "MULTIPLY" : "SUM", p);
             // ci sono processi liberi
-            send_cmd(&cmd_list->cmd, pid_to_pipe[p]);
+            send_cmd(&cmd_list->cmd, pid_to_pipe[p], p, sem_ids->pipe_sem);
             cmd_list = cmd_list->next;
             p_free[p] = 0;
-            sem_inc(sem_ids->pipe_sem, p);
         } else {
             printf("attendo con p = %i\n", p);
             msg_t msg;
             rcv_msg(&msg, queue);
             if(msg.success){
+                printf("il figlio c'è l'ha fatta\n");
                 p_free[msg.id] = 1;
                 executed_cmds++;
             }else{
-                send_cmd(&msg.cmd, pid_to_pipe[msg.id]);
+                printf("il figlio non c'è l'ha fatta\n");
+                send_cmd(&msg.cmd, pid_to_pipe[msg.id], p, sem_ids->pipe_sem);
             }
         }
     }
@@ -215,7 +216,7 @@ int run(int N, int P, int *pid_to_pipe, int queue, lock_t *sem_ids) {
     // ho finito tutti i messaggi da inviare ed ho ricevuto il riscontro da tutti.
     for (int p = 0; p < P; ++p){
         cmd.role = END;
-        send_cmd(&cmd, pid_to_pipe[p]);
+        send_cmd(&cmd, pid_to_pipe[p], p, sem_ids->pipe_sem);
     }
     return 0;
 }

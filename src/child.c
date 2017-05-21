@@ -3,7 +3,6 @@
 int child(int child_id, shm_t **shm_array, int pipe_fd, int queue_id, lock_t *sem_ids){
 	cmd_t cmd;
 	while (true) {
-		sem_dec(sem_ids->pipe_sem, child_id); // dovrei rimanere qua fino a quando il padre non invia qualcosa.
 		if (rcv_cmd(&cmd, pipe_fd, child_id, sem_ids->pipe_sem) == -1)
 			perror("read fallita\n");
 		else {
@@ -21,9 +20,9 @@ int child(int child_id, shm_t **shm_array, int pipe_fd, int queue_id, lock_t *se
 					sum(cmd.data.row, shm_array, sem_ids);
 				break;
 				case END:
+					printf("FIGLIO %i\tEND\n", getpid());
 					return 0;
 			}
-			if(cmd.role == END) return 0;
 
 			msg_t msg;
 			msg.type = 1;

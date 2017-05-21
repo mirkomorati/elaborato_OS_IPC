@@ -2,8 +2,9 @@
 #include "../headers/msg_lib.h"
 #include "../headers/sem_lib.h"
 
-int send_cmd(const cmd_t * restrict cmd, const int fd){
+int send_cmd(const cmd_t * restrict cmd, const int fd,const int id, const int sem_id){
 	if (cmd != NULL){
+		sem_inc(sem_id, id);
 		size_t size = sizeof(*cmd);
 		if (write(fd, cmd, size) == -1){
 			perror("ERROR send_cmd - writing on pipe");
@@ -22,14 +23,11 @@ int rcv_cmd(cmd_t * restrict cmd, const int fd, const int id, const int sem_id){
 	if (cmd != NULL) {
 		size_t size = sizeof(*cmd);
 		sem_dec(sem_id, id);
+		printf("superato il semaforo\n");
 		if (read(fd, cmd, size) == -1) {
 			perror("ERROR rcv_cmd - reading pipe");
 			return -1;
-		} else {
-			if (++errors > max_err) {
-				exit(-1);
-			}
-		}
+		}	
 	}
 	return 0;
 }
