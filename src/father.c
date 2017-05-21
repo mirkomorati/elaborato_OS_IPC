@@ -94,7 +94,20 @@ int main(int argc, char **argv) {
         sig_end(-1);
     }
 
-    sig_end(run(N, P, pid_to_pipe, queue_id, &sem_ids));
+    if (run(N, P, pid_to_pipe, queue_id, &sem_ids) == -1) {
+        perror("run");
+        sig_end(-1);
+    }
+
+    for (int i = 0; i < N; i++) {
+        for (int j = 0; j < N; j++) {
+            printf("%li\t", C.shmaddr[i * N + j]);
+        }
+        printf("\n");
+    } 
+    printf("\n");
+
+    sig_end(0);
 }
 
 

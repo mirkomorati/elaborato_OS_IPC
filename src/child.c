@@ -96,7 +96,7 @@ int multiply(int i, int j, shm_t **shm_array, lock_t *sem_ids) {
 		perror("ERROR multiply - sem_lock C");
 		return -1;
 	}
-	C->shmaddr[i + j * C->N] = res;
+	C->shmaddr[i * C->N + j] = res;
 	sem_unlock(sem_ids->result_sem, 0);
 
 	free(row);
