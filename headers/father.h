@@ -1,3 +1,7 @@
+/*!
+ * \file father.h
+ */
+
 #ifndef FATHER_H
 #define FATHER_H
 #include "std_lib.h"
@@ -6,10 +10,11 @@
 #include "sem_lib.h"
 #include "msg_lib.h"
 #include "child.h"
+#include "io_lib.h"
 
 #define MAX_ERRORS 3
 
-/**
+/*!
  * \brief	Rappresenta una semplice lista di comandi.
  */
 typedef struct cmd_list {
@@ -27,7 +32,7 @@ typedef struct cmd_list {
  */
 int init(shm_t **shm_array, lock_t *sem_ids, int P);
 
-/**
+/*!
  * \brief      	Crea P figli del padre ed inizializza gli strumenti per permettere
  * 				la comunicazione tra padre e figli.
  *

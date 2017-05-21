@@ -14,7 +14,7 @@ int shm_create(shm_t *M) {
     }
 
 
-    if ((M->fd = open(M->path, O_RDONLY, S_IRUSR)) == -1) {
+    if ((M->fd = open(M->path, O_RDWR, S_IRUSR | S_IWUSR)) == -1) {
         perror("ERROR shm_create - open");
         return -1;
     }

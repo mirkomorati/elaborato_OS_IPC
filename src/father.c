@@ -49,7 +49,7 @@ int main(int argc, char **argv) {
                 // controllo se esiste il file altrimenti lo creo.
                 struct stat st;
                 if(stat(optarg, &st) == -1 && errno == ENOENT)
-                    if(creat(optarg, S_IRUSR) == -1)
+                    if(creat(optarg, S_IRUSR | S_IWUSR) == -1)
                         perror("Error creating matrixC file: ");
                 C.path = optarg;
                 break;
@@ -109,6 +109,8 @@ int main(int argc, char **argv) {
         printf("\n");
     } 
     printf("\n");
+
+    shmatrix_to_csv(&C);
 
     sig_end(0);
 }
