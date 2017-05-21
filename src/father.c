@@ -99,6 +99,9 @@ int main(int argc, char **argv) {
         sig_end(-1);
     }
 
+    int status;
+    while(wait(&status) < 0);
+
     for (int i = 0; i < N; i++) {
         for (int j = 0; j < N; j++) {
             printf("%li\t", C.shmaddr[i * N + j]);
