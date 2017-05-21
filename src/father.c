@@ -161,7 +161,7 @@ int make_child(shm_t **shm_array , lock_t *sem_ids, int P, int *pid_to_pipe, int
         else if (pids[i] == 0){
             exit(child(i, shm_array, tmp_pipe[i][0], tmp_queue_id, sem_ids));
         }else{
-            pid_to_pipe[i] = i;
+            pid_to_pipe[i] = tmp_pipe[i][1];
         }
     }
 
@@ -181,8 +181,8 @@ int make_child(shm_t **shm_array , lock_t *sem_ids, int P, int *pid_to_pipe, int
 
 
 int run(int N, int P, int *pid_to_pipe, int queue, lock_t *sem_ids) {
-    cmd_list_t *cmd_list = (cmd_list_t *) malloc(sizeof(cmd_list_t)); // attenzione gestione della lista errata.
-    int number_of_cmd = generate_cmd_list(cmd_list, N);
+    cmd_list_t *cmd_list = NULL; // attenzione gestione della lista errata.
+    int number_of_cmd = generate_cmd_list(&cmd_list, N);
     int executed_cmds = 0;
     cmd_t cmd;
     char p_free[P];
@@ -200,6 +200,7 @@ int run(int N, int P, int *pid_to_pipe, int queue, lock_t *sem_ids) {
             p_free[p] = 0;
             sem_inc(sem_ids->pipe_sem, p);
         } else {
+            printf("attendo con p = %i\n", p);
             msg_t msg;
             rcv_msg(&msg, queue);
             if(msg.success){
@@ -338,7 +339,7 @@ static inline int first_free(char *a, int dim){
     return -1;
 }
 
-int generate_cmd_list(cmd_list_t *head, int N){
+int generate_cmd_list(cmd_list_t **head, int N){
     cmd_t cmd;
     int cmd_number = 0;
     for (int i = 0; i < N; ++i){
@@ -357,13 +358,21 @@ int generate_cmd_list(cmd_list_t *head, int N){
     return cmd_number;
 }
 
-void add_to_cmd_list(cmd_list_t *head, cmd_t *cmd){
-    cmd_list_t *tmp = head;
-    while(tmp->next != NULL)
-        tmp = tmp->next;
+void add_to_cmd_list(cmd_list_t **head, cmd_t *cmd){
+    cmd_list_t *tmp = *head;
+    if(tmp == NULL){
+        // creo la lista
+        tmp = (cmd_list_t *)malloc(sizeof(cmd_list_t));
+        tmp->cmd = *cmd;
+        tmp->next = NULL;
+        *head = tmp;
+    }else{ // la riempio
+        while(tmp->next != NULL)
+            tmp = tmp->next;
 
-    tmp->next = (cmd_list_t *)malloc(sizeof(cmd_list_t));
-    tmp = tmp->next;
-    tmp->cmd = *cmd;
-    tmp->next = NULL;
+        tmp->next = (cmd_list_t *)malloc(sizeof(cmd_list_t));
+        tmp = tmp->next;
+        tmp->cmd = *cmd;
+        tmp->next = NULL;
+    }
 }

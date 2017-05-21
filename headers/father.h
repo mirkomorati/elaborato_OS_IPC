@@ -65,7 +65,7 @@ int run(int N, int P, int *pid_to_pipe, int queue, lock_t *sem_ids);
  *
  * @return     	ritorna il numero di comandi creati.
  */
-int generate_cmd_list(cmd_list_t *head, int N);
+int generate_cmd_list(cmd_list_t **head, int N);
 
 /**
  * @brief      	Aggiunge un comando in coda alla lista che inizia in head
@@ -73,6 +73,6 @@ int generate_cmd_list(cmd_list_t *head, int N);
  * @param[out]  head	Testa della lista sulla quale aggiungere il comando
  * @param[in]	cmd   	Il comando da aggiungere
  */
-void add_to_cmd_list(cmd_list_t *head, cmd_t *cmd);
+void add_to_cmd_list(cmd_list_t **head, cmd_t *cmd);
 
 #endif
