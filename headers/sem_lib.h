@@ -10,9 +10,7 @@
 
 typedef struct{
 	int queue_sem;
-	int A_sem;
-	int B_sem;
-	int result_sem;
+    int S_sem;
     int pipe_sem;
 } lock_t;
 

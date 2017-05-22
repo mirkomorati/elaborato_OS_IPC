@@ -17,13 +17,9 @@ int send_cmd(const cmd_t * restrict cmd, const int fd,const int id, const int se
 
 
 int rcv_cmd(cmd_t * restrict cmd, const int fd, const int id, const int sem_id){
-	static char errors = 0;
-	const char max_err = 2;
-
 	if (cmd != NULL) {
 		size_t size = sizeof(*cmd);
 		sem_dec(sem_id, id);
-		printf("superato il semaforo\n");
 		if (read(fd, cmd, size) == -1) {
 			perror("ERROR rcv_cmd - reading pipe");
 			return -1;

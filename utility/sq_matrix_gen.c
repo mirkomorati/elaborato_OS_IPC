@@ -5,7 +5,7 @@
 #include <time.h>
 
 #define MAX_RAND 100
-#define OFFSET 0
+#define OFFSET -50
 
 int main(int argc, char **argv) {
     int fd;

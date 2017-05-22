@@ -11,7 +11,7 @@ int child(int child_id, shm_t **shm_array, int pipe_fd, int queue_id, lock_t *se
 					#ifdef DEBUG
 					printf("FIGLIO %i\tMULTIPLY\ti: %i, j: %i\n", getpid(), cmd.data.c.i, cmd.data.c.j);
 					#endif
-					multiply(cmd.data.c.i, cmd.data.c.j, shm_array, sem_ids);
+					multiply(cmd.data.c.i, cmd.data.c.j, shm_array);
 				break;
 				case SUM:
 					#ifdef DEBUG
@@ -39,7 +39,7 @@ int child(int child_id, shm_t **shm_array, int pipe_fd, int queue_id, lock_t *se
 	return 0;
 }
 
-int multiply(int i, int j, shm_t **shm_array, lock_t *sem_ids) {
+int multiply(int i, int j, shm_t **shm_array) {
 	shm_t *A = shm_array[0];
 	shm_t *B = shm_array[1];
 	shm_t *C = shm_array[2];
@@ -47,57 +47,20 @@ int multiply(int i, int j, shm_t **shm_array, lock_t *sem_ids) {
 	long *row = (long *) malloc(sizeof(long) * A->N);
 	long *col = (long *) malloc(sizeof(long) * B->N);
 
-	if (sem_lock(sem_ids->A_sem, i) == -1) {
-		perror("ERROR multiply - sem_lock A");
-		return -1;
-	}
-	/*#ifdef DEBUG
-	printf("SEM A LOCK da figlio %i, riga %i\n", getpid(), i);
-	#endif*/
 	for (int l = 0; l < A->N; l++) {
 		row[l] = A->shmaddr[i * A->N + l];
-		/*#ifdef DEBUG
-		printf("%i: %li\t", l, row[l]);
-		#endif*/
 	}
-	sem_unlock(sem_ids->A_sem, i);
-	/*#ifdef DEBUG
-	printf("\nSEM A UNLOCK da figlio %i, riga %i\n", getpid(), i);
-	#endif*/
 
-	if (sem_lock(sem_ids->B_sem, j) == -1) {
-		perror("ERROR multiply - sem_lock B");
-		return -1;
-	}
-	/*#ifdef DEBUG
-	printf("SEM B LOCK da figlio %i, riga %i\n", getpid(), j);
-	#endif*/
 	for (int l = 0; l < B->N; l++) {
 		col[l] = B->shmaddr[j + l * B->N];
-		/*#ifdef DEBUG
-		printf("%i: %li\t", l, col[l]);
-		#endif*/
 	}
-	sem_unlock(sem_ids->B_sem, j);
-	/*#ifdef DEBUG
-	printf("\nSEM B UNLOCK da figlio %i, riga %i\n", getpid(), j);
-	#endif*/
 
 	long res = 0;
 	for (int l = 0; l < A->N; l++) {
 		res += row[l] * col[l];
 	}
 
-	/*#ifdef DEBUG
-	printf("MULTIPLY\ti: %i, j: %i = %li\n", i, j, res);
-	#endif*/
-
-	if (sem_lock(sem_ids->result_sem, 0) == -1) {
-		perror("ERROR multiply - sem_lock C");
-		return -1;
-	}
 	C->shmaddr[i * C->N + j] = res;
-	sem_unlock(sem_ids->result_sem, 0);
 
 	free(row);
 	free(col);
@@ -111,21 +74,18 @@ int sum(int k, shm_t **shm_array, lock_t *sem_ids) {
 
 	long res = 0;
 
-	if (sem_lock(sem_ids->result_sem, 0) == -1) {
-		perror("ERROR sum - sem_lock C");
-		return -1;
-	}
 	for (int i = 0; i < C->N; i++) {
-		res += C->shmaddr[i + k * C->N];
+		res += C->shmaddr[k * C->N + i];
+		printf("%li\t", C->shmaddr[k * C->N + i]);
 	}
-	sem_unlock(sem_ids->result_sem, 0);
+	printf("\n");
 
-	if (sem_lock(sem_ids->result_sem, 1) == -1) {
+	if (sem_lock(sem_ids->S_sem, 0) == -1) {
 		perror("ERROR sum - sem_lock S");
 		return -1;
 	}
-	S->shmaddr += res;
-	sem_unlock(sem_ids->result_sem, 1);
+	S->shmaddr[0] += res;
+	sem_unlock(sem_ids->S_sem, 0);
 
 	return 0;
 }

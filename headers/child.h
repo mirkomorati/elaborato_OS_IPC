@@ -28,7 +28,7 @@ int child(int child_id, shm_t **shm_array, int pipe_fd, int queue_id, lock_t *se
  * 
  * \return      0 in caso di successo, -1 altrimenti.
  */
-int multiply(int i, int j, shm_t **shm_array, lock_t *sem_ids);
+int multiply(int i, int j, shm_t **shm_array);
 
 /*!
  * @brief       Funzione che calcola la somma di una riga e aggiorna il

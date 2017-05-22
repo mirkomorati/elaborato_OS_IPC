@@ -22,10 +22,12 @@ int main(int argc, char **argv) {
     int opt;
     char *short_opt = "A:B:C:N:P:h";
 
-    shm_t A, B, C;
-    shm_t S;
+    shm_t A, B, C, S;
+    shm_t *shm_array[5] = {&A, &B, &C, &S, NULL};
     int N;
     int P;
+    lock_t sem_ids;
+    int queue_id;
 
     if (argc < 10) {
         char *buf = "Error: too few arguments.\n\
@@ -73,16 +75,14 @@ int main(int argc, char **argv) {
                 exit(1);
         }
     }
+
+    int pid_to_pipe[P];
+
     A.N = N;
     B.N = N;
     C.N = N;
     S.N = 1;
     S.path = "/dev/urandom";
-
-    shm_t *shm_array[5] = {&A, &B, &C, &S, NULL};
-    lock_t sem_ids;
-    int pid_to_pipe[P];
-    int queue_id;
 
     if(init(shm_array, &sem_ids, P) == -1) {
         perror("init");
@@ -99,8 +99,9 @@ int main(int argc, char **argv) {
         sig_end(-1);
     }
 
-    int status;
-    while(wait(&status) < 0);
+    int status, wpid;
+    while((wpid = wait(&status)) > 0)
+        printf("terminazione normale: il figlio %i ha terminato\n", wpid);
 
     for (int i = 0; i < N; i++) {
         for (int j = 0; j < N; j++) {
@@ -112,36 +113,46 @@ int main(int argc, char **argv) {
 
     shmatrix_to_csv(&C);
 
-    sig_end(0);
+    printf("--- SOMMA: %li ---\n", S.shmaddr[0]);
+
+    sig_free_sem(false, NULL);
+    sig_free_memory(false, NULL);
+    sig_free_queue(false, NULL);
+    exit(0);
 }
 
 
 int init(shm_t **shm_array, lock_t *sem_ids, int P) {
-
     #ifdef DEBUG   
     printf("Loading matrix\n\n");
     #endif
 
-    bool parse;
-    for (int i = 0; shm_array[i] != NULL; i++) {
-        parse = true;
-        if (shm_array[i + 2] == NULL || shm_array[i + 1] == NULL)
-            parse = false;
-
-        if (shm_load(shm_array[i], parse) == -1) {
-            perror("shm_load");
-            return -1;
-        }
+    if (shm_load(shm_array[0], true) == -1) {
+        perror("shm_load A");
+        return -1;
     }
+    if (shm_load(shm_array[1], true) == -1) {
+        perror("shm_load B");
+        return -1;
+    }
+    if (shm_load(shm_array[2], false) == -1) {
+        perror("shm_load C");
+        return -1;
+    }
+    if (shm_load(shm_array[3], false) == -1) {
+        perror("shm_load S");
+        return -1;
+    }
+    shm_array[3]->shmaddr[0] = 0;
+    
 
     if ((sem_ids->queue_sem = sem_create(1, 1)) == -1) return -1;
-    if ((sem_ids->A_sem = sem_create(shm_array[0]->N, 1)) == -1) return -1;
-    if ((sem_ids->B_sem = sem_create(shm_array[1]->N, 1)) == -1) return -1;
-    if ((sem_ids->result_sem = sem_create(2, 1)) == -1) return -1;
+    if ((sem_ids->S_sem = sem_create(1, 1)) == -1) return -1;
     if ((sem_ids->pipe_sem = sem_create(P, 0)) == -1) return -1;
 
     return 0;
 }
+
 
 int make_child(shm_t **shm_array , lock_t *sem_ids, int P, int *pid_to_pipe, int *queue_id) {
     int *tmp_pipe[P];
@@ -202,10 +213,13 @@ int run(int N, int P, int *pid_to_pipe, int queue, lock_t *sem_ids) {
     cmd_list_t *cmd_list = NULL; // attenzione gestione della lista errata.
     int number_of_cmd = generate_cmd_list(&cmd_list, N);
     int executed_cmds = 0;
+    int completed_row[N];
     cmd_t cmd;
     char p_free[P];
-    for (int i = 0; i < P; ++i)
+    for (int i = 0; i < P; ++i) {
         p_free[i] = 1;
+        completed_row[i] = 0;
+    }
 
     printf("inizio il ciclo di base di run\n");
     while(executed_cmds < number_of_cmd && cmd_list != NULL){
@@ -213,19 +227,28 @@ int run(int N, int P, int *pid_to_pipe, int queue, lock_t *sem_ids) {
         if ((p = first_free(p_free, P))!= -1){
             printf("invio comando %s al figlio %i\n",cmd_list->cmd.role == MULTIPLY ? "MULTIPLY" : "SUM", p);
             // ci sono processi liberi
+            
+            /*
+            // NON FUNZIONA, l'idea e' di aggiungere una sum non eseguibile perche' non sono finite le multiply su quella riga in coda alla lista
+            
+            if (cmd_list->cmd.role == SUM && completed_row[cmd_list->cmd.data.row] != N) {
+                add_to_cmd_list(&cmd_list, &cmd_list->cmd);
+                cmd_list = cmd_list->next;
+                continue;
+            }
+            */
+            
             send_cmd(&cmd_list->cmd, pid_to_pipe[p], p, sem_ids->pipe_sem);
             cmd_list = cmd_list->next;
             p_free[p] = 0;
         } else {
-            printf("attendo con p = %i\n", p);
             msg_t msg;
             rcv_msg(&msg, queue);
-            if(msg.success){
-                printf("il figlio c'è l'ha fatta\n");
+            if (msg.success) {
                 p_free[msg.id] = 1;
                 executed_cmds++;
-            }else{
-                printf("il figlio non c'è l'ha fatta\n");
+                completed_row[msg.cmd.data.c.i]++;
+            } else {
                 send_cmd(&msg.cmd, pid_to_pipe[msg.id], p, sem_ids->pipe_sem);
             }
         }
@@ -361,8 +384,8 @@ static inline int first_free(char *a, int dim){
 int generate_cmd_list(cmd_list_t **head, int N){
     cmd_t cmd;
     int cmd_number = 0;
-    for (int i = 0; i < N; ++i){
-        for (int j = 0; j < N; ++j){
+    for (int i = 0; i < N; ++i) {
+        for (int j = 0; j < N; ++j) {
             cmd.role = MULTIPLY;
             cmd.data.c.i = i;
             cmd.data.c.j = j;
@@ -374,6 +397,7 @@ int generate_cmd_list(cmd_list_t **head, int N){
         add_to_cmd_list(head, &cmd);
         cmd_number++;
     }
+
     return cmd_number;
 }
 
