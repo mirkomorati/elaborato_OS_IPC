@@ -218,6 +218,9 @@ int run(int N, int P, int *pid_to_pipe, int queue, lock_t *sem_ids) {
     char p_free[P];
     for (int i = 0; i < P; ++i) {
         p_free[i] = 1;
+    }
+
+    for (int i = 0; i < N; i++) {
         completed_row[i] = 0;
     }
 
@@ -228,15 +231,13 @@ int run(int N, int P, int *pid_to_pipe, int queue, lock_t *sem_ids) {
             printf("invio comando %s al figlio %i\n",cmd_list->cmd.role == MULTIPLY ? "MULTIPLY" : "SUM", p);
             // ci sono processi liberi
             
-            /*
             // NON FUNZIONA, l'idea e' di aggiungere una sum non eseguibile perche' non sono finite le multiply su quella riga in coda alla lista
-            
             if (cmd_list->cmd.role == SUM && completed_row[cmd_list->cmd.data.row] != N) {
+                printf("Aggiungo SUM %i in coda, completed: %i\n", cmd_list->cmd.data.row, completed_row[cmd_list->cmd.data.row]);
                 add_to_cmd_list(&cmd_list, &cmd_list->cmd);
                 cmd_list = cmd_list->next;
                 continue;
             }
-            */
             
             send_cmd(&cmd_list->cmd, pid_to_pipe[p], p, sem_ids->pipe_sem);
             cmd_list = cmd_list->next;
@@ -247,9 +248,12 @@ int run(int N, int P, int *pid_to_pipe, int queue, lock_t *sem_ids) {
             if (msg.success) {
                 p_free[msg.id] = 1;
                 executed_cmds++;
-                completed_row[msg.cmd.data.c.i]++;
             } else {
                 send_cmd(&msg.cmd, pid_to_pipe[msg.id], p, sem_ids->pipe_sem);
+            }
+            if (msg.cmd.role == MULTIPLY) {
+                completed_row[msg.cmd.data.c.i]++;
+                printf("i: %i, completed: %i\n", msg.cmd.data.c.i, completed_row[msg.cmd.data.c.i]);
             }
         }
     }
@@ -392,12 +396,15 @@ int generate_cmd_list(cmd_list_t **head, int N){
             add_to_cmd_list(head, &cmd);
             cmd_number++;
         }
+    }
+
+    for (int i = 0; i < N; i++) {
         cmd.role = SUM;
         cmd.data.row = i;
         add_to_cmd_list(head, &cmd);
         cmd_number++;
     }
-
+    
     return cmd_number;
 }
 
