@@ -233,9 +233,12 @@ int run(int N, int P, int *pid_to_pipe, int queue, lock_t *sem_ids) {
             
             // NON FUNZIONA, l'idea e' di aggiungere una sum non eseguibile perche' non sono finite le multiply su quella riga in coda alla lista
             if (cmd_list->cmd.role == SUM && completed_row[cmd_list->cmd.data.row] != N) {
-                printf("Aggiungo SUM %i in coda, completed: %i\n", cmd_list->cmd.data.row, completed_row[cmd_list->cmd.data.row]);
+                //printf("Aggiungo SUM %i in coda, completed: %i\n", cmd_list->cmd.data.row, completed_row[cmd_list->cmd.data.row]);
                 add_to_cmd_list(&cmd_list, &cmd_list->cmd);
                 cmd_list = cmd_list->next;
+                // MAGIA --------> NON TOCCARE
+                p_free[p] = 0;
+                // FINE MAGIA
                 continue;
             }
             
@@ -253,7 +256,7 @@ int run(int N, int P, int *pid_to_pipe, int queue, lock_t *sem_ids) {
             }
             if (msg.cmd.role == MULTIPLY) {
                 completed_row[msg.cmd.data.c.i]++;
-                printf("i: %i, completed: %i\n", msg.cmd.data.c.i, completed_row[msg.cmd.data.c.i]);
+                //printf("i: %i, completed: %i\n", msg.cmd.data.c.i, completed_row[msg.cmd.data.c.i]);
             }
         }
     }
