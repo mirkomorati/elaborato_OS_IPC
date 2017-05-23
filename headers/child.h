@@ -5,6 +5,7 @@
 #include "shm_lib.h"
 #include "sem_lib.h"
 #include "msg_lib.h"
+#include "io_lib.h"
 
 /*!
  * \brief      	Rappresenta il "main" di ogni figlio. N.B da questa funzione o da qualsiasi 

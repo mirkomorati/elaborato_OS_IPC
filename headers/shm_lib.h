@@ -18,14 +18,6 @@ typedef struct {
 }shm_t;
 
 /*!
- * \brief       Funzione per parsare il file contenente la matrice e caricarla
- *              in memoria condivisa
- *
- * \param       M   Puntatore a un oggetto shm_t
- */
-void shmatrix_parse(shm_t *M);
-
-/*!
  * \brief       Chiama le funzioni utili a creare un nuovo oggetto vuoto
  *              shm_t, parsarlo e caricarlo in memoria condivisa
  *
@@ -45,4 +37,19 @@ int shm_load(shm_t *M, bool parse);
  */
 int shm_create(shm_t *M);
 
+/*!
+ * \brief      Funzione per parsare il file contenente la matrice e caricarla
+ *             in memoria condivisa
+ *
+ * \param      M   Puntatore a un oggetto shm_t
+ */
+void shmatrix_from_csv(shm_t *M);
+
+/**
+ * @brief      Funzione per convertire la matrice caricata in memoria condivisa
+ *             e salvarla su file in formato csv
+ *
+ * @param      M     La matrice da convertire
+ */     
+void shmatrix_to_csv(shm_t *M);
 #endif

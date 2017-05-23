@@ -2,6 +2,7 @@
 #include "../headers/sem_lib.h"
 #include "../headers/ending_lib.h"
 
+
 int sem_create(int nsem, int init) {
 	int id;
 	sig_sem_t tmp_sem;
@@ -11,12 +12,12 @@ int sem_create(int nsem, int init) {
 		semctl_arg[i] = init;
 
 	if ((id = semget(IPC_PRIVATE, nsem, IPC_CREAT | 0666)) == -1){
-		perror("semaphore create");
+		sys_err("semaphore create");
 		return -1;
 	}
 
 	if (semctl(id, 0, SETALL, semctl_arg) == -1){
-		perror("semaphore init");
+		sys_err("semaphore init");
 		return -1;
 	}
 
@@ -28,6 +29,7 @@ int sem_create(int nsem, int init) {
 	return id;
 }
 
+
 int sem_lock(int id, int nsem) {
 	struct sembuf sem_op;
 
@@ -35,11 +37,12 @@ int sem_lock(int id, int nsem) {
 	sem_op.sem_op = -1;
 	sem_op.sem_flg = 0;
 	if (semop(id, &sem_op, 1) == -1) {
-		perror("ERROR semaphore lock");
+		sys_err("ERROR semaphore lock");
 		return -1;
 	}
 	return 0;
 }
+
 
 int sem_unlock(int id, int nsem) {
 	struct sembuf sem_op;
@@ -48,7 +51,7 @@ int sem_unlock(int id, int nsem) {
 	sem_op.sem_op = 1;
 	sem_op.sem_flg = 0;
 	if (semop(id, &sem_op, 1) == -1) {
-		perror("ERROR semaphore unlock");
+		sys_err("ERROR semaphore unlock");
 		return -1;
 	}
 	return 0;

@@ -1,15 +1,61 @@
 #include "../headers/io_lib.h"
 
-#define BUF_SIZE 4096
-
-void shmatrix_to_csv(shm_t *M) {
+void sys_print(int fd, char *str, ...) {
     char buf[BUF_SIZE];
-    for (int i = 0; i < M->N; i++) {
-        for (int j = 0; j < M->N; j++) {
-            int bytes = sprintf(buf, (j + 1 == M->N ? "%li\n" : "%li;"), M->shmaddr[i * M->N + j]);
-            if (write(M->fd, buf, bytes) != bytes) {
-                perror("ERROR shmatrix_to_csv - write");
-            }
+    char tmp_buf[BUF_SIZE];
+    char c;
+    char *tmp_str;
+    int i = 0, j;
+    va_list arg;
+    va_start(arg, str);
+
+    while ((c = *str++) != '\0') {
+        switch(c) {
+            case '%':
+                switch (c = *str++) {
+                    case '%':
+                        buf[i++] = '%';
+                        break;
+                    case 'i':
+                        sprintf(tmp_buf, "%i", va_arg(arg, int));
+                        j = 0;
+                        while (tmp_buf[j] != '\0')
+                            buf[i++] = tmp_buf[j++];
+                        break;
+                    case 'l':
+                        c = *str++;     // skippo i di %li
+                        sprintf(tmp_buf, "%li", va_arg(arg, long));
+                        j = 0;
+                        while (tmp_buf[j] != '\0')
+                            buf[i++] = tmp_buf[j++];
+                        break;
+                    case 's':
+                        tmp_str = va_arg(arg, char *);
+                        j = 0;
+                        while (tmp_str[j] != '\0')
+                            buf[i++] = tmp_str[j++];
+                        break;
+                }
+                break;
+
+            case '\n':
+                buf[i++] = '\n';
+                break;
+
+            case '\t':
+                buf[i++] = '\t'; 
+                break;
+
+            default:
+                buf[i++] = c;
         }
-    }    
+    }
+    
+    write(fd, buf, i); 
+    va_end(arg);
+}
+
+void sys_err(char *str) {
+    char *error = strerror(errno);
+    sys_print(STDERR, "%s: %s\n", str, error);
 }

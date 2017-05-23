@@ -5,6 +5,7 @@
 #ifndef ENDING_LIB_H
 #define ENDING_LIB_H
 #include <stdbool.h>
+#include "io_lib.h"
 
 /*!
  * \struct      Struttura che permette di liberare un'area di memoria condivisa
