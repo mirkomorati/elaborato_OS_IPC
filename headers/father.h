@@ -62,21 +62,22 @@ int make_child(shm_t **shm_array, lock_t *sem_ids, int P, int *pid_to_pipe, int 
  */
 int run(int N, int P, int *pid_to_pipe, int queue, lock_t *sem_ids);
 
-/**
- * @brief      	Crea una lista di comandi che devono essere inviati ai figli
+/*!
+ * \brief      	Crea una lista di comandi che devono essere inviati ai figli
  *
- * @param[out]  head 	È la testa della lista dei comandi da creare.
- * @param[in]  	N		È l'ordine delle matrici.     	
+ * \param[out]  multiply_head 	È la testa della lista dei comandi di tipo moltiplicazione da creare.
+ * \param[out]	sum_head		È la testa della lista dei comandi di tipo somma da creare
+ * \param[in]  	N				È l'ordine delle matrici.     	
  *
- * @return     	ritorna il numero di comandi creati.
+ * \return     	ritorna il numero di comandi creati.
  */
-int generate_cmd_list(cmd_list_t **head, int N);
+int generate_cmd_list(cmd_list_t **multiply_head, cmd_list_t **sum_head, int N);
 
-/**
- * @brief      	Aggiunge un comando in coda alla lista che inizia in head
+/*!
+ * \brief      	Aggiunge un comando in coda alla lista che inizia in head
  *
- * @param[out]  head	Testa della lista sulla quale aggiungere il comando
- * @param[in]	cmd   	Il comando da aggiungere
+ * \param[out]  head	Testa della lista sulla quale aggiungere il comando
+ * \param[in]	cmd   	Il comando da aggiungere
  */
 void add_to_cmd_list(cmd_list_t **head, cmd_t *cmd);
 

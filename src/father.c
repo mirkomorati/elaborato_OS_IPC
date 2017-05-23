@@ -105,7 +105,7 @@ int main(int argc, char **argv) {
 
     for (int i = 0; i < N; i++) {
         for (int j = 0; j < N; j++) {
-            printf("%li\t", C.shmaddr[i * N + j]);
+            printf("[%i][%i]:\t%li\t", i, j, C.shmaddr[i * N + j]);
         }
         printf("\n");
     } 
@@ -210,9 +210,9 @@ int make_child(shm_t **shm_array , lock_t *sem_ids, int P, int *pid_to_pipe, int
 
 
 int run(int N, int P, int *pid_to_pipe, int queue, lock_t *sem_ids) {
-    cmd_list_t *cmd_list = NULL; // attenzione gestione della lista errata.
-    int number_of_cmd = generate_cmd_list(&cmd_list, N);
-    int executed_cmds = 0;
+    cmd_list_t *multiply_cmd_list = NULL;
+    cmd_list_t *sum_cmd_list = NULL;
+    int number_of_cmd = generate_cmd_list(&multiply_cmd_list, &sum_cmd_list, N);
     int completed_row[N];
     cmd_t cmd;
     char p_free[P];
@@ -225,38 +225,37 @@ int run(int N, int P, int *pid_to_pipe, int queue, lock_t *sem_ids) {
     }
 
     printf("inizio il ciclo di base di run\n");
-    while(executed_cmds < number_of_cmd && cmd_list != NULL){
+    while(number_of_cmd >= 1){
         int p;
         if ((p = first_free(p_free, P))!= -1){
-            printf("invio comando %s al figlio %i\n",cmd_list->cmd.role == MULTIPLY ? "MULTIPLY" : "SUM", p);
             // ci sono processi liberi
-            
-            // NON FUNZIONA, l'idea e' di aggiungere una sum non eseguibile perche' non sono finite le multiply su quella riga in coda alla lista
-            if (cmd_list->cmd.role == SUM && completed_row[cmd_list->cmd.data.row] != N) {
-                //printf("Aggiungo SUM %i in coda, completed: %i\n", cmd_list->cmd.data.row, completed_row[cmd_list->cmd.data.row]);
-                add_to_cmd_list(&cmd_list, &cmd_list->cmd);
-                cmd_list = cmd_list->next;
-                // MAGIA --------> NON TOCCARE
+            if (sum_cmd_list != NULL && completed_row[sum_cmd_list->cmd.data.row] == N){
+                // se ci sono ancora comandi di tipo somma e sono terminate le moltiplicazioni per quella riga
+                send_cmd(&sum_cmd_list->cmd, pid_to_pipe[p], p, sem_ids->pipe_sem);
+                sum_cmd_list = sum_cmd_list->next;
                 p_free[p] = 0;
-                // FINE MAGIA
-                continue;
+            } else if (multiply_cmd_list != NULL){
+                // a questo punto o ho finito le moltiplicazioni (dubito) o non ho finito le moltiplicazioni per la riga
+                send_cmd(&multiply_cmd_list->cmd, pid_to_pipe[p], p, sem_ids->pipe_sem);
+                multiply_cmd_list = multiply_cmd_list->next;
+                p_free[p] = 0;
+            } else {
+                // ho finito le moltiplicazioni ma non mi è ancora arrivato il riscontro di conseguenza non posso
+                // aver finito, per non creare un ciclo infinito occupo il processo ed aspetto fino a quando non 
+                // finisce uno di quelli impegnati nelle ultime moltiplicazioni. 
+                p_free[p] = 0; 
             }
-            
-            send_cmd(&cmd_list->cmd, pid_to_pipe[p], p, sem_ids->pipe_sem);
-            cmd_list = cmd_list->next;
-            p_free[p] = 0;
         } else {
             msg_t msg;
             rcv_msg(&msg, queue);
             if (msg.success) {
                 p_free[msg.id] = 1;
-                executed_cmds++;
+                number_of_cmd--;
+                if (msg.cmd.role == MULTIPLY){
+                    completed_row[msg.cmd.data.c.i]++;
+                }
             } else {
                 send_cmd(&msg.cmd, pid_to_pipe[msg.id], p, sem_ids->pipe_sem);
-            }
-            if (msg.cmd.role == MULTIPLY) {
-                completed_row[msg.cmd.data.c.i]++;
-                //printf("i: %i, completed: %i\n", msg.cmd.data.c.i, completed_row[msg.cmd.data.c.i]);
             }
         }
     }
@@ -269,126 +268,14 @@ int run(int N, int P, int *pid_to_pipe, int queue, lock_t *sem_ids) {
     return 0;
 }
 
-/*
-int run(int N, int P, pid_to_pipe_t *pid_to_pipe, int queue) {
-    int completed_rows[N];
-    for (int i = 0; i < N; ++i)
-        completed_rows[i] = 0;
 
-    cmd_t cmd;
-    msg_t msg;
-
-    int i = 0, j = 0, errors = 0;
-    
-    for (int p = 0; p < P; ++p) {
-        cmd.role = MULTIPLY;
-        cmd.data.c.i = i;
-        cmd.data.c.j = j;
-        if (send_cmd(&cmd, pid_to_pipe[p].pipe_fd) == -1) {
-            // QUI SE IL NUMERO DI PROCESSI È MAGGIORE DEL NUMERO DI RIGA È NECESSARIO INVIARE ANCHE UNA SOMMA.
-            if(++errors > MAX_ERRORS) {
-                perror("too many errors");
-                return -1;
-            } else {
-                printf("comando non mandato a: %i, su pipe %i\n", pid_to_pipe[p].pid, pid_to_pipe[p].pipe_fd);
-                j--; // da tenere così.
-                j %= N;
-                i -= j / N;
-            }
-        } else if (p != P - 1) {
-            j++;
-            i += j / N;
-            j %= N;
-        }
-    }
-
-    errors = 0;
-
-
-    while(true){
-
-        if (i == N) { 
-            printf("waiting for ctrl-c...\n");
-            usleep(2e6);
-            cmd.role = END;
-            for (int p = 0; p < P; ++p)
-            {
-                if (send_cmd(&cmd, pid_to_pipe[p].pipe_fd) == -1) {
-                    perror("sending end cmd");
-                    printf("comando non mandato a: %i, su pipe %i\n", pid_to_pipe[p].pid, pid_to_pipe[p].pipe_fd);
-                } else{
-                    int status;
-                    waitpid(pid_to_pipe[p].pid, &status, 0);
-                    printf("inviato END al figlio: %i sulla pipe: %i\n", pid_to_pipe[p].pid, pid_to_pipe[p].pipe_fd);
-                }
-            }
-            break;
-        }
-
-        if (rcv_msg(&msg, queue) == -1) {
-            if(++errors > MAX_ERRORS) {
-                perror("too many errors");
-                return -1;
-            }
-        }
-
-        int pipe;
-        for (int p = 0; p < P; ++p)
-            if (msg.pid == pid_to_pipe[p].pid)
-                pipe = pid_to_pipe[p].pipe_fd;
-
-        if(msg.success) {
-
-            pending--;
-            if(msg.cmd.role == MULTIPLY && ++completed_rows[msg.cmd.data.c.i] == N) {
-                cmd.role = SUM;
-                cmd.data.row = msg.cmd.data.c.i;
-            } else {
-                j++;
-                i += j / N;
-                j %= N;
-                cmd.role = MULTIPLY;
-                cmd.data.c.i = i;
-                cmd.data.c.j = j;
-            }
-
-            if (i == N)
-                continue;
-
-            if (send_cmd(&cmd, pipe) == -1) {
-                printf("comando non mandato a: %i, su pipe %i\n", msg.pid, pipe);
-                if(++errors > MAX_ERRORS) {
-                    perror("too many errors");
-                    return -1;
-                } else {
-                    j--; // da tenere così.
-                    j %= N;
-                    i -= j / N;
-                }
-            }
-        } else {
-            #ifdef DEBUG
-            printf("Message received FAIL\n");
-            #endif
-            if (send_cmd(&msg.cmd, pipe) == -1) {
-                if(++errors > MAX_ERRORS) {
-                    perror("too many errors");
-                    return -1;
-                } 
-            }
-        }
-    }
-
-    return 0;
-}
-*/
 static inline int first_free(char *a, int dim){
     for (int i = 0; i < dim; ++i)
         if (a[i] == 1) return i;
     return -1;
 }
 
-int generate_cmd_list(cmd_list_t **head, int N){
+int generate_cmd_list(cmd_list_t **multiply_head, cmd_list_t **sum_head, int N){
     cmd_t cmd;
     int cmd_number = 0;
     for (int i = 0; i < N; ++i) {
@@ -396,18 +283,15 @@ int generate_cmd_list(cmd_list_t **head, int N){
             cmd.role = MULTIPLY;
             cmd.data.c.i = i;
             cmd.data.c.j = j;
-            add_to_cmd_list(head, &cmd);
+            add_to_cmd_list(multiply_head, &cmd);
             cmd_number++;
         }
-    }
-
-    for (int i = 0; i < N; i++) {
         cmd.role = SUM;
         cmd.data.row = i;
-        add_to_cmd_list(head, &cmd);
+        add_to_cmd_list(sum_head, &cmd);
         cmd_number++;
     }
-    
+
     return cmd_number;
 }
 
