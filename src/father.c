@@ -103,6 +103,7 @@ int main(int argc, char **argv) {
     while((wpid = wait(&status)) > 0)
         printf("terminazione normale: il figlio %i ha terminato\n", wpid);
 
+/*
     for (int i = 0; i < N; i++) {
         for (int j = 0; j < N; j++) {
             printf("[%i][%i]:\t%li\t", i, j, C.shmaddr[i * N + j]);
@@ -110,7 +111,8 @@ int main(int argc, char **argv) {
         printf("\n");
     } 
     printf("\n");
-
+*/
+    
     shmatrix_to_csv(&C);
 
     printf("--- SOMMA: %li ---\n", S.shmaddr[0]);

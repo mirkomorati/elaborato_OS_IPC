@@ -50,12 +50,12 @@ void shmatrix_parse(shm_t *M) {
             for (value = strtok_r(line, ";", &brkb); value; value = strtok_r(NULL, ";", &brkb)) {
                 M->shmaddr[i] = atol(value);
 #ifdef DEBUG
-                printf("%i: %li\t", i, M->shmaddr[i]);
+//                printf("%i: %li\t", i, M->shmaddr[i]);
 #endif
                 i++;
             }
 #ifdef DEBUG
-            printf("\n");
+//            printf("\n");
 #endif
         }
     }
