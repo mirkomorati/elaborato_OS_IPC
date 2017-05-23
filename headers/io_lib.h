@@ -12,5 +12,6 @@
 
 void sys_print(int fd, char *str, ...);
 
+void sys_err(char *str);
 
 #endif

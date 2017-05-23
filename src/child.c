@@ -4,7 +4,7 @@ int child(int child_id, shm_t **shm_array, int pipe_fd, int queue_id, lock_t *se
 	cmd_t cmd;
 	while (true) {
 		if (rcv_cmd(&cmd, pipe_fd, child_id, sem_ids->pipe_sem) == -1)
-			perror("read fallita\n");
+			sys_err("read fallita\n");
 		else {
 			switch (cmd.role) {
 				case MULTIPLY:
@@ -31,7 +31,7 @@ int child(int child_id, shm_t **shm_array, int pipe_fd, int queue_id, lock_t *se
 			msg.id = child_id;
 
 			if(send_msg(&msg, queue_id, sem_ids->queue_sem) == -1) {
-				perror("send_msg child");
+				sys_err("send_msg child");
 				return -1;
 			}
 		}
@@ -79,7 +79,7 @@ int sum(int k, shm_t **shm_array, lock_t *sem_ids) {
 	}
 
 	if (sem_lock(sem_ids->S_sem, 0) == -1) {
-		perror("ERROR sum - sem_lock S");
+		sys_err("ERROR sum - sem_lock S");
 		return -1;
 	}
 	S->shmaddr[0] += res;

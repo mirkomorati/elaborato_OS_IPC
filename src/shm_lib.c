@@ -11,18 +11,18 @@ int shm_create(shm_t *M) {
     sig_shmem_t to_delete;
 
     if ((M->shmid = shmget(IPC_PRIVATE, size, flag)) == -1) {
-        perror("ERROR shm_create - shmget");
+        sys_err("ERROR shm_create - shmget");
         return -1;
     }
 
 
     if ((M->fd = open(M->path, O_RDWR, S_IRUSR | S_IWUSR)) == -1) {
-        perror("ERROR shm_create - open");
+        sys_err("SYS_ERROR shm_create - open");
         return -1;
     }
 
     if (*(M->shmaddr = (long *) shmat(M->shmid, NULL, 0)) == -1) {
-        perror("ERROR shm_create - shmat");
+        sys_err("ERROR shm_create - shmat");
         return -1;
     }
 
@@ -37,7 +37,7 @@ int shm_create(shm_t *M) {
 
 int shm_load(shm_t *M, bool parse) {
 	if(shm_create(M) == -1) {
-        perror("shm_create");
+        sys_err("shm_create");
         return -1;
     }
 
@@ -53,7 +53,7 @@ void shmatrix_to_csv(shm_t *M) {
         for (int j = 0; j < M->N; j++) {
             int bytes = sprintf(buf, (j + 1 == M->N ? "%li\n" : "%li;"), M->shmaddr[i * M->N + j]);
             if (write(M->fd, buf, bytes) != bytes) {
-                perror("ERROR shmatrix_to_csv - write");
+                sys_err("ERROR shmatrix_to_csv - write");
             }
         }
     }    

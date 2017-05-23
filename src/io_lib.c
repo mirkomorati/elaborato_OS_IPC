@@ -54,3 +54,8 @@ void sys_print(int fd, char *str, ...) {
     write(fd, buf, i); 
     va_end(arg);
 }
+
+void sys_err(char *str) {
+    char *error = strerror(errno);
+    sys_print(STDERR, "%s: %s\n", str, error);
+}

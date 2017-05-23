@@ -50,7 +50,7 @@ int main(int argc, char **argv) {
                 struct stat st;
                 if(stat(optarg, &st) == -1 && errno == ENOENT)
                     if(creat(optarg, S_IRUSR | S_IWUSR) == -1)
-                        perror("Error creating matrixC file: ");
+                        sys_err("Error creating matrixC file: ");
                 C.path = optarg;
                 break;
             }
@@ -82,17 +82,17 @@ int main(int argc, char **argv) {
     S.path = "/dev/urandom";
 
     if(init(shm_array, &sem_ids, P) == -1) {
-        perror("init");
+        sys_err("init");
         sig_end(-1);
     }
 
     if (make_child(shm_array, &sem_ids, P, pid_to_pipe, &queue_id) == -1){
-        perror("make_child");
+        sys_err("make_child");
         sig_end(-1);
     }
 
     if (run(N, P, pid_to_pipe, queue_id, &sem_ids) == -1) {
-        perror("run");
+        sys_err("run");
         sig_end(-1);
     }
 
@@ -127,19 +127,19 @@ int init(shm_t **shm_array, lock_t *sem_ids, int P) {
     #endif
 
     if (shm_load(shm_array[0], true) == -1) {
-        perror("shm_load A");
+        sys_err("shm_load A");
         return -1;
     }
     if (shm_load(shm_array[1], true) == -1) {
-        perror("shm_load B");
+        sys_err("shm_load B");
         return -1;
     }
     if (shm_load(shm_array[2], false) == -1) {
-        perror("shm_load C");
+        sys_err("shm_load C");
         return -1;
     }
     if (shm_load(shm_array[3], false) == -1) {
-        perror("shm_load S");
+        sys_err("shm_load S");
         return -1;
     }
     shm_array[3]->shmaddr[0] = 0;
@@ -163,7 +163,7 @@ int make_child(shm_t **shm_array , lock_t *sem_ids, int P, int *pid_to_pipe, int
     for (int i = 0; i < P; ++i){
         tmp_pipe[i] = (int *) malloc(2*sizeof(int));
         if(pipe(tmp_pipe[i]) == -1){
-            perror("ERROR make_child - creating pipe");
+            sys_err("ERROR make_child - creating pipe");
             return -1;
         }
     }
@@ -171,7 +171,7 @@ int make_child(shm_t **shm_array , lock_t *sem_ids, int P, int *pid_to_pipe, int
     sys_print(STDOUT, "creating queue\n");
     #endif
     if((tmp_queue_id =msgget(IPC_PRIVATE, (IPC_CREAT | IPC_EXCL | 0666))) == -1){
-        perror("ERROR make_child - creating queue");
+        sys_err("ERROR make_child - creating queue");
         return -1;
     }
     sig_add_queue(1, tmp_queue_id);
@@ -183,7 +183,7 @@ int make_child(shm_t **shm_array , lock_t *sem_ids, int P, int *pid_to_pipe, int
 
     for (int i = 0; i < P; ++i){
         if((pids[i] = fork()) < 0){
-            perror("ERROR make_child - creating child");
+            sys_err("ERROR make_child - creating child");
             return -1;
         }
         else if (pids[i] == 0){

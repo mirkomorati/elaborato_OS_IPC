@@ -198,7 +198,7 @@ void sig_free_memory(bool setting, sig_shmem_list_t *arg){
         while(list != NULL){
             if (shmctl(list->obj.shmid, IPC_RMID, NULL) == -1){
                 sys_print(STDOUT, "ERROR: shmid: %i", list->obj.shmid);
-                perror("shmctl sig_free_memory");
+                sys_err("shmctl sig_free_memory");
                 return;
             }
             list = list->next;
@@ -216,7 +216,7 @@ void sig_shmdt(bool setting, sig_shmem_list_t *arg){
 	else if(list != NULL) {
         while(list != NULL){
             if (shmdt(list->obj.shmaddr) == -1) {
-                perror("shmdt");
+                sys_err("shmdt");
                 return;
             }
             list = list->next;
@@ -233,7 +233,7 @@ void sig_free_sem(bool setting, sig_sem_list_t *arg){
 		sig_sem_list_t *head = list;
         while(list != NULL){
             if (semctl(list->obj.semid, list->obj.semnum, IPC_RMID) == -1){
-                perror("semctl sig_free_sem");
+                sys_err("semctl sig_free_sem");
                 return;
             }
             list = list->next;
@@ -252,7 +252,7 @@ void sig_free_queue(bool setting, sig_queue_list_t *arg){
 		sig_queue_list_t *head = list;
         while(list != NULL){
             if (msgctl(list->obj, IPC_RMID, NULL) == -1){
-                perror("msgctl");
+                sys_err("msgctl");
                 return;
             }
             list = list->next;
