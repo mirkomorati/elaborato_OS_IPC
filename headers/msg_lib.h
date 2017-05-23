@@ -10,6 +10,7 @@
 #include <stdbool.h>
 #include <stdint.h>
 #include "sem_lib.h"
+#include "io_lib.h"
 
 /*! 
  * \brief 		Rappresenta il ruolo di un figlio

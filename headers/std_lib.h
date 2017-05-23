@@ -25,6 +25,7 @@
 #include <sys/stat.h> 	// funzione stat per ottenere lo status di un file.
 #include <stdbool.h>	// per avere i booleani in C.
 #include <errno.h>		// gestione degli errori, vedesi ENOENT.
+#include <stdarg.h>
 
 #define STDIN 0
 #define STDOUT 1

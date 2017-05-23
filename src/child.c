@@ -9,18 +9,18 @@ int child(int child_id, shm_t **shm_array, int pipe_fd, int queue_id, lock_t *se
 			switch (cmd.role) {
 				case MULTIPLY:
 					#ifdef DEBUG
-					printf("FIGLIO %i\tMULTIPLY\ti: %i, j: %i\n", child_id, cmd.data.c.i, cmd.data.c.j);
+					sys_print(STDOUT, "FIGLIO %i\tMULTIPLY\ti: %i, j: %i\n", child_id, cmd.data.c.i, cmd.data.c.j);
 					#endif
 					multiply(cmd.data.c.i, cmd.data.c.j, shm_array);
 				break;
 				case SUM:
 					#ifdef DEBUG
-					printf("FIGLIO %i\tSUM\t\trow: %i\n", getpid(), cmd.data.row);
+					sys_print(STDOUT, "FIGLIO %i\tSUM\t\trow: %i\n", child_id, cmd.data.row);
 					#endif
 					sum(cmd.data.row, shm_array, sem_ids);
 				break;
 				case END:
-					printf("FIGLIO %i\tEND\n", getpid());
+					sys_print(STDOUT, "FIGLIO %i\tEND\n", getpid());
 					return 0;
 			}
 
@@ -76,9 +76,7 @@ int sum(int k, shm_t **shm_array, lock_t *sem_ids) {
 
 	for (int i = 0; i < C->N; i++) {
 		res += C->shmaddr[k * C->N + i];
-	//	printf("%li\t", C->shmaddr[k * C->N + i]);
 	}
-	//printf("\n");
 
 	if (sem_lock(sem_ids->S_sem, 0) == -1) {
 		perror("ERROR sum - sem_lock S");

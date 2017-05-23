@@ -2,6 +2,7 @@
 #include "../headers/sem_lib.h"
 #include "../headers/ending_lib.h"
 
+
 int sem_create(int nsem, int init) {
 	int id;
 	sig_sem_t tmp_sem;
@@ -28,6 +29,7 @@ int sem_create(int nsem, int init) {
 	return id;
 }
 
+
 int sem_lock(int id, int nsem) {
 	struct sembuf sem_op;
 
@@ -40,6 +42,7 @@ int sem_lock(int id, int nsem) {
 	}
 	return 0;
 }
+
 
 int sem_unlock(int id, int nsem) {
 	struct sembuf sem_op;

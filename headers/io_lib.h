@@ -7,12 +7,10 @@
 #include "std_lib.h"
 #include "shm_lib.h"
 
-/**
- * @brief      Conversione di una matrice salvata come shared memory
- *             in formato csv e salvataggio su file
- *
- * @param      M     La matrice da convertire
- */     
-void shmatrix_to_csv(shm_t *M);
+#define BUF_SIZE 4096
+
+
+void sys_print(int fd, char *str, ...);
+
 
 #endif

@@ -30,9 +30,7 @@ int main(int argc, char **argv) {
     int queue_id;
 
     if (argc < 10) {
-        char *buf = "Error: too few arguments.\n\
-        usage: ./elaborato_IPC -A matrix -B matrix -C matrix -N order -P #processes\n";
-        write(STDOUT, buf, sizeof(char) * strlen(buf));
+        sys_print(STDOUT, "Error: too few arguments.\nusage: ./elaborato_IPC -A matrix -B matrix -C matrix -N order -P #processes\n");
         exit(1);
     }
 
@@ -70,8 +68,7 @@ int main(int argc, char **argv) {
                 break;
             }
             default:
-                printf("Wrong arguments\n");
-                printf("Usage: \n");
+                sys_print(STDOUT, "Wrong arguments\nusage: ./elaborato_IPC -A matrix -B matrix -C matrix -N order -P #processes\n");
                 exit(1);
         }
     }
@@ -101,21 +98,21 @@ int main(int argc, char **argv) {
 
     int status, wpid;
     while((wpid = wait(&status)) > 0)
-        printf("terminazione normale: il figlio %i ha terminato\n", wpid);
+        sys_print(STDOUT, "terminazione normale: il figlio %i ha terminato\n", wpid);
 
 /*
     for (int i = 0; i < N; i++) {
         for (int j = 0; j < N; j++) {
-            printf("[%i][%i]:\t%li\t", i, j, C.shmaddr[i * N + j]);
+            sys_print(STDOUT, "[%i][%i]:\t%li\t", i, j, C.shmaddr[i * N + j]);
         }
-        printf("\n");
+        sys_print(STDOUT, "\n");
     } 
-    printf("\n");
+    sys_print(STDOUT, "\n");
 */
-    
+
     shmatrix_to_csv(&C);
 
-    printf("--- SOMMA: %li ---\n", S.shmaddr[0]);
+    sys_print(STDOUT, "--- SOMMA: %li ---\n", S.shmaddr[0]);
 
     sig_free_sem(false, NULL);
     sig_free_memory(false, NULL);
@@ -126,7 +123,7 @@ int main(int argc, char **argv) {
 
 int init(shm_t **shm_array, lock_t *sem_ids, int P) {
     #ifdef DEBUG   
-    printf("Loading matrix\n\n");
+    sys_print(STDOUT, "Loading matrix\n\n");
     #endif
 
     if (shm_load(shm_array[0], true) == -1) {
@@ -161,7 +158,7 @@ int make_child(shm_t **shm_array , lock_t *sem_ids, int P, int *pid_to_pipe, int
     int tmp_queue_id;
     int pids[P];
     #ifdef DEBUG
-    printf("creating pipes\n");
+    sys_print(STDOUT, "creating pipes\n");
     #endif
     for (int i = 0; i < P; ++i){
         tmp_pipe[i] = (int *) malloc(2*sizeof(int));
@@ -171,7 +168,7 @@ int make_child(shm_t **shm_array , lock_t *sem_ids, int P, int *pid_to_pipe, int
         }
     }
     #ifdef DEBUG
-    printf("creating queue\n");
+    sys_print(STDOUT, "creating queue\n");
     #endif
     if((tmp_queue_id =msgget(IPC_PRIVATE, (IPC_CREAT | IPC_EXCL | 0666))) == -1){
         perror("ERROR make_child - creating queue");
@@ -181,7 +178,7 @@ int make_child(shm_t **shm_array , lock_t *sem_ids, int P, int *pid_to_pipe, int
     *queue_id = tmp_queue_id;
     
     #ifdef DEBUG
-    printf("creating childs\n");
+    sys_print(STDOUT, "creating childs\n");
     #endif
 
     for (int i = 0; i < P; ++i){
@@ -197,11 +194,11 @@ int make_child(shm_t **shm_array , lock_t *sem_ids, int P, int *pid_to_pipe, int
     }
 
     #ifdef DEBUG
-    printf("\n%i childs created:\n", P);
+    sys_print(STDOUT, "\n%i childs created:\n", P);
     for (int i = 0; i < P; ++i){
-        printf("child %i:\tpid = %i\tpipe = (r:%i,w:%i)\n",i, pids[i], tmp_pipe[i][0], tmp_pipe[i][1]);
+        sys_print(STDOUT, "child %i:\tpid = %i\tpipe = (r:%i,w:%i)\n",i, pids[i], tmp_pipe[i][0], tmp_pipe[i][1]);
     }
-    printf("\n");
+    sys_print(STDOUT, "\n");
     #endif
 
     for (int i = 0; i < P; ++i){
@@ -226,7 +223,7 @@ int run(int N, int P, int *pid_to_pipe, int queue, lock_t *sem_ids) {
         completed_row[i] = 0;
     }
 
-    printf("inizio il ciclo di base di run\n");
+    sys_print(STDOUT, "inizio il ciclo di base di run\n");
     while(number_of_cmd >= 1){
         int p;
         if ((p = first_free(p_free, P))!= -1){
