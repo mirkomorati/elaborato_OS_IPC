@@ -42,9 +42,6 @@ $(TARGET) : $(OBJECTS)
 $(OBJDIR)/%.o: $(SRCDIR)/%.c
 	$(CC) -c $(CFLAGS) $< -o $@
 
-#$(OBJDIR)/main.o : $(MAIN) 
-#	$(CC) -c $(CFLAGS) $< -o $@
-
 $(OBJECTS) : | $(OBJDIR)
 
 $(OBJDIR) :

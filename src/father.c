@@ -29,11 +29,6 @@ int main(int argc, char **argv) {
     lock_t sem_ids;
     int queue_id;
 
-    if (argc < 10) {
-        sys_print(STDOUT, "Error: too few arguments.\nusage: ./elaborato_IPC -A matrix -B matrix -C matrix -N order -P #processes\n");
-        exit(1);
-    }
-
     while ((opt = getopt_long(argc, argv, short_opt, long_opt, NULL)) != -1) {
         if (opt == -1) break;
         switch (opt) {
@@ -63,14 +58,19 @@ int main(int argc, char **argv) {
                 break;
 
             case 'h': {
-                char *buf = "usage: ./elaborato_IPC -A matrix -B matrix -C matrix -N order -P #processes\n";
-                write(STDOUT, buf, sizeof(char) * strlen(buf));
+                sys_print(STDOUT, "usage: %s -A matrixA -B matrixB -C matrixC -N order -P #processes\n", argv[0]);
+                exit(-1);
                 break;
             }
             default:
-                sys_print(STDOUT, "Wrong arguments\nusage: ./elaborato_IPC -A matrix -B matrix -C matrix -N order -P #processes\n");
-                exit(1);
+                sys_print(STDOUT, "Wrong arguments\nusage: %s -A matrix -B matrix -C matrix -N order -P #processes\n", argv[0]);
+                exit(-1);
         }
+    }
+
+    if (argc < 10) {
+        sys_print(STDOUT, "Error: too few arguments.\ntype '%s -h' for usage\n", argv[0]);
+        exit(-1);
     }
 
     int pid_to_pipe[P];
