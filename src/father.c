@@ -98,7 +98,11 @@ int main(int argc, char **argv) {
 
     int status, wpid;
     while((wpid = wait(&status)) > 0)
+        #ifdef DEBUG
         sys_print(STDOUT, "terminazione normale: il figlio %i ha terminato\n", wpid);
+        #else
+        ;
+        #endif
 
 /*
     for (int i = 0; i < N; i++) {
