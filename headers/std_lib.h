@@ -11,28 +11,20 @@
 
 #include <stdio.h>      // sprintf
 #include <stdlib.h>     // exit, atoi, malloc, free
-
-// +---- inutilizzate ?
-// |
-// v
-//#include <unistd.h>
-//#include <signal.h>       // gestione dei segnali come SIGINT
-//#include <sys/types.h>
-//#include <sys/ipc.h>      // gestione di tutto cio che riguarda la comunicazione tra i processi.
-//
+#include <unistd.h>     // write, read, fork, getpid, pipe
+#include <signal.h>     // signal
 #include <stdarg.h>		// va_start, va_arg, va_end
+#include <stdbool.h>    // booleani
+#include <errno.h>      // errno
 #include <fcntl.h>		// creat, open
 #include <getopt.h>		// option
 #include <string.h>		// strlen, strtok_r, strerror
-
 #include <sys/shm.h>	// shmat, shmdt, shmctl, shmget
-
 #include <sys/msg.h> 	// msgget, msgctl, msgrcv
 #include <sys/sem.h> 	// semget, semctl, semop
-
 #include <sys/stat.h> 	// stat
-#include <stdbool.h>	// booleani
-#include <errno.h>		// errno
+#include <sys/types.h>
+#include <sys/ipc.h>
 
 #define STDIN 0
 #define STDOUT 1
