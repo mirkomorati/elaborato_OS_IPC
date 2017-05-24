@@ -104,19 +104,25 @@ int main(int argc, char **argv) {
         ;
         #endif
 
-/*
+
+    sys_print(STDOUT, "\nIl risultato della moltiplicazione tra %s e %s è:\n\n", A.path, B.path);
+
     for (int i = 0; i < N; i++) {
+        sys_print(STDOUT, "|");
         for (int j = 0; j < N; j++) {
-            sys_print(STDOUT, "[%i][%i]:\t%li\t", i, j, C.shmaddr[i * N + j]);
+            if (j+1 == N)
+                sys_print(STDOUT, "%li|", C.shmaddr[i * N + j]);
+            else
+                sys_print(STDOUT, "%li\t", C.shmaddr[i * N + j]);
         }
         sys_print(STDOUT, "\n");
-    } 
+    }
     sys_print(STDOUT, "\n");
-*/
-
+    
     shmatrix_to_csv(&C);
 
-    sys_print(STDOUT, "--- SOMMA: %li ---\n", S.shmaddr[0]);
+    sys_print(STDOUT, "--- La somma di tutti i suoi termini è: %li ---\n\n", S.shmaddr[0]);
+    sys_print(STDOUT, "Il risultato della moltiplicazione è stato salvato in %s\n\n", C.path);
 
     sig_free_sem(false, NULL);
     sig_free_memory(false, NULL);
@@ -227,7 +233,6 @@ int run(int N, int P, int *pid_to_pipe, int queue, lock_t *sem_ids) {
         completed_row[i] = 0;
     }
 
-    sys_print(STDOUT, "inizio il ciclo di base di run\n");
     while(number_of_cmd >= 1){
         int p;
         if ((p = first_free(p_free, P))!= -1){
