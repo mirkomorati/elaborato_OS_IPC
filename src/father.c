@@ -29,11 +29,6 @@ int main(int argc, char **argv) {
     lock_t sem_ids;
     int queue_id;
 
-    if (argc < 10) {
-        sys_print(STDOUT, "Error: too few arguments.\nusage: ./elaborato_IPC -A matrix -B matrix -C matrix -N order -P #processes\n");
-        exit(1);
-    }
-
     while ((opt = getopt_long(argc, argv, short_opt, long_opt, NULL)) != -1) {
         if (opt == -1) break;
         switch (opt) {
@@ -63,14 +58,19 @@ int main(int argc, char **argv) {
                 break;
 
             case 'h': {
-                char *buf = "usage: ./elaborato_IPC -A matrix -B matrix -C matrix -N order -P #processes\n";
-                write(STDOUT, buf, sizeof(char) * strlen(buf));
+                sys_print(STDOUT, "usage: %s -A matrixA -B matrixB -C matrixC -N order -P #processes\n", argv[0]);
+                exit(-1);
                 break;
             }
             default:
-                sys_print(STDOUT, "Wrong arguments\nusage: ./elaborato_IPC -A matrix -B matrix -C matrix -N order -P #processes\n");
-                exit(1);
+                sys_print(STDOUT, "Wrong arguments\nusage: %s -A matrix -B matrix -C matrix -N order -P #processes\n", argv[0]);
+                exit(-1);
         }
+    }
+
+    if (argc < 10) {
+        sys_print(STDOUT, "Error: too few arguments.\ntype '%s -h' for usage\n", argv[0]);
+        exit(-1);
     }
 
     int pid_to_pipe[P];
@@ -98,21 +98,31 @@ int main(int argc, char **argv) {
 
     int status, wpid;
     while((wpid = wait(&status)) > 0)
+        #ifdef DEBUG
         sys_print(STDOUT, "terminazione normale: il figlio %i ha terminato\n", wpid);
+        #else
+        ;
+        #endif
 
-/*
+
+    sys_print(STDOUT, "\nIl risultato della moltiplicazione tra %s e %s è:\n\n", A.path, B.path);
+
     for (int i = 0; i < N; i++) {
+        sys_print(STDOUT, "|");
         for (int j = 0; j < N; j++) {
-            sys_print(STDOUT, "[%i][%i]:\t%li\t", i, j, C.shmaddr[i * N + j]);
+            if (j+1 == N)
+                sys_print(STDOUT, "%li|", C.shmaddr[i * N + j]);
+            else
+                sys_print(STDOUT, "%li\t", C.shmaddr[i * N + j]);
         }
         sys_print(STDOUT, "\n");
-    } 
+    }
     sys_print(STDOUT, "\n");
-*/
-
+    
     shmatrix_to_csv(&C);
 
-    sys_print(STDOUT, "--- SOMMA: %li ---\n", S.shmaddr[0]);
+    sys_print(STDOUT, "--- La somma di tutti i suoi termini è: %li ---\n\n", S.shmaddr[0]);
+    sys_print(STDOUT, "Il risultato della moltiplicazione è stato salvato in %s\n\n", C.path);
 
     sig_free_sem(false, NULL);
     sig_free_memory(false, NULL);
@@ -223,7 +233,6 @@ int run(int N, int P, int *pid_to_pipe, int queue, lock_t *sem_ids) {
         completed_row[i] = 0;
     }
 
-    sys_print(STDOUT, "inizio il ciclo di base di run\n");
     while(number_of_cmd >= 1){
         int p;
         if ((p = first_free(p_free, P))!= -1){

@@ -6,7 +6,7 @@ LD:=gcc
 DOXY:=doxygen
 
 #FLAGS
-CFLAGS:=-Wall -DDEBUG -g -O0
+CFLAGS?=-Wall -DDEBUG -g -O0
 
 #directories
 BINDIR:=bin
@@ -41,9 +41,6 @@ $(TARGET) : $(OBJECTS)
 
 $(OBJDIR)/%.o: $(SRCDIR)/%.c
 	$(CC) -c $(CFLAGS) $< -o $@
-
-#$(OBJDIR)/main.o : $(MAIN) 
-#	$(CC) -c $(CFLAGS) $< -o $@
 
 $(OBJECTS) : | $(OBJDIR)
 

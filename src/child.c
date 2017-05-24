@@ -2,6 +2,7 @@
 
 int child(int child_id, shm_t **shm_array, int pipe_fd, int queue_id, lock_t *sem_ids){
 	cmd_t cmd;
+	msg_t msg;
 	while (true) {
 		if (rcv_cmd(&cmd, pipe_fd, child_id, sem_ids->pipe_sem) == -1)
 			sys_err("read fallita\n");
@@ -17,14 +18,25 @@ int child(int child_id, shm_t **shm_array, int pipe_fd, int queue_id, lock_t *se
 					#ifdef DEBUG
 					sys_print(STDOUT, "FIGLIO %i\tSUM\t\trow: %i\n", child_id, cmd.data.row);
 					#endif
-					sum(cmd.data.row, shm_array, sem_ids);
+					if (sum(cmd.data.row, shm_array, sem_ids)){
+						msg.type = 1;
+						msg.success = false;
+						msg.cmd = cmd;
+						msg.id = child_id;
+
+						if(send_msg(&msg, queue_id, sem_ids->queue_sem) == -1) {
+							perror("send_msg child");
+							return -1;
+						}
+					}
 				break;
 				case END:
+					#ifdef DEBUG
 					sys_print(STDOUT, "FIGLIO %i\tEND\n", getpid());
+					#endif
 					return 0;
 			}
 
-			msg_t msg;
 			msg.type = 1;
 			msg.success = true;
 			msg.cmd = cmd;
@@ -39,7 +51,7 @@ int child(int child_id, shm_t **shm_array, int pipe_fd, int queue_id, lock_t *se
 	return 0;
 }
 
-int multiply(int i, int j, shm_t **shm_array) {
+void multiply(int i, int j, shm_t **shm_array) {
 	shm_t *A = shm_array[0];
 	shm_t *B = shm_array[1];
 	shm_t *C = shm_array[2];
@@ -64,8 +76,6 @@ int multiply(int i, int j, shm_t **shm_array) {
 
 	free(row);
 	free(col);
-
-	return 0;
 }
 
 int sum(int k, shm_t **shm_array, lock_t *sem_ids) {

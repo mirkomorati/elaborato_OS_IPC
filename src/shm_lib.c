@@ -74,14 +74,8 @@ void shmatrix_from_csv(shm_t *M) {
 
             for (value = strtok_r(line, ";", &brkb); value; value = strtok_r(NULL, ";", &brkb)) {
                 M->shmaddr[i] = atol(value);
-#ifdef DEBUG
-//              sys_print(STDOUT, f("%i: %li\t", i, M->shmaddr[i]);
-#endif
                 i++;
             }
-#ifdef DEBUG
-//          sys_print(STDOUT, f("\n");
-#endif
         }
     }
 }
