@@ -1,12 +1,15 @@
 #include "../headers/child.h"
 
-int child(int child_id, shm_t **shm_array, int pipe_fd, int queue_id, lock_t *sem_ids){
+int child(int child_id, shm_t **shm_array, int pipe_fd, int queue_id, lock_t *sem_ids) {
 	cmd_t cmd;
 	msg_t msg;
 	while (true) {
 		if (rcv_cmd(&cmd, pipe_fd, child_id, sem_ids->pipe_sem) == -1)
-			sys_err("read fallita\n");
+			sys_err("ERROR rcv_cmd figlio\n");
 		else {
+			msg.type = 1;
+			msg.cmd = cmd;
+			msg.id = child_id;
 			switch (cmd.role) {
 				case MULTIPLY:
 					#ifdef DEBUG
@@ -18,14 +21,10 @@ int child(int child_id, shm_t **shm_array, int pipe_fd, int queue_id, lock_t *se
 					#ifdef DEBUG
 					sys_print(STDOUT, "FIGLIO %i\tSUM\t\trow: %i\n", child_id, cmd.data.row);
 					#endif
-					if (sum(cmd.data.row, shm_array, sem_ids)){
-						msg.type = 1;
+					if (sum(cmd.data.row, shm_array, sem_ids)) {
 						msg.success = false;
-						msg.cmd = cmd;
-						msg.id = child_id;
-
 						if(send_msg(&msg, queue_id, sem_ids->queue_sem) == -1) {
-							perror("send_msg child");
+							sys_err("ERROR send_msg figlio");
 							return -1;
 						}
 					}
@@ -36,11 +35,7 @@ int child(int child_id, shm_t **shm_array, int pipe_fd, int queue_id, lock_t *se
 					#endif
 					return 0;
 			}
-
-			msg.type = 1;
 			msg.success = true;
-			msg.cmd = cmd;
-			msg.id = child_id;
 
 			if(send_msg(&msg, queue_id, sem_ids->queue_sem) == -1) {
 				sys_err("send_msg child");
@@ -51,6 +46,7 @@ int child(int child_id, shm_t **shm_array, int pipe_fd, int queue_id, lock_t *se
 	return 0;
 }
 
+
 void multiply(int i, int j, shm_t **shm_array) {
 	shm_t *A = shm_array[0];
 	shm_t *B = shm_array[1];
@@ -58,16 +54,13 @@ void multiply(int i, int j, shm_t **shm_array) {
 
 	long *row = (long *) malloc(sizeof(long) * A->N);
 	long *col = (long *) malloc(sizeof(long) * B->N);
+	long res = 0;
 
 	for (int l = 0; l < A->N; l++) {
 		row[l] = A->shmaddr[i * A->N + l];
-	}
-
-	for (int l = 0; l < B->N; l++) {
 		col[l] = B->shmaddr[j + l * B->N];
 	}
 
-	long res = 0;
 	for (int l = 0; l < A->N; l++) {
 		res += row[l] * col[l];
 	}
@@ -77,6 +70,7 @@ void multiply(int i, int j, shm_t **shm_array) {
 	free(row);
 	free(col);
 }
+
 
 int sum(int k, shm_t **shm_array, lock_t *sem_ids) {
 	shm_t *C = shm_array[2];

@@ -1,0 +1,57 @@
+/Users/mirko/Desktop/UNIVR/UNIVR 2016-2017/Sistemi Operativi/secondo semestre/elaborato_OS_IPC/headers/msg_lib.h:38: warning: Compound cmd_t::data_u::point_u is not documented.
+/Users/mirko/Desktop/UNIVR/UNIVR 2016-2017/Sistemi Operativi/secondo semestre/elaborato_OS_IPC/headers/sem_lib.h:11: warning: Compound lock_t is not documented.
+/Users/mirko/Desktop/UNIVR/UNIVR 2016-2017/Sistemi Operativi/secondo semestre/elaborato_OS_IPC/headers/msg_lib.h:37: warning: Compound cmd_t::data_u is not documented.
+/Users/mirko/Desktop/UNIVR/UNIVR 2016-2017/Sistemi Operativi/secondo semestre/elaborato_OS_IPC/headers/child.h:25: warning: The following parameters of child(int child_id, shm_t **shm_array, int pipe_fd, int queue_id, lock_t *sem_ids) are not documented:
+  parameter 'child_id'
+  parameter 'sem_ids'
+/Users/mirko/Desktop/UNIVR/UNIVR 2016-2017/Sistemi Operativi/secondo semestre/elaborato_OS_IPC/headers/child.h:34: warning: The following parameters of multiply(int i, int j, shm_t **shm_array) are not documented:
+  parameter 'shm_array'
+/Users/mirko/Desktop/UNIVR/UNIVR 2016-2017/Sistemi Operativi/secondo semestre/elaborato_OS_IPC/headers/child.h:44: warning: The following parameters of sum(int k, shm_t **shm_array, lock_t *sem_ids) are not documented:
+  parameter 'shm_array'
+  parameter 'sem_ids'
+/Users/mirko/Desktop/UNIVR/UNIVR 2016-2017/Sistemi Operativi/secondo semestre/elaborato_OS_IPC/headers/ending_lib.h:95: warning: argument 'args' of command @param is not found in the argument list of sig_add_queue(int n,...)
+/Users/mirko/Desktop/UNIVR/UNIVR 2016-2017/Sistemi Operativi/secondo semestre/elaborato_OS_IPC/headers/ending_lib.h:86: warning: argument 'args' of command @param is not found in the argument list of sig_add_sem(int n,...)
+/Users/mirko/Desktop/UNIVR/UNIVR 2016-2017/Sistemi Operativi/secondo semestre/elaborato_OS_IPC/headers/ending_lib.h:77: warning: argument 'args' of command @param is not found in the argument list of sig_add_shmem(int n,...)
+/Users/mirko/Desktop/UNIVR/UNIVR 2016-2017/Sistemi Operativi/secondo semestre/elaborato_OS_IPC/headers/father.h:15: warning: Member MAX_ERRORS (macro definition) of file father.h is not documented.
+/Users/mirko/Desktop/UNIVR/UNIVR 2016-2017/Sistemi Operativi/secondo semestre/elaborato_OS_IPC/headers/father.h:32: warning: The following parameters of init(shm_t **shm_array, lock_t *sem_ids, int P) are not documented:
+  parameter 'sem_ids'
+  parameter 'P'
+/Users/mirko/Desktop/UNIVR/UNIVR 2016-2017/Sistemi Operativi/secondo semestre/elaborato_OS_IPC/headers/father.h:35: warning: argument 'pipe_fd' of command @param is not found in the argument list of make_child(shm_t **shm_array, lock_t *sem_ids, int P, int *pid_to_pipe, int *queue_id)
+/Users/mirko/Desktop/UNIVR/UNIVR 2016-2017/Sistemi Operativi/secondo semestre/elaborato_OS_IPC/headers/father.h:47: warning: The following parameters of make_child(shm_t **shm_array, lock_t *sem_ids, int P, int *pid_to_pipe, int *queue_id) are not documented:
+  parameter 'sem_ids'
+  parameter 'pid_to_pipe'
+/Users/mirko/Desktop/UNIVR/UNIVR 2016-2017/Sistemi Operativi/secondo semestre/elaborato_OS_IPC/headers/father.h:50: warning: argument 'pipe' of command @param is not found in the argument list of run(int N, int P, int *pid_to_pipe, int queue, lock_t *sem_ids)
+/Users/mirko/Desktop/UNIVR/UNIVR 2016-2017/Sistemi Operativi/secondo semestre/elaborato_OS_IPC/headers/father.h:62: warning: The following parameters of run(int N, int P, int *pid_to_pipe, int queue, lock_t *sem_ids) are not documented:
+  parameter 'pid_to_pipe'
+  parameter 'sem_ids'
+/Users/mirko/Desktop/UNIVR/UNIVR 2016-2017/Sistemi Operativi/secondo semestre/elaborato_OS_IPC/headers/io_lib.h:11: warning: Member BUF_SIZE (macro definition) of file io_lib.h is not documented.
+/Users/mirko/Desktop/UNIVR/UNIVR 2016-2017/Sistemi Operativi/secondo semestre/elaborato_OS_IPC/headers/msg_lib.h:104: warning: The following parameters of rcv_cmd(cmd_t *restrict cmd, const int fd, const int id, const int sem_id) are not documented:
+  parameter 'id'
+  parameter 'sem_id'
+/Users/mirko/Desktop/UNIVR/UNIVR 2016-2017/Sistemi Operativi/secondo semestre/elaborato_OS_IPC/headers/msg_lib.h:93: warning: The following parameters of send_cmd(const cmd_t *restrict cmd, const int fd, const int id, const int sem_id) are not documented:
+  parameter 'id'
+  parameter 'sem_id'
+/Users/mirko/Desktop/UNIVR/UNIVR 2016-2017/Sistemi Operativi/secondo semestre/elaborato_OS_IPC/headers/msg_lib.h:70: warning: The following parameters of send_msg(const msg_t *restrict msg, const int id, const int sem_id) are not documented:
+  parameter 'sem_id'
+/Users/mirko/Desktop/UNIVR/UNIVR 2016-2017/Sistemi Operativi/secondo semestre/elaborato_OS_IPC/headers/std_lib.h:29: warning: Member STDIN (macro definition) of file std_lib.h is not documented.
+/Users/mirko/Desktop/UNIVR/UNIVR 2016-2017/Sistemi Operativi/secondo semestre/elaborato_OS_IPC/headers/std_lib.h:30: warning: Member STDOUT (macro definition) of file std_lib.h is not documented.
+/Users/mirko/Desktop/UNIVR/UNIVR 2016-2017/Sistemi Operativi/secondo semestre/elaborato_OS_IPC/headers/std_lib.h:31: warning: Member STDERR (macro definition) of file std_lib.h is not documented.
+/Users/mirko/Desktop/UNIVR/UNIVR 2016-2017/Sistemi Operativi/secondo semestre/elaborato_OS_IPC/headers/father.h:21: warning: Member cmd (variable) of class cmd_list is not documented.
+/Users/mirko/Desktop/UNIVR/UNIVR 2016-2017/Sistemi Operativi/secondo semestre/elaborato_OS_IPC/headers/father.h:22: warning: Member next (variable) of class cmd_list is not documented.
+/Users/mirko/Desktop/UNIVR/UNIVR 2016-2017/Sistemi Operativi/secondo semestre/elaborato_OS_IPC/headers/msg_lib.h:41: warning: Member c (variable) of class cmd_t::data_u is not documented.
+/Users/mirko/Desktop/UNIVR/UNIVR 2016-2017/Sistemi Operativi/secondo semestre/elaborato_OS_IPC/headers/msg_lib.h:42: warning: Member row (variable) of class cmd_t::data_u is not documented.
+/Users/mirko/Desktop/UNIVR/UNIVR 2016-2017/Sistemi Operativi/secondo semestre/elaborato_OS_IPC/headers/msg_lib.h:39: warning: Member i (variable) of class cmd_t::data_u::point_u is not documented.
+/Users/mirko/Desktop/UNIVR/UNIVR 2016-2017/Sistemi Operativi/secondo semestre/elaborato_OS_IPC/headers/msg_lib.h:40: warning: Member j (variable) of class cmd_t::data_u::point_u is not documented.
+/Users/mirko/Desktop/UNIVR/UNIVR 2016-2017/Sistemi Operativi/secondo semestre/elaborato_OS_IPC/headers/sem_lib.h:12: warning: Member queue_sem (variable) of class lock_t is not documented.
+/Users/mirko/Desktop/UNIVR/UNIVR 2016-2017/Sistemi Operativi/secondo semestre/elaborato_OS_IPC/headers/sem_lib.h:13: warning: Member S_sem (variable) of class lock_t is not documented.
+/Users/mirko/Desktop/UNIVR/UNIVR 2016-2017/Sistemi Operativi/secondo semestre/elaborato_OS_IPC/headers/sem_lib.h:14: warning: Member pipe_sem (variable) of class lock_t is not documented.
+/Users/mirko/Desktop/UNIVR/UNIVR 2016-2017/Sistemi Operativi/secondo semestre/elaborato_OS_IPC/headers/ending_lib.h:53: warning: Member obj (variable) of class sig_queue_list is not documented.
+/Users/mirko/Desktop/UNIVR/UNIVR 2016-2017/Sistemi Operativi/secondo semestre/elaborato_OS_IPC/headers/ending_lib.h:54: warning: Member next (variable) of class sig_queue_list is not documented.
+/Users/mirko/Desktop/UNIVR/UNIVR 2016-2017/Sistemi Operativi/secondo semestre/elaborato_OS_IPC/headers/ending_lib.h:42: warning: Member obj (variable) of class sig_sem_list is not documented.
+/Users/mirko/Desktop/UNIVR/UNIVR 2016-2017/Sistemi Operativi/secondo semestre/elaborato_OS_IPC/headers/ending_lib.h:43: warning: Member next (variable) of class sig_sem_list is not documented.
+/Users/mirko/Desktop/UNIVR/UNIVR 2016-2017/Sistemi Operativi/secondo semestre/elaborato_OS_IPC/headers/ending_lib.h:32: warning: Member semid (variable) of class sig_sem_t is not documented.
+/Users/mirko/Desktop/UNIVR/UNIVR 2016-2017/Sistemi Operativi/secondo semestre/elaborato_OS_IPC/headers/ending_lib.h:33: warning: Member semnum (variable) of class sig_sem_t is not documented.
+/Users/mirko/Desktop/UNIVR/UNIVR 2016-2017/Sistemi Operativi/secondo semestre/elaborato_OS_IPC/headers/ending_lib.h:23: warning: Member obj (variable) of class sig_shmem_list is not documented.
+/Users/mirko/Desktop/UNIVR/UNIVR 2016-2017/Sistemi Operativi/secondo semestre/elaborato_OS_IPC/headers/ending_lib.h:24: warning: Member next (variable) of class sig_shmem_list is not documented.
+/Users/mirko/Desktop/UNIVR/UNIVR 2016-2017/Sistemi Operativi/secondo semestre/elaborato_OS_IPC/headers/ending_lib.h:14: warning: Member shmid (variable) of class sig_shmem_t is not documented.
+/Users/mirko/Desktop/UNIVR/UNIVR 2016-2017/Sistemi Operativi/secondo semestre/elaborato_OS_IPC/headers/ending_lib.h:15: warning: Member shmaddr (variable) of class sig_shmem_t is not documented.

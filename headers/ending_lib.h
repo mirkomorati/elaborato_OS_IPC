@@ -8,7 +8,7 @@
 #include "io_lib.h"
 
 /*!
- * \struct      Struttura che permette di liberare un'area di memoria condivisa
+ * \brief 		Struttura che permette di liberare un'area di memoria condivisa
  */
 typedef struct {
     int shmid;
@@ -17,42 +17,40 @@ typedef struct {
 
 
 /*!
- * \struct      Lista che contiene le memorie condivise
+ * \brief      Lista che contiene le memorie condivise
  */
-typedef struct sig_shmem_list{
+typedef struct sig_shmem_list {
 	sig_shmem_t obj;
 	struct sig_shmem_list *next;
 } sig_shmem_list_t;
 
 /*!
- * \struct 		Permette di memorizzare i dati necessari all'eliminazione di 
+ * \brief 		Permette di memorizzare i dati necessari all'eliminazione di 
  * 				un set di semafori.
  */
-typedef struct{
+typedef struct {
 	int semid;
 	int semnum;
 } sig_sem_t;
 
-/**
- * \struct 		Lista che verrà utilizzata per tenere traccia di tutti
+/*!
+ * \brief 		Lista che verrà utilizzata per tenere traccia di tutti
  *              i semafori presenti da liberare alla terminazione
  *              del programma.
  */
-typedef struct sig_sem_list{
+typedef struct sig_sem_list {
 	sig_sem_t obj;
-
 	struct sig_sem_list *next;
 } sig_sem_list_t;
 
 /*!
- * \struct 		Rappresenta una lista di interi, che verrà utilizzata per 
+ * \brief 		Rappresenta una lista di interi, che verrà utilizzata per 
  * 				memorizzare tutti gli id di tutte le code di messaggi che 
  * 				verranno create dal programma, così che possano essere 
  * 				liberate prima della terminazione.
  */
-typedef struct sig_queue_list{
+typedef struct sig_queue_list {
 	int obj;
-
 	struct sig_queue_list *next;
 } sig_queue_list_t;
 
@@ -64,7 +62,6 @@ typedef struct sig_queue_list{
  */
 void sig_handler(int sig, int pid);
 
-
 /*!
  * \brief      	Assegna il corretto handler ad ogni segnale
  * 
@@ -75,7 +72,6 @@ void sig_handler(int sig, int pid);
 
  */
 void sig_init(sig_shmem_list_t *shm_list, sig_sem_list_t *sem_list, sig_queue_list_t *queue_list);
-
 
 /*!
  * \brief      	Aggiunge gli oggetti alla lista della memoria condivisa da
@@ -105,7 +101,7 @@ void sig_add_sem(int n, ...);
 void sig_add_queue(int n, ...);
 
 /*!
- * \brief		Se \setting è false il programma libera la memoria condivisa
+ * \brief		Se setting è false il programma libera la memoria condivisa
  * 				presente nella lista.
  *
  * \param[in]  	setting 	Se true il valore di arg viene valutato e 
@@ -116,7 +112,7 @@ void sig_add_queue(int n, ...);
 void sig_free_memory(bool setting, sig_shmem_list_t *arg);
 
 /*!
- * \brief      	Se \setting è false il programma effettua il detach 
+ * \brief      	Se setting è false il programma effettua il detach 
  * 				della memoria condivisa presente nella lista.
  * 				
  * \param[in]  	setting  	Se true il valore di arg viene valutato e 
@@ -127,7 +123,7 @@ void sig_free_memory(bool setting, sig_shmem_list_t *arg);
 void sig_shmdt(bool setting, sig_shmem_list_t *arg);
 
 /*!
- * \brief		Se \setting è false il programma elimina i semafori presenti 
+ * \brief		Se setting è false il programma elimina i semafori presenti 
  * 				nella lista dei semafori.
  *
  * \param[in]  	setting 	Se true il valore di arg viene valutato e 
@@ -138,7 +134,7 @@ void sig_shmdt(bool setting, sig_shmem_list_t *arg);
 void sig_free_sem(bool setting, sig_sem_list_t *arg);
 
 /*!
- * \brief		Se \setting è false il vengono eliminate tutte le code 
+ * \brief		Se setting è false il vengono eliminate tutte le code 
  * 				di messaggi presenti nel programma.
  *
  * \param[in]  	setting 	Se true il valore di arg viene valutato e 

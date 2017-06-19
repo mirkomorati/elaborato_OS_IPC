@@ -40,12 +40,12 @@ int main(int argc, char **argv) {
                 B.path = optarg;
                 break;
 
-            case 'C':{
+            case 'C': {
                 // controllo se esiste il file altrimenti lo creo.
                 struct stat st;
                 if(stat(optarg, &st) == -1 && errno == ENOENT)
                     if(creat(optarg, S_IRUSR | S_IWUSR) == -1)
-                        sys_err("Error creating matrixC file: ");
+                        sys_err("ERROR creating matrixC file");
                 C.path = optarg;
                 break;
             }
@@ -59,7 +59,7 @@ int main(int argc, char **argv) {
 
             case 'h': {
                 sys_print(STDOUT, "usage: %s -A matrixA -B matrixB -C matrixC -N order -P #processes\n", argv[0]);
-                exit(-1);
+                exit(0);
                 break;
             }
             default:
@@ -74,6 +74,7 @@ int main(int argc, char **argv) {
     }
 
     int pid_to_pipe[P];
+    int status, wpid;
 
     A.N = N;
     B.N = N;
@@ -81,39 +82,35 @@ int main(int argc, char **argv) {
     S.N = 1;
     S.path = "/dev/urandom";
 
-    if(init(shm_array, &sem_ids, P) == -1) {
-        sys_err("init");
+    if (init(shm_array, &sem_ids, P) == -1) {
+        sys_err("ERROR init");
         sig_end(-1);
     }
 
     if (make_child(shm_array, &sem_ids, P, pid_to_pipe, &queue_id) == -1){
-        sys_err("make_child");
+        sys_err("ERROR make_child");
         sig_end(-1);
     }
 
     if (run(N, P, pid_to_pipe, queue_id, &sem_ids) == -1) {
-        sys_err("run");
+        sys_err("ERROR run");
         sig_end(-1);
     }
 
-    int status, wpid;
     while((wpid = wait(&status)) > 0)
         #ifdef DEBUG
-        sys_print(STDOUT, "terminazione normale: il figlio %i ha terminato\n", wpid);
+        sys_print(STDOUT, "Terminazione normale: il figlio %i ha terminato\n", wpid);
         #else
         ;
         #endif
-
 
     sys_print(STDOUT, "\nIl risultato della moltiplicazione tra %s e %s è:\n\n", A.path, B.path);
 
     for (int i = 0; i < N; i++) {
         sys_print(STDOUT, "|");
         for (int j = 0; j < N; j++) {
-            if (j+1 == N)
-                sys_print(STDOUT, "%li|", C.shmaddr[i * N + j]);
-            else
-                sys_print(STDOUT, "%li\t", C.shmaddr[i * N + j]);
+            sys_print(STDOUT, "%li", C.shmaddr[i * N + j]);
+            sys_print(STDOUT, j + 1 == N ? "|" : "\t");
         }
         sys_print(STDOUT, "\n");
     }
@@ -137,27 +134,35 @@ int init(shm_t **shm_array, lock_t *sem_ids, int P) {
     #endif
 
     if (shm_load(shm_array[0], true) == -1) {
-        sys_err("shm_load A");
+        sys_err("ERROR shm_load A");
         return -1;
     }
     if (shm_load(shm_array[1], true) == -1) {
-        sys_err("shm_load B");
+        sys_err("ERROR shm_load B");
         return -1;
     }
     if (shm_load(shm_array[2], false) == -1) {
-        sys_err("shm_load C");
+        sys_err("ERROR shm_load C");
         return -1;
     }
     if (shm_load(shm_array[3], false) == -1) {
-        sys_err("shm_load S");
+        sys_err("ERROR shm_load S");
         return -1;
     }
     shm_array[3]->shmaddr[0] = 0;
     
-
-    if ((sem_ids->queue_sem = sem_create(1, 1)) == -1) return -1;
-    if ((sem_ids->S_sem = sem_create(1, 1)) == -1) return -1;
-    if ((sem_ids->pipe_sem = sem_create(P, 0)) == -1) return -1;
+    if ((sem_ids->queue_sem = sem_create(1, 1)) == -1) {
+        sys_err("ERROR sem_create queue_sem");
+        return -1;
+    }
+    if ((sem_ids->S_sem = sem_create(1, 1)) == -1) {
+        sys_err("ERROR sem_create S_sem");
+        return -1;
+    }
+    if ((sem_ids->pipe_sem = sem_create(P, 0)) == -1) {
+        sys_err("ERROR sem_create pipe_sem");
+        return -1;
+    }
 
     return 0;
 }
@@ -167,20 +172,24 @@ int make_child(shm_t **shm_array , lock_t *sem_ids, int P, int *pid_to_pipe, int
     int *tmp_pipe[P];
     int tmp_queue_id;
     int pids[P];
+
     #ifdef DEBUG
     sys_print(STDOUT, "creating pipes\n");
     #endif
-    for (int i = 0; i < P; ++i){
-        tmp_pipe[i] = (int *) malloc(2*sizeof(int));
-        if(pipe(tmp_pipe[i]) == -1){
+    
+    for (int i = 0; i < P; ++i) {
+        tmp_pipe[i] = (int *) malloc(2 * sizeof(int));
+        if(pipe(tmp_pipe[i]) == -1) {
             sys_err("ERROR make_child - creating pipe");
             return -1;
         }
     }
+
     #ifdef DEBUG
     sys_print(STDOUT, "creating queue\n");
     #endif
-    if((tmp_queue_id =msgget(IPC_PRIVATE, (IPC_CREAT | IPC_EXCL | 0666))) == -1){
+
+    if((tmp_queue_id =msgget(IPC_PRIVATE, (IPC_CREAT | IPC_EXCL | 0666))) == -1) {
         sys_err("ERROR make_child - creating queue");
         return -1;
     }
@@ -191,29 +200,30 @@ int make_child(shm_t **shm_array , lock_t *sem_ids, int P, int *pid_to_pipe, int
     sys_print(STDOUT, "creating childs\n");
     #endif
 
-    for (int i = 0; i < P; ++i){
-        if((pids[i] = fork()) < 0){
+    for (int i = 0; i < P; ++i) {
+        if((pids[i] = fork()) < 0) {
             sys_err("ERROR make_child - creating child");
             return -1;
         }
-        else if (pids[i] == 0){
+        else if (pids[i] == 0) {
             exit(child(i, shm_array, tmp_pipe[i][0], tmp_queue_id, sem_ids));
-        }else{
+        } else {
             pid_to_pipe[i] = tmp_pipe[i][1];
         }
     }
 
     #ifdef DEBUG
     sys_print(STDOUT, "\n%i childs created:\n", P);
-    for (int i = 0; i < P; ++i){
+    for (int i = 0; i < P; ++i) {
         sys_print(STDOUT, "child %i:\tpid = %i\tpipe = (r:%i,w:%i)\n",i, pids[i], tmp_pipe[i][0], tmp_pipe[i][1]);
     }
     sys_print(STDOUT, "\n");
     #endif
 
-    for (int i = 0; i < P; ++i){
+    for (int i = 0; i < P; ++i) {
         free(tmp_pipe[i]);
     }
+
     return 0;   
 }
 
@@ -233,11 +243,11 @@ int run(int N, int P, int *pid_to_pipe, int queue, lock_t *sem_ids) {
         completed_row[i] = 0;
     }
 
-    while(number_of_cmd >= 1){
+    while (number_of_cmd >= 1) {
         int p;
-        if ((p = first_free(p_free, P))!= -1){
+        if ((p = first_free(p_free, P)) != -1) {
             // ci sono processi liberi
-            if (sum_cmd_list != NULL && completed_row[sum_cmd_list->cmd.data.row] == N){
+            if (sum_cmd_list != NULL && completed_row[sum_cmd_list->cmd.data.row] == N) {
                 // se ci sono ancora comandi di tipo somma e sono terminate le moltiplicazioni per quella riga
                 send_cmd(&sum_cmd_list->cmd, pid_to_pipe[p], p, sem_ids->pipe_sem);
                 sum_cmd_list = sum_cmd_list->next;
@@ -259,7 +269,7 @@ int run(int N, int P, int *pid_to_pipe, int queue, lock_t *sem_ids) {
             if (msg.success) {
                 p_free[msg.id] = 1;
                 number_of_cmd--;
-                if (msg.cmd.role == MULTIPLY){
+                if (msg.cmd.role == MULTIPLY) {
                     completed_row[msg.cmd.data.c.i]++;
                 }
             } else {
@@ -269,15 +279,16 @@ int run(int N, int P, int *pid_to_pipe, int queue, lock_t *sem_ids) {
     }
 
     // ho finito tutti i messaggi da inviare ed ho ricevuto il riscontro da tutti.
-    for (int p = 0; p < P; ++p){
+    for (int p = 0; p < P; ++p) {
         cmd.role = END;
         send_cmd(&cmd, pid_to_pipe[p], p, sem_ids->pipe_sem);
     }
+
     return 0;
 }
 
 
-static inline int first_free(char *a, int dim){
+static inline int first_free(char *a, int dim) {
     for (int i = 0; i < dim; ++i)
         if (a[i] == 1) return i;
     return -1;
@@ -285,37 +296,37 @@ static inline int first_free(char *a, int dim){
 
 int generate_cmd_list(cmd_list_t **multiply_head, cmd_list_t **sum_head, int N){
     cmd_t cmd;
-    int cmd_number = 0;
+    int cmd_number = N * (N + 1);
+
     for (int i = 0; i < N; ++i) {
         for (int j = 0; j < N; ++j) {
             cmd.role = MULTIPLY;
             cmd.data.c.i = i;
             cmd.data.c.j = j;
             add_to_cmd_list(multiply_head, &cmd);
-            cmd_number++;
         }
         cmd.role = SUM;
         cmd.data.row = i;
         add_to_cmd_list(sum_head, &cmd);
-        cmd_number++;
     }
 
     return cmd_number;
 }
 
-void add_to_cmd_list(cmd_list_t **head, cmd_t *cmd){
+void add_to_cmd_list(cmd_list_t **head, cmd_t *cmd) {
     cmd_list_t *tmp = *head;
-    if(tmp == NULL){
+
+    if (tmp == NULL) {
         // creo la lista
-        tmp = (cmd_list_t *)malloc(sizeof(cmd_list_t));
+        tmp = (cmd_list_t *) malloc(sizeof(cmd_list_t));
         tmp->cmd = *cmd;
         tmp->next = NULL;
         *head = tmp;
-    }else{ // la riempio
+    } else { // la riempio
         while(tmp->next != NULL)
             tmp = tmp->next;
 
-        tmp->next = (cmd_list_t *)malloc(sizeof(cmd_list_t));
+        tmp->next = (cmd_list_t *) malloc(sizeof(cmd_list_t));
         tmp = tmp->next;
         tmp->cmd = *cmd;
         tmp->next = NULL;
