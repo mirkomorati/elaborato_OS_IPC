@@ -7,7 +7,7 @@
 #include "ending_lib.h"
 
 /*! 
- * \struct      Struttura per rappresentare una memoria condivisa
+ * \brief   Struttura per rappresentare una memoria condivisa
  */
 typedef struct {
     char *path;     //!< Path del file contenente la matrice
@@ -15,7 +15,7 @@ typedef struct {
     int fd;         //!< File Descriptor
     int shmid;      //!< ID della memoria condivisa
     long *shmaddr;  //!< Indirizzo di attacco della memoria condivisa
-}shm_t;
+} shm_t;
 
 /*!
  * \brief       Chiama le funzioni utili a creare un nuovo oggetto vuoto

@@ -1,3 +1,7 @@
+/*!
+ * \file        child.h
+ */
+
 #ifndef CHILD_H
 #define CHILD_H
 
@@ -12,7 +16,7 @@
  * 				funzione chiamata da questa, non si deve mai usare sig_end(), sig end deve 
  * 				essere chiamata solo e soltanto dal padre.
  *
- * \param      	shm_array  	L'array contente le zone di memoria condivise.
+ * \param[in] 	shm_array  	L'array contente le zone di memoria condivise.
  * \param[in]  	pipe_fd    	La pipe sulla quale leggere.
  * \param[in]  	queue_id   	La coda sulla quale scrivere.
  * 
@@ -24,8 +28,8 @@ int child(int child_id, shm_t **shm_array, int pipe_fd, int queue_id, lock_t *se
  * @brief       Funzione che calcola il prodotto tra due matrici e lo
  *              salva in posizione i j nella matrice destinazione     
  *
- * @param[in]  i            Numero di riga
- * @param[in]  j            Numero di colonna
+ * @param[in]   i            Numero di riga
+ * @param[in]   j            Numero di colonna
  */
 void multiply(int i, int j, shm_t **shm_array);
 
@@ -33,7 +37,7 @@ void multiply(int i, int j, shm_t **shm_array);
  * @brief       Funzione che calcola la somma di una riga e aggiorna il
  *              valore nell'area di memoria predefinita
  *
- * @param[in]  k     { parameter_description }
+ * @param[in]   k            Numero di riga
  * 
  * \return      0 in caso di successo, -1 altrimenti.
  */

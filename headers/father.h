@@ -15,11 +15,10 @@
 #define MAX_ERRORS 3
 
 /*!
- * \brief	Rappresenta una semplice lista di comandi.
+ * \brief       Rappresenta una lista di comandi.
  */
 typedef struct cmd_list {
 	cmd_t cmd;
-
 	struct cmd_list *next;
 } cmd_list_t;
 

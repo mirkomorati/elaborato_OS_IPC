@@ -21,20 +21,20 @@
  * 	- MULTIPLY: il figlio deve effettuare una moltiplicazione
  * 	- SUM: 		il figlio deve effettuare una somma
  */
-typedef enum{
+typedef enum {
 	MULTIPLY, 
 	SUM,
 	END
-}role_t;
+} role_t;
 
 /*! 
  * \brief 		Comando inviato dal padre ai figli
  * 
  * Rappresenta un comando inviato dal padre ad uno dei suoi figli
  */
-typedef struct{
+typedef struct {
 	role_t role; //!< Ruolo che il figlio deve svolgere
-	union data_u {
+	union data_u {	
 		struct point_u {
 			int i;	
 			int j;
@@ -43,7 +43,7 @@ typedef struct{
 	} data; 	//!< \brief Dati del comando 
 	     		//! In caso di somma va tenuto conto del valore di row,
 	     		//! altrimenti va tenuto conto del valore di c
-}cmd_t;
+} cmd_t;
 
 /*! 
  * \brief Messaggio dei figli al padre 
@@ -51,12 +51,12 @@ typedef struct{
  * Rappresenta un messaggio per la coda di messaggi utilizzata dai 
  * figli per comunicare con il padre
  */
-typedef struct{
+typedef struct {
 	long type;		//!< Tipo del messaggio
 	bool success;	//!< True se il comando è stato eseguito correttamente
 	cmd_t cmd;		//!< Comando che doveva essere eseguito
 	int id;		//!< l'id del figlio che ha inviato il messaggio.
-}msg_t;
+} msg_t;
 
 /*!
  * \brief      	Mette il messaggio msg nella coda di messaggi che devono
