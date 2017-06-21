@@ -71,7 +71,6 @@ void shmatrix_from_csv(shm_t *M) {
     while (read(M->fd, buf, BUF_SIZE) != 0) {
 
         for (line = strtok_r(buf, "\n", &brkt); line; line = strtok_r(NULL, "\n", &brkt)) {
-
             for (value = strtok_r(line, ",", &brkb); value; value = strtok_r(NULL, ",", &brkb)) {
                 M->shmaddr[i] = atol(value);
                 i++;
