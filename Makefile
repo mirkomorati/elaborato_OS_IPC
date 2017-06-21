@@ -15,6 +15,7 @@ SRCDIR:=src
 HDRDIR:=headers
 DOCDIR:=doc
 UTILDIR:=utility
+UTILBINDIR:=$(BINDIR)/utility
 
 #files
 #MAIN:=$.c
@@ -25,11 +26,13 @@ HDR:=$(addprefix $(HDRDIR)/, father.h ending_lib.h shm_lib.h \
 DOXYFILE:=Doxyfile 
 
 # utilities
-MATRIX_GEN_EXE=$(addprefix $(BINDIR)/, sq_matrix_gen)
-MATRIX_GEN_SRC=$(addprefix $(UTILDIR)/, sq_matrix_gen.c)
+MATRIX_GEN_EXE=$(addprefix $(UTILBINDIR)/, matrix_gen)
+MATRIX_GEN_SRC=$(addprefix $(UTILDIR)/, matrix_gen.c)
 
-MATRIX_DIFF_EXE=$(addprefix $(BINDIR)/, matrix_diff)
+MATRIX_DIFF_EXE=$(addprefix $(UTILBINDIR)/, matrix_diff)
 MATRIX_DIFF_SRC=$(addprefix $(UTILDIR)/, matrix_diff.c)
+
+SH=$(addprefix $(UTILDIR)/, *.sh)
 
 #object files
 OBJECTS=$(addprefix $(OBJDIR)/, father.o ending_lib.o \
@@ -40,7 +43,7 @@ TARGET:=$(BINDIR)/elaborato_IPC
 
 #-----------------------rules----------------------------
 
-all : doc build
+all : doc build utility
 
 build : $(TARGET)
 
@@ -52,11 +55,17 @@ $(OBJDIR)/%.o: $(SRCDIR)/%.c
 
 $(OBJECTS) : | $(OBJDIR)
 
-$(OBJDIR) : $(BINDIR)
+$(OBJDIR) :
 	mkdir -p $(OBJDIR)
 
 $(BINDIR) :
 	mkdir -p $(BINDIR)
+
+$(UTILBINDIR) :
+	mkdir -p $(UTILBINDIR)
+
+$(SH) : $(UTILBINDIR)
+	cp $(SH) $(UTILBINDIR)
 
 doc: $(HDR)
 	$(DOXY) $(DOXYFILE)
@@ -70,8 +79,9 @@ clean-doc:
 clean-all:
 	rm -rf $(BINDIR)
 	rm -rf $(DOCDIR)
+	rm -rf $(UTILBINDIR)
 
-utility: $(BINDIR) $(MATRIX_GEN_EXE) $(MATRIX_DIFF_EXE)
+utility: $(UTILBINDIR) $(MATRIX_GEN_EXE) $(MATRIX_DIFF_EXE) $(SH)
 
 $(MATRIX_GEN_EXE) : $(MATRIX_GEN_SRC)
 	$(CC) $< -o $@
