@@ -7,7 +7,7 @@
 
 int main(int argc, char const *argv[])
 {
-	int fd1, fd2, dimension, i = 0;
+	int fd1, fd2, dimension, i = 0, exit_flag = 0;
 	long *matrix1, *matrix2;
 	char buf[4096];
 	char *line, *value, *brkt, *brkb;
@@ -56,11 +56,12 @@ int main(int argc, char const *argv[])
     {
     	if (matrix1[i] != matrix2[i]){
     		printf("error: index = %i\tfirst = %li\tsecond = %li\n", i, matrix1[i], matrix2[i]);
+            exit_flag = 1;
     	}
     }
 
     free(matrix1);
     free(matrix2);
 
-	return 0;
+	return exit_flag == 1 ? -1 : 0;
 }
