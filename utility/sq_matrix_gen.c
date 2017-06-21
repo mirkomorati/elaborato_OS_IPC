@@ -25,7 +25,7 @@ int main(int argc, char **argv) {
     int N = atoi(argv[2]); 
     for (int i = 0; i < N; i++) {
         for (int j = 0; j < N; j++) {
-            int bytes = sprintf(buffer, (j + 1 == N ? "%d\n" : "%d;"), rand() % MAX_RAND + OFFSET);
+            int bytes = sprintf(buffer, (j + 1 == N ? "%d\n" : "%d,"), rand() % MAX_RAND + OFFSET);
             write(fd, buffer, bytes);
         }
     }
