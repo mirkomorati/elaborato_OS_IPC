@@ -69,12 +69,18 @@ void shmatrix_from_csv(shm_t *M) {
 #endif
 
     while (read(M->fd, buf, BUF_SIZE) != 0) {
-
         for (line = strtok_r(buf, "\n", &brkt); line; line = strtok_r(NULL, "\n", &brkt)) {
-            for (value = strtok_r(line, ",", &brkb); value; value = strtok_r(NULL, ",", &brkb)) {
+            for (value = strtok_r(line, ",", &brkb); value && i <= M->N * M->N; value = strtok_r(NULL, ",", &brkb)) {
                 M->shmaddr[i] = atol(value);
                 i++;
             }
         }
+    }
+
+    for (int l = 0; i < M->N; i++) {
+        for (int j = 0; j < M->N; j++) {
+            printf("%li ", M->shmaddr[l * M->N + j]);
+        }
+        printf("\n");
     }
 }
