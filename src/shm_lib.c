@@ -51,7 +51,7 @@ void shmatrix_to_csv(shm_t *M) {
     char buf[BUF_SIZE];
     for (int i = 0; i < M->N; i++) {
         for (int j = 0; j < M->N; j++) {
-            int bytes = sprintf(buf, (j + 1 == M->N ? "%li\n" : "%li;"), M->shmaddr[i * M->N + j]);
+            int bytes = sprintf(buf, (j + 1 == M->N ? "%li\n" : "%li,"), M->shmaddr[i * M->N + j]);
             if (write(M->fd, buf, bytes) != bytes) {
                 sys_err("ERROR shmatrix_to_csv - write");
             }
@@ -72,7 +72,7 @@ void shmatrix_from_csv(shm_t *M) {
 
         for (line = strtok_r(buf, "\n", &brkt); line; line = strtok_r(NULL, "\n", &brkt)) {
 
-            for (value = strtok_r(line, ";", &brkb); value; value = strtok_r(NULL, ";", &brkb)) {
+            for (value = strtok_r(line, ",", &brkb); value; value = strtok_r(NULL, ",", &brkb)) {
                 M->shmaddr[i] = atol(value);
                 i++;
             }

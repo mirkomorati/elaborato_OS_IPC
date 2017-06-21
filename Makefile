@@ -14,6 +14,7 @@ OBJDIR:=$(BINDIR)/obj
 SRCDIR:=src
 HDRDIR:=headers
 DOCDIR:=doc
+UTILDIR:=utility
 
 #files
 #MAIN:=$.c
@@ -22,6 +23,13 @@ SRC:=$(addprefix $(SRCDIR)/, father.c ending_lib.c shm_lib.c \
 HDR:=$(addprefix $(HDRDIR)/, father.h ending_lib.h shm_lib.h \
 	msg_lib.h std_lib.h sem_lib.h io_lib.h child.h)
 DOXYFILE:=Doxyfile 
+
+# utilities
+MATRIX_GEN_EXE=$(addprefix $(BINDIR)/, sq_matrix_gen)
+MATRIX_GEN_SRC=$(addprefix $(UTILDIR)/, sq_matrix_gen.c)
+
+MATRIX_DIFF_EXE=$(addprefix $(BINDIR)/, matrix_diff)
+MATRIX_DIFF_SRC=$(addprefix $(UTILDIR)/, matrix_diff.c)
 
 #object files
 OBJECTS=$(addprefix $(OBJDIR)/, father.o ending_lib.o \
@@ -44,9 +52,11 @@ $(OBJDIR)/%.o: $(SRCDIR)/%.c
 
 $(OBJECTS) : | $(OBJDIR)
 
-$(OBJDIR) :
-	mkdir -p $(BINDIR)
+$(OBJDIR) : $(BINDIR)
 	mkdir -p $(OBJDIR)
+
+$(BINDIR) :
+	mkdir -p $(BINDIR)
 
 doc: $(HDR)
 	$(DOXY) $(DOXYFILE)
@@ -60,3 +70,12 @@ clean-doc:
 clean-all:
 	rm -rf $(BINDIR)
 	rm -rf $(DOCDIR)
+
+utility: $(BINDIR) $(MATRIX_GEN_EXE) $(MATRIX_DIFF_EXE)
+
+$(MATRIX_GEN_EXE) : $(MATRIX_GEN_SRC)
+	$(CC) $< -o $@
+
+$(MATRIX_DIFF_EXE) : $(MATRIX_DIFF_SRC)
+	$(CC) $< -o $@
+	
