@@ -254,7 +254,7 @@ int run(int N, int P, int *pid_to_pipe, int queue, lock_t *sem_ids) {
                 send_cmd(&sum_cmd_list->cmd, pid_to_pipe[p], p, sem_ids->pipe_sem);
                 sum_cmd_list = sum_cmd_list->next;
                 p_free[p] = 0;
-            } else if (multiply_cmd_list != NULL){
+            } else if (multiply_cmd_list != NULL) {
                 // a questo punto o ho finito le moltiplicazioni (dubito) o non ho finito le moltiplicazioni per la riga
                 send_cmd(&multiply_cmd_list->cmd, pid_to_pipe[p], p, sem_ids->pipe_sem);
                 multiply_cmd_list = multiply_cmd_list->next;
@@ -295,6 +295,7 @@ static inline int first_free(char *a, int dim) {
         if (a[i] == 1) return i;
     return -1;
 }
+
 
 int generate_cmd_list(cmd_list_t **multiply_head, cmd_list_t **sum_head, int N){
     cmd_t cmd;
