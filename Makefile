@@ -33,6 +33,7 @@ MATRIX_DIFF_EXE=$(addprefix $(UTILBINDIR)/, matrix_diff)
 MATRIX_DIFF_SRC=$(addprefix $(UTILDIR)/, matrix_diff.c)
 
 SH=$(addprefix $(UTILDIR)/, *.sh)
+SHCP=$(addprefix $(UTILBINDIR), *.sh)
 
 #object files
 OBJECTS=$(addprefix $(OBJDIR)/, father.o ending_lib.o \
@@ -43,7 +44,7 @@ TARGET:=$(BINDIR)/elaborato_IPC
 
 #-----------------------rules----------------------------
 
-all : doc build utility
+all : build utility
 
 build : $(TARGET)
 
@@ -64,13 +65,13 @@ $(BINDIR) :
 $(UTILBINDIR) :
 	mkdir -p $(UTILBINDIR)
 
-$(SH) : $(UTILBINDIR)
-	cp $(SH) $(UTILBINDIR)
-
 doc: $(HDR)
 	$(DOXY) $(DOXYFILE)
 
 clean:
+	rm -rf $(BINDIR)
+
+clean-obj:
 	rm -rf $(OBJDIR)
 
 clean-doc:
@@ -81,11 +82,14 @@ clean-all:
 	rm -rf $(DOCDIR)
 	rm -rf $(UTILBINDIR)
 
-utility: $(UTILBINDIR) $(MATRIX_GEN_EXE) $(MATRIX_DIFF_EXE) $(SH)
+utility: $(UTILBINDIR) $(MATRIX_GEN_EXE) $(MATRIX_DIFF_EXE) $(SHCP)
 
 $(MATRIX_GEN_EXE) : $(MATRIX_GEN_SRC)
 	$(CC) $< -o $@
 
 $(MATRIX_DIFF_EXE) : $(MATRIX_DIFF_SRC)
 	$(CC) $< -o $@
+
+$(SHCP) : $(SH)
+	cp -p $(SH) $(UTILBINDIR)
 	
