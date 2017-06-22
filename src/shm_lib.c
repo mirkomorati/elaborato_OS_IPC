@@ -58,28 +58,23 @@ void shmatrix_to_csv(shm_t *M) {
 }
 
 void shmatrix_from_csv(shm_t *M) {
-    char *buf;
-    int i = 0;
+    char buf[5093] = {'\0'};
+    int i = 0, sum = 0;
     char *line, *value, *brkt, *brkb;
+    int read_size;
 
-#ifdef DEBUG
-    sys_print(STDOUT, "---PARSING %s\n", M->path);
-#endif
-
-    int curr = lseek(M->fd, 0, SEEK_CUR);
-    int buf_size = lseek(M->fd, 0, SEEK_END);
-    lseek(M->fd, curr, SEEK_SET);
-    buf = (char *) malloc(sizeof(char) * buf_size);
-
-    if (read(M->fd, buf, buf_size) != 0) {
-        buf[buf_size] = '\0';
+    printf("\nmatrice\n");
+    while ((read_size = read(M->fd, buf, 5093)) != 0) {
+        buf[read_size] = '\0'; // strtok wants a null terminated string.
         for (line = strtok_r(buf, "\n", &brkt); line; line = strtok_r(NULL, "\n", &brkt)) {
             for (value = strtok_r(line, ",", &brkb); value; value = strtok_r(NULL, ",", &brkb)) {
                 M->shmaddr[i] = atol(value);
+                sum++;
+                printf("%li ", atol(value));
                 i++;
             }
+            printf("\n");
         }
     }
-
-    free(buf);
+    printf("\n%i\n\n", sum);
 }
