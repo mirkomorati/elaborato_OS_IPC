@@ -39,5 +39,8 @@
 bin
 doc
 
+# sample files
+sample
+
 # vecchi file tenuti temporaneamente
 *.old
