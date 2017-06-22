@@ -23,6 +23,7 @@ echo
 for i in `seq $lower $upper`; do
     echo -e "\n======================"
     echo "DIFF ORDER $i"
-    ./matrix_diff ../../sample/m_out/matrixC$i ../../sample/m_out/matlab_matrixC$i $i
+    ./matrix_diff ../../sample/m_out/matrixC$i ../../sample/m_out/matlab_matrixC$i $i > /dev/null
+    echo $?
     echo
 done
