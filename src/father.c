@@ -16,6 +16,7 @@ int main(int argc, char **argv) {
         {"order",     required_argument, 0, 'N'},
         {"processes", required_argument, 0, 'P'},
         {"help",      no_argument,       0, 'h'},
+        {"thread",    no_argument,       0, 't'},
         {0,           0,                 0,  0 }
     };
 
