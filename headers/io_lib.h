@@ -8,7 +8,7 @@
 #include "std_lib.h"
 #include "shm_lib.h"
 
-#define BUF_SIZE 4096
+#define BUF_SIZE 128
 
 
 /**

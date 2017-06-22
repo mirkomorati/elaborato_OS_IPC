@@ -2,8 +2,6 @@
 #include "../headers/shm_lib.h"
 #include "../headers/io_lib.h"
 
-#define BUF_SIZE 4096
-
 
 int shm_create(shm_t *M) {
     int size = M->N * M->N * sizeof(long);
@@ -60,7 +58,7 @@ void shmatrix_to_csv(shm_t *M) {
 }
 
 void shmatrix_from_csv(shm_t *M) {
-    char buf[BUF_SIZE];
+    char *buf;
     int i = 0;
     char *line, *value, *brkt, *brkb;
 
@@ -68,19 +66,20 @@ void shmatrix_from_csv(shm_t *M) {
     sys_print(STDOUT, "---PARSING %s\n", M->path);
 #endif
 
-    while (read(M->fd, buf, BUF_SIZE) != 0) {
+    int curr = lseek(M->fd, 0, SEEK_CUR);
+    int buf_size = lseek(M->fd, 0, SEEK_END);
+    lseek(M->fd, curr, SEEK_SET);
+    buf = (char *) malloc(sizeof(char) * buf_size);
+
+    if (read(M->fd, buf, buf_size) != 0) {
+        buf[buf_size] = '\0';
         for (line = strtok_r(buf, "\n", &brkt); line; line = strtok_r(NULL, "\n", &brkt)) {
-            for (value = strtok_r(line, ",", &brkb); value && i <= M->N * M->N; value = strtok_r(NULL, ",", &brkb)) {
+            for (value = strtok_r(line, ",", &brkb); value; value = strtok_r(NULL, ",", &brkb)) {
                 M->shmaddr[i] = atol(value);
                 i++;
             }
         }
     }
 
-    for (int l = 0; i < M->N; i++) {
-        for (int j = 0; j < M->N; j++) {
-            printf("%li ", M->shmaddr[l * M->N + j]);
-        }
-        printf("\n");
-    }
+    free(buf);
 }

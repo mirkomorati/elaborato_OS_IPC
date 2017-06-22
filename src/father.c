@@ -106,15 +106,17 @@ int main(int argc, char **argv) {
 
     sys_print(STDOUT, "\nIl risultato della moltiplicazione tra %s e %s è:\n\n", A.path, B.path);
 
-    for (int i = 0; i < N; i++) {
-        sys_print(STDOUT, "|");
-        for (int j = 0; j < N; j++) {
-            sys_print(STDOUT, "%li", C.shmaddr[i * N + j]);
-            sys_print(STDOUT, j + 1 == N ? "|" : "\t");
+    if (N < 20) {
+        for (int i = 0; i < N; i++) {
+            sys_print(STDOUT, "|");
+            for (int j = 0; j < N; j++) {
+                sys_print(STDOUT, "%li", C.shmaddr[i * N + j]);
+                sys_print(STDOUT, j + 1 == N ? "|" : "\t");
+            }
+            sys_print(STDOUT, "\n");
         }
         sys_print(STDOUT, "\n");
     }
-    sys_print(STDOUT, "\n");
     
     shmatrix_to_csv(&C);
 
