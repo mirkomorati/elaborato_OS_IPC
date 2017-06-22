@@ -231,33 +231,38 @@ int make_child(shm_t **shm_array , lock_t *sem_ids, int P, int *pid_to_pipe, int
 
 
 int run(int N, int P, int *pid_to_pipe, int queue, lock_t *sem_ids) {
-    cmd_list_t *multiply_cmd_list = NULL;
-    cmd_list_t *sum_cmd_list = NULL;
-    int number_of_cmd = generate_cmd_list(&multiply_cmd_list, &sum_cmd_list, N);
+    cmd_t *multiply_cmd_array = (cmd_t *) malloc(sizeof(cmd_t) * N * N);
+    cmd_t *sum_cmd_array = (cmd_t *) malloc(sizeof(cmd_t) * N);
+    generate_cmd_array(multiply_cmd_array, sum_cmd_array, N);
+    int number_of_cmd = N * (N + 1);
     int completed_row[N];
     cmd_t cmd;
     char p_free[P];
-    for (int i = 0; i < P; ++i) {
+    int i, j;
+
+    for (i = 0; i < P; ++i) {
         p_free[i] = 1;
     }
 
-    for (int i = 0; i < N; i++) {
+    for (i = 0; i < N; i++) {
         completed_row[i] = 0;
     }
+
+    i = j = 0;
 
     while (number_of_cmd >= 1) {
         int p;
         if ((p = first_free(p_free, P)) != -1) {
             // ci sono processi liberi
-            if (sum_cmd_list != NULL && completed_row[sum_cmd_list->cmd.data.row] == N) {
+            if ((i < N) && completed_row[sum_cmd_array[i].data.row] == N) {
                 // se ci sono ancora comandi di tipo somma e sono terminate le moltiplicazioni per quella riga
-                send_cmd(&sum_cmd_list->cmd, pid_to_pipe[p], p, sem_ids->pipe_sem);
-                sum_cmd_list = sum_cmd_list->next;
+                send_cmd(&sum_cmd_array[i], pid_to_pipe[p], p, sem_ids->pipe_sem);
+                i++;
                 p_free[p] = 0;
-            } else if (multiply_cmd_list != NULL) {
+            } else if ((j < (N * N))) {
                 // a questo punto o ho finito le moltiplicazioni (dubito) o non ho finito le moltiplicazioni per la riga
-                send_cmd(&multiply_cmd_list->cmd, pid_to_pipe[p], p, sem_ids->pipe_sem);
-                multiply_cmd_list = multiply_cmd_list->next;
+                send_cmd(&multiply_cmd_array[j], pid_to_pipe[p], p, sem_ids->pipe_sem);
+                j++;
                 p_free[p] = 0;
             } else {
                 // ho finito le moltiplicazioni ma non mi è ancora arrivato il riscontro di conseguenza non posso
@@ -296,42 +301,14 @@ static inline int first_free(char *a, int dim) {
     return -1;
 }
 
-
-int generate_cmd_list(cmd_list_t **multiply_head, cmd_list_t **sum_head, int N){
-    cmd_t cmd;
-    int cmd_number = N * (N + 1);
-
+void generate_cmd_array(cmd_t *multiply_array, cmd_t *sum_array, int N){
     for (int i = 0; i < N; ++i) {
         for (int j = 0; j < N; ++j) {
-            cmd.role = MULTIPLY;
-            cmd.data.c.i = i;
-            cmd.data.c.j = j;
-            add_to_cmd_list(multiply_head, &cmd);
+            multiply_array[i * N + j].role = MULTIPLY;
+            multiply_array[i * N + j].data.c.i = i;
+            multiply_array[i * N + j].data.c.j = j;
         }
-        cmd.role = SUM;
-        cmd.data.row = i;
-        add_to_cmd_list(sum_head, &cmd);
-    }
-
-    return cmd_number;
-}
-
-void add_to_cmd_list(cmd_list_t **head, cmd_t *cmd) {
-    cmd_list_t *tmp = *head;
-
-    if (tmp == NULL) {
-        // creo la lista
-        tmp = (cmd_list_t *) malloc(sizeof(cmd_list_t));
-        tmp->cmd = *cmd;
-        tmp->next = NULL;
-        *head = tmp;
-    } else { // la riempio
-        while(tmp->next != NULL)
-            tmp = tmp->next;
-
-        tmp->next = (cmd_list_t *) malloc(sizeof(cmd_list_t));
-        tmp = tmp->next;
-        tmp->cmd = *cmd;
-        tmp->next = NULL;
+        sum_array[i].role = SUM;
+        sum_array[i].data.row = i;
     }
 }

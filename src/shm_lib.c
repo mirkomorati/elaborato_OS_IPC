@@ -69,7 +69,7 @@ void shmatrix_from_csv(shm_t *M) {
     int curr = lseek(M->fd, 0, SEEK_CUR);
     int buf_size = lseek(M->fd, 0, SEEK_END);
     lseek(M->fd, curr, SEEK_SET);
-    buf = (char *) malloc(sizeof(char) * buf_size);
+    buf = (char *) malloc(sizeof(char) * buf_size + 1);
 
     if (read(M->fd, buf, buf_size) != 0) {
         buf[buf_size] = '\0';

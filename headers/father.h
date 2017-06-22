@@ -80,4 +80,8 @@ int generate_cmd_list(cmd_list_t **multiply_head, cmd_list_t **sum_head, int N);
  */
 void add_to_cmd_list(cmd_list_t **head, cmd_t *cmd);
 
+cmd_list_t *create_last(cmd_t *cmd);
+
+void generate_cmd_array(cmd_t *multiply_array, cmd_t *sum_array, int N);
+
 #endif
