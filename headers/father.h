@@ -11,6 +11,7 @@
 #include "msg_lib.h"
 #include "child.h"
 #include "io_lib.h"
+#include "thread_lib.h"
 
 #define MAX_ERRORS 3
 

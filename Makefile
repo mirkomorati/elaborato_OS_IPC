@@ -7,7 +7,6 @@ DOXY:=doxygen
 
 #FLAGS
 CFLAGS?=-Wall -DDEBUG -g -O0
-LIBS?=-lpthread
 
 #directories
 BINDIR:=bin
@@ -38,7 +37,7 @@ SHCP=$(addprefix $(UTILBINDIR), *.sh)
 
 #object files
 OBJECTS=$(addprefix $(OBJDIR)/, father.o ending_lib.o \
-	shm_lib.o msg_lib.o sem_lib.o io_lib.o child.o)
+	shm_lib.o msg_lib.o sem_lib.o io_lib.o thread_lib.o child.o)
 
 #target
 TARGET:=$(BINDIR)/elaborato_IPC
@@ -50,7 +49,7 @@ all : build utility
 build : $(TARGET)
 
 $(TARGET) : $(OBJECTS)
-	$(CC) $(CFLAGS) $(LIBS) $^ -o $@ 
+	$(CC) $(CFLAGS) $^ -o $@ 
 
 $(OBJDIR)/%.o: $(SRCDIR)/%.c
 	$(CC) -c $(CFLAGS) $< -o $@

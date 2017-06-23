@@ -15,18 +15,19 @@ int main(int argc, char **argv) {
         {"matrixC",   required_argument, 0, 'C'},
         {"order",     required_argument, 0, 'N'},
         {"processes", required_argument, 0, 'P'},
-        {"help",      no_argument,       0, 'h'},
         {"thread",    no_argument,       0, 't'},
+        {"help",      no_argument,       0, 'h'},
         {0,           0,                 0,  0 }
     };
 
     int opt;
-    char *short_opt = "A:B:C:N:P:h";
+    char *short_opt = "A:B:C:N:P:th";
 
     shm_t A, B, C, S;
     shm_t *shm_array[5] = {&A, &B, &C, &S, NULL};
     int N;
     int P;
+    bool thread_flag = false;
     lock_t sem_ids;
     int queue_id;
 
@@ -50,6 +51,7 @@ int main(int argc, char **argv) {
                 C.path = optarg;
                 break;
             }
+            
             case 'N':
                 N = atoi(optarg);
                 break;
@@ -58,13 +60,18 @@ int main(int argc, char **argv) {
                 P = atoi(optarg);
                 break;
 
+            case 't':
+                thread_flag = true;
+                break;
+
             case 'h': {
-                sys_print(STDOUT, "usage: %s -A matrixA -B matrixB -C matrixC -N order -P #processes\n", argv[0]);
+                sys_print(STDOUT, "usage: %s -A matrixA -B matrixB -C matrixC -N order [-P #processes | -t]\n", argv[0]);
                 exit(0);
                 break;
             }
+            
             default:
-                sys_print(STDOUT, "Wrong arguments\nusage: %s -A matrix -B matrix -C matrix -N order -P #processes\n", argv[0]);
+                sys_print(STDOUT, "Wrong arguments\nusage: %s -A matrix -B matrix -C matrix -N order [-P #processes | -t]\n", argv[0]);
                 exit(-1);
         }
     }
@@ -74,60 +81,70 @@ int main(int argc, char **argv) {
         exit(-1);
     }
 
-    int pid_to_pipe[P];
-    int status, wpid;
-
-    A.N = N;
-    B.N = N;
-    C.N = N;
-    S.N = 1;
-    S.path = "/dev/urandom";
-
-    if (init(shm_array, &sem_ids, P) == -1) {
-        sys_err("ERROR init");
-        sig_end(-1);
-    }
-
-    if (make_child(shm_array, &sem_ids, P, pid_to_pipe, &queue_id) == -1){
-        sys_err("ERROR make_child");
-        sig_end(-1);
-    }
-
-    if (run(N, P, pid_to_pipe, queue_id, &sem_ids) == -1) {
-        sys_err("ERROR run");
-        sig_end(-1);
-    }
-
-    while((wpid = wait(&status)) > 0)
+    if (thread_flag) {
         #ifdef DEBUG
-        sys_print(STDOUT, "Terminazione normale: il figlio %i ha terminato\n", wpid);
-        #else
-        ;
+        sys_print(STDOUT, "---USING THREADS---\n");
         #endif
+        exit(use_thread(A.path, B.path, C.path, N));
+    } else if (P != 0) {
+        int pid_to_pipe[P];
+        int status, wpid;
 
-    sys_print(STDOUT, "\nIl risultato della moltiplicazione tra %s e %s è:\n\n", A.path, B.path);
+        A.N = N;
+        B.N = N;
+        C.N = N;
+        S.N = 1;
+        S.path = "/dev/urandom";
 
-    if (N < 20) {
-        for (int i = 0; i < N; i++) {
-            sys_print(STDOUT, "|");
-            for (int j = 0; j < N; j++) {
-                sys_print(STDOUT, "%li", C.shmaddr[i * N + j]);
-                sys_print(STDOUT, j + 1 == N ? "|" : "\t");
+        if (init(shm_array, &sem_ids, P) == -1) {
+            sys_err("ERROR init");
+            sig_end(-1);
+        }
+
+        if (make_child(shm_array, &sem_ids, P, pid_to_pipe, &queue_id) == -1){
+            sys_err("ERROR make_child");
+            sig_end(-1);
+        }
+
+        if (run(N, P, pid_to_pipe, queue_id, &sem_ids) == -1) {
+            sys_err("ERROR run");
+            sig_end(-1);
+        }
+
+        while((wpid = wait(&status)) > 0)
+            #ifdef DEBUG
+            sys_print(STDOUT, "Terminazione normale: il figlio %i ha terminato\n", wpid);
+            #else
+            ;
+            #endif
+
+        sys_print(STDOUT, "\nIl risultato della moltiplicazione tra %s e %s è:\n\n", A.path, B.path);
+
+        if (N < 20) {
+            for (int i = 0; i < N; i++) {
+                sys_print(STDOUT, "|");
+                for (int j = 0; j < N; j++) {
+                    sys_print(STDOUT, "%li", C.shmaddr[i * N + j]);
+                    sys_print(STDOUT, j + 1 == N ? "|" : "\t");
+                }
+                sys_print(STDOUT, "\n");
             }
             sys_print(STDOUT, "\n");
         }
-        sys_print(STDOUT, "\n");
+        
+        shmatrix_to_csv(&C);
+
+        sys_print(STDOUT, "--- La somma di tutti i suoi termini è: %li ---\n\n", S.shmaddr[0]);
+        sys_print(STDOUT, "Il risultato della moltiplicazione è stato salvato in %s\n\n", C.path);
+
+        sig_free_sem(false, NULL);
+        sig_free_memory(false, NULL);
+        sig_free_queue(false, NULL);
+        exit(0);
+    } else {
+        sys_print(STDOUT, "Error: Wrong arguments.\ntype '%s -h' for usage\n", argv[0]);
+        exit(-1);
     }
-    
-    shmatrix_to_csv(&C);
-
-    sys_print(STDOUT, "--- La somma di tutti i suoi termini è: %li ---\n\n", S.shmaddr[0]);
-    sys_print(STDOUT, "Il risultato della moltiplicazione è stato salvato in %s\n\n", C.path);
-
-    sig_free_sem(false, NULL);
-    sig_free_memory(false, NULL);
-    sig_free_queue(false, NULL);
-    exit(0);
 }
 
 
