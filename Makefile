@@ -7,6 +7,7 @@ DOXY:=doxygen
 
 #FLAGS
 CFLAGS?=-Wall -DDEBUG -g -O0
+LIBS?=-lpthread
 
 #directories
 BINDIR:=bin
@@ -49,7 +50,7 @@ all : build utility
 build : $(TARGET)
 
 $(TARGET) : $(OBJECTS)
-	$(CC) $(CFLAGS) $^ -o $@ 
+	$(CC) $(CFLAGS) $(LIBS) $^ -o $@ 
 
 $(OBJDIR)/%.o: $(SRCDIR)/%.c
 	$(CC) -c $(CFLAGS) $< -o $@
