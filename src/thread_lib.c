@@ -75,6 +75,7 @@ int use_thread(char *A_path, char *B_path, char *C_path, int N) {
     free(matrixA);
     free(matrixB);
     free(matrixC);
+    free(completed_rows);
     return 0;
 }
 
