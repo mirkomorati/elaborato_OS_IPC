@@ -137,14 +137,18 @@ void * thread_callback(void * args){
     switch (arg->role){
         case T_SUM: {
             int completed = 0;
+            int done[N];
+            for (int i = 0; i < N; ++i)
+                done[i] = 0;
             while(completed < N){
                 for (int i = 0; i < N; ++i){
                     pthread_mutex_lock(arg->sum_mutex);
-                    if (arg->completed_rows[i] == 1){
+                    if (arg->completed_rows[i] == 1 && done[i] == 0){
                         for (int j = 0; j < N; ++j){
                             *(arg->sum) += arg->matrixC[(i * N) + j];
                         }
                         completed++;
+                        done[i] = 1;
                     }   
                     pthread_mutex_unlock(arg->sum_mutex);
                 }
