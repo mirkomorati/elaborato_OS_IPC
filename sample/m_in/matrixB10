@@ -8,3 +8,136 @@
 -2,2,1,-1,-3,-3,-4,3,1,-5
 4,1,0,1,-2,-5,-1,-5,3,-4
 -3,2,-3,-3,-5,0,0,-1,-5,-5
+-5	-4	-2	0	3	-4	2	0	-5	-5	
+0	-3	1	-1	3	-1	-2	0	4	-5	
+-1	2	1	3	2	0	4	2	-4	-2	
+0	-3	-3	2	-1	-2	-1	-1	2	2	
+-1	4	-1	-4	1	-5	1	3	3	3	
+0	-3	-5	-2	4	-3	2	-3	-5	-5	
+1	-4	-5	-1	-2	-4	-5	-4	-1	3	
+0	-5	-2	-5	1	-5	-5	-1	2	0	
+-5	-5	4	-2	1	-4	3	3	-3	2	
+2	-3	4	3	1	4	0	2	0	3	
+
+3	-5	2	-2	-1	4	-2	-2	-4	3	
+3	3	-2	-3	4	-3	2	-4	0	3	
+-3	4	3	0	1	-2	0	3	-4	-3	
+0	0	-2	0	-2	3	1	4	0	2	
+0	4	0	-1	-3	-5	-1	-4	2	-3	
+3	2	0	-3	-1	0	4	3	-3	-3	
+1	-4	-3	-2	4	4	-4	-2	3	-5	
+-2	2	1	-1	-3	-3	-4	3	1	-5	
+4	1	0	1	-2	-5	-1	-5	3	-4	
+-3	2	-3	-3	-5	0	0	-1	-5	-5	
+THREAD ROLE: MULTIPLY
+THREAD ROLE: MULTIPLY
+MULTIPLY row 0 col 0:	-36
+THREAD ROLE: MULTIPLY
+THREAD ROLE: MULTIPLY
+THREAD ROLE: MULTIPLY
+MULTIPLY row 5 col 0:	0
+MULTIPLY row 3 col 0:	-3
+THREAD ROLE: MULTIPLY
+MULTIPLY row 3 col 1:	-21
+MULTIPLY row 4 col 0:	-5
+MULTIPLY row 5 col 1:	-48
+THREAD ROLE: MULTIPLY
+THREAD ROLE: MULTIPLY
+MULTIPLY row 8 col 0:	-75
+MULTIPLY row 6 col 0:	-16
+MULTIPLY row 8 col 1:	17
+MULTIPLY row 2 col 0:	-10
+THREAD ROLE: MULTIPLY
+MULTIPLY row 1 col 0:	14
+THREAD ROLE: MULTIPLY
+MULTIPLY row 0 col 1:	-14
+MULTIPLY row 9 col 0:	-16
+THREAD ROLE: SUM
+MULTIPLY row 6 col 1:	-36
+MULTIPLY row 3 col 2:	-11
+MULTIPLY row 9 col 1:	19
+MULTIPLY row 8 col 2:	4
+MULTIPLY row 0 col 2:	1
+MULTIPLY row 3 col 3:	15
+MULTIPLY row 1 col 1:	7
+MULTIPLY row 5 col 2:	1
+MULTIPLY row 4 col 1:	18
+MULTIPLY row 6 col 2:	-1
+MULTIPLY row 8 col 3:	18
+MULTIPLY row 2 col 1:	3
+MULTIPLY row 0 col 3:	37
+MULTIPLY row 4 col 2:	-14
+MULTIPLY row 3 col 4:	-29
+MULTIPLY row 8 col 4:	-7
+MULTIPLY row 3 col 5:	15
+MULTIPLY row 6 col 3:	28
+MULTIPLY row 4 col 3:	-7
+MULTIPLY row 5 col 3:	23
+MULTIPLY row 4 col 4:	0
+MULTIPLY row 3 col 6:	-5
+MULTIPLY row 2 col 2:	-13
+MULTIPLY row 9 col 2:	9
+MULTIPLY row 6 col 4:	-31
+MULTIPLY row 9 col 3:	-19
+MULTIPLY row 1 col 2:	32
+MULTIPLY row 4 col 5:	-51
+MULTIPLY row 7 col 0:	-19
+MULTIPLY row 0 col 4:	25
+MULTIPLY row 5 col 4:	30
+MULTIPLY row 2 col 3:	-14
+MULTIPLY row 5 col 5:	35
+MULTIPLY row 7 col 1:	-9
+MULTIPLY row 3 col 7:	-4
+MULTIPLY row 1 col 3:	32
+MULTIPLY row 6 col 5:	30
+MULTIPLY row 1 col 4:	-8
+MULTIPLY row 8 col 5:	-6
+MULTIPLY row 7 col 2:	28
+MULTIPLY row 8 col 6:	-40
+MULTIPLY row 9 col 4:	-44
+MULTIPLY row 0 col 5:	14
+MULTIPLY row 3 col 8:	8
+MULTIPLY row 6 col 6:	12
+MULTIPLY row 3 col 9:	5
+MULTIPLY row 6 col 7:	-9
+MULTIPLY row 4 col 6:	-34
+MULTIPLY row 9 col 5:	7
+MULTIPLY row 4 col 7:	-63
+MULTIPLY row 0 col 6:	-20
+MULTIPLY row 7 col 3:	42
+MULTIPLY row 8 col 7:	34
+MULTIPLY row 7 col 4:	-31
+MULTIPLY row 6 col 8:	-13
+MULTIPLY row 4 col 8:	25
+MULTIPLY row 6 col 9:	56
+MULTIPLY row 2 col 4:	26
+MULTIPLY row 7 col 5:	-28
+MULTIPLY row 2 col 5:	17
+MULTIPLY row 1 col 5:	-39
+MULTIPLY row 8 col 8:	11
+MULTIPLY row 5 col 6:	-15
+MULTIPLY row 7 col 6:	-14
+MULTIPLY row 1 col 6:	-10
+MULTIPLY row 7 col 7:	-28
+MULTIPLY row 1 col 7:	-15
+MULTIPLY row 9 col 6:	0
+MULTIPLY row 0 col 7:	22
+MULTIPLY row 4 col 9:	-31
+MULTIPLY row 8 col 9:	-65
+MULTIPLY row 5 col 7:	-19
+MULTIPLY row 5 col 8:	50
+MULTIPLY row 5 col 9:	49
+MULTIPLY row 2 col 6:	-13
+MULTIPLY row 2 col 7:	21
+MULTIPLY row 1 col 8:	36
+MULTIPLY row 9 col 7:	43
+MULTIPLY row 1 col 9:	-1
+MULTIPLY row 9 col 8:	-47
+MULTIPLY row 0 col 8:	62
+MULTIPLY row 2 col 8:	16
+MULTIPLY row 9 col 9:	-49
+MULTIPLY row 2 col 9:	-4
+MULTIPLY row 7 col 8:	15
+MULTIPLY row 7 col 9:	15
+MULTIPLY row 0 col 9:	17
+SUM: -116
