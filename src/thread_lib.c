@@ -6,7 +6,7 @@ int use_thread(char *A_path, char *B_path, char *C_path, int N) {
     pthread_t threads[thread_number];
     long *matrixA, *matrixB, *matrixC, *sum;
     int *completed_rows;
-    pthread_mutex_t sum_mutex; 
+    pthread_mutex_t sum_mutex;
 
     int A_fd, B_fd, C_fd;
 
@@ -25,7 +25,7 @@ int use_thread(char *A_path, char *B_path, char *C_path, int N) {
         return -1;
     }
 
-    if (pthread_mutex_init(&sum_mutex, NULL)){
+    if (pthread_mutex_init(&sum_mutex, NULL)) {
         sys_err("ERROR use_thread - pthread_mutex_init");
     }
 
@@ -53,6 +53,7 @@ int use_thread(char *A_path, char *B_path, char *C_path, int N) {
     }
 
 
+
 #ifdef DEBUG
     if (N <= 20) {
         for (int i = 0; i < N; i++) {
@@ -72,12 +73,12 @@ int use_thread(char *A_path, char *B_path, char *C_path, int N) {
 #endif
 
 
-    if (create_threads(threads, args, thread_number) == -1){
+    if (create_threads(threads, args, thread_number) == -1) {
         sys_err("ERROR use_thread - create_threads");
         return -1;
     }
 
-    for (int i = 0; i < thread_number; ++i){
+    for (int i = 0; i < thread_number; ++i) {
         pthread_join(threads[i], NULL);
     }
 
@@ -100,7 +101,7 @@ void matrix_to_csv(int fd, long *matrix, int N) {
                 sys_err("ERROR matrix_to_csv - write");
             }
         }
-    }    
+    }
 }
 
 void matrix_from_csv(int fd, long *matrix, int N) {
@@ -127,8 +128,8 @@ void matrix_from_csv(int fd, long *matrix, int N) {
 }
 
 int create_threads(pthread_t *thread_array, thread_arg_t *args, int thread_number) {
-    for(int i = 0; i < thread_number; i++) {
-        if(pthread_create(&thread_array[i], NULL, thread_callback, (void *) (&args[i]))) {
+    for (int i = 0; i < thread_number; i++) {
+        if (pthread_create(&thread_array[i], NULL, thread_callback, (void *) (&args[i]))) {
             sys_err("error creating threads");
             return -1;
         }
@@ -138,64 +139,64 @@ int create_threads(pthread_t *thread_array, thread_arg_t *args, int thread_numbe
 }
 
 void * thread_callback(void * args) {
-    thread_arg_t *arg = (thread_arg_t *) args; 
+    thread_arg_t *arg = (thread_arg_t *) args;
     int N = arg->dimension; // per comodità nel codice.
     sys_print(STDOUT, "THREAD ID: %i, ROLE: %s\n", arg->thread_id, arg->role == T_SUM ? "SUM" : "MULTIPLY");
 
     switch (arg->role) {
-        case T_SUM: {
-            *(arg->sum) = 0;
-            int completed = 0;
-            while(completed < N) {
-                for (int i = 0; i < N; ++i) {
-                    pthread_mutex_lock(arg->sum_mutex);
-                    if (arg->completed_rows[i] == 1) {
-                        for (int j = 0; j < N; ++j) {
-                            *(arg->sum) += arg->matrixC[(i * N) + j];
-                        }
-                        completed++;
-                        arg->completed_rows[i] = 2;    // Completed and done.
-                    }   
-                    pthread_mutex_unlock(arg->sum_mutex);
+    case T_SUM: {
+        *(arg->sum) = 0;
+        int completed = 0;
+        while (completed < N) {
+            for (int i = 0; i < N; ++i) {
+                pthread_mutex_lock(arg->sum_mutex);
+                if (arg->completed_rows[i] == 1) {
+                    for (int j = 0; j < N; ++j) {
+                        *(arg->sum) += arg->matrixC[(i * N) + j];
+                    }
+                    completed++;
+                    arg->completed_rows[i] = 2;    // Completed and done.
                 }
+                pthread_mutex_unlock(arg->sum_mutex);
             }
-            #ifdef DEBUG
-            sys_print(STDOUT, "THREAD %i\tSUM: %li\n", arg->thread_id, *(arg->sum));
-            #endif
         }
-        break;
-        
-        case T_MULTIPLY : {
-            long *row = (long *) malloc(sizeof(long) * N);
-            long *col = (long *) malloc(sizeof(long) * N);
-            long res = 0;
+#ifdef DEBUG
+        sys_print(STDOUT, "THREAD %i\tSUM: %li\n", arg->thread_id, *(arg->sum));
+#endif
+    }
+    break;
 
-            for (int j = 0; j < N; j++) {
-                res = 0;
-                for (int l = 0; l < N; l++) {
-                    row[l] = arg->matrixA[arg->row * N + l];
-                    col[l] = arg->matrixB[j + l * N];
-                }
+    case T_MULTIPLY : {
+        long *row = (long *) malloc(sizeof(long) * N);
+        long *col = (long *) malloc(sizeof(long) * N);
+        long res = 0;
 
-                for (int l = 0; l < N; l++) {
-                    res += row[l] * col[l];
-                }
-
-                arg->matrixC[arg->row * N + j] = res;
-                #ifdef DEBUG
-                sys_print(STDOUT, "THREAD %i\tMULTIPLY row %i col %i:\t%li\n", arg->thread_id, arg->row, j, res);
-                #endif
+        for (int j = 0; j < N; j++) {
+            res = 0;
+            for (int l = 0; l < N; l++) {
+                row[l] = arg->matrixA[arg->row * N + l];
+                col[l] = arg->matrixB[j + l * N];
             }
-            pthread_mutex_lock(arg->sum_mutex);
-            arg->completed_rows[arg->row] = 1;
-            pthread_mutex_unlock(arg->sum_mutex);
-            free(row);
-            free(col);
-        }
-        break;
 
-        default:
-            sys_err("ERROR thread_callback - role not recognized");
+            for (int l = 0; l < N; l++) {
+                res += row[l] * col[l];
+            }
+
+            arg->matrixC[arg->row * N + j] = res;
+#ifdef DEBUG
+            sys_print(STDOUT, "THREAD %i\tMULTIPLY row %i col %i:\t%li\n", arg->thread_id, arg->row, j, res);
+#endif
+        }
+        pthread_mutex_lock(arg->sum_mutex);
+        arg->completed_rows[arg->row] = 1;
+        pthread_mutex_unlock(arg->sum_mutex);
+        free(row);
+        free(col);
+    }
+    break;
+
+    default:
+        sys_err("ERROR thread_callback - role not recognized");
     }
     return NULL;
 }
