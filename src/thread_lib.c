@@ -37,6 +37,7 @@ int use_thread(char *A_path, char *B_path, char *C_path, int N) {
     matrix_from_csv(B_fd, matrixB, N);
 
     for (int i = 0; i < N+1; ++i) {
+        args[i].dimension = N;
         args[i].matrixA = matrixA;
         args[i].matrixB = matrixB;
         args[i].matrixC = matrixC;
@@ -125,11 +126,25 @@ int create_threads(pthread_t *thread_array, thread_arg_t *args, int thread_numbe
 
 void * thread_callback(void * args){
     thread_arg_t *arg = (thread_arg_t *) args; 
+    int N = arg->dimension; // per comodità nel codice.
     sys_print(STDOUT, "ciao, il mio ruolo è: %s\n", arg->role == T_SUM ? "SUM" : "MULTIPLY");
 
     switch (arg->role){
         case T_SUM: {
-            
+            int sum = 0;
+            int completed = 0;
+            while(completed < N){
+                for (int i = 0; i < N; ++i){
+                    pthread_mutex_lock(arg->sum_mutex);
+                    if (arg->completed_rows[i] == 1){
+                        for (int j = 0; j < N; ++j){
+                            sum += arg->matrixC[(i * N) + j];
+                        }
+                        completed++;
+                    }   
+                    pthread_mutex_unlock(arg->sum_mutex);
+                }
+            }
         }
         break;
         case T_MULTIPLY : {

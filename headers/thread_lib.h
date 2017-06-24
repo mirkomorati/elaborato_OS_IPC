@@ -19,6 +19,7 @@ typedef struct {
 	int *completed_rows;
 	thread_role_t role;
 	int row;
+	int dimension;
 	long *matrixA;
 	long *matrixB;
 	long *matrixC;
