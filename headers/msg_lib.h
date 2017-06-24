@@ -12,14 +12,13 @@
 #include "sem_lib.h"
 #include "io_lib.h"
 
-/*! 
- * \brief 		Rappresenta il ruolo di un figlio
- * 
- * Il ruolo è variabile ed è parte di un comando che può essere inviato da un
- * padre ad un figlio
- * Può essere:
- * 	- MULTIPLY: il figlio deve effettuare una moltiplicazione
- * 	- SUM: 		il figlio deve effettuare una somma
+/*!
+ * @brief      Rappresenta il ruolo di un figlio
+ *
+ *             Il ruolo è variabile ed è parte di un comando che può essere
+ *             inviato da un padre ad un figlio Può essere:
+ *  - MULTIPLY: il figlio deve effettuare una moltiplicazione
+ *  - SUM: 		il figlio deve effettuare una somma
  */
 typedef enum {
 	MULTIPLY, 

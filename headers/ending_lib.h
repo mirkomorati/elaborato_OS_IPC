@@ -63,22 +63,21 @@ typedef struct sig_queue_list {
 void sig_handler(int sig, int pid);
 
 /*!
- * \brief      	Assegna il corretto handler ad ogni segnale
- * 
- * \param[in]	shm_list   	La testa della lista della memoria condivisa da 
- * 							rimuovere.
- * \param[in]	sem_list	La testa della lista dei semafori da rimuovere.
- * \param[in]	queue_list	La testa della lista delle code da rimuovere.
-
+ * @brief      Assegna il corretto handler ad ogni segnale
+ *
+ * @param[in]  shm_list    La testa della lista della memoria condivisa da
+ *                         rimuovere.
+ * @param[in]  sem_list    La testa della lista dei semafori da rimuovere.
+ * @param[in]  queue_list  La testa della lista delle code da rimuovere.
  */
 void sig_init(sig_shmem_list_t *shm_list, sig_sem_list_t *sem_list, sig_queue_list_t *queue_list);
 
 /*!
- * \brief      	Aggiunge gli oggetti alla lista della memoria condivisa da
- *              eliminare.
+ * @brief      Aggiunge gli oggetti alla lista della memoria condivisa da
+ *             eliminare.
  *
- * \param[in] 	n       Numero di elementi
- * \param[in]  	args 	Gli oggetti
+ * @param[in]  n          Numero di elementi
+ * @param[in]  args  Gli oggetti
  */
 void sig_add_shmem(int n, ...);
 
