@@ -1,7 +1,9 @@
 #include "../headers/thread_lib.h"
 
 int use_thread(char *A_path, char *B_path, char *C_path, int N) {
-    thread_arg_t args;
+    thread_arg_t args[N];
+    pthread_t threads[N];
+    long *matrixA, *matrixB, *matrixC;
 
     int A_fd, B_fd, C_fd;
 
@@ -20,32 +22,47 @@ int use_thread(char *A_path, char *B_path, char *C_path, int N) {
         return -1;
     }
 
-    args.matrixA = (long *) malloc(sizeof(long) * N * N);
-    args.matrixB = (long *) malloc(sizeof(long) * N * N);
-    args.matrixC = (long *) malloc(sizeof(long) * N * N);
+    matrixA = (long *) malloc(sizeof(long) * N * N);
+    matrixB = (long *) malloc(sizeof(long) * N * N);
+    matrixC = (long *) malloc(sizeof(long) * N * N);
 
-    matrix_from_csv(A_fd, args.matrixA, N);
-    matrix_from_csv(B_fd, args.matrixB, N);
+    matrix_from_csv(A_fd, matrixA, N);
+    matrix_from_csv(B_fd, matrixB, N);
+
+    for (int i = 0; i < N; ++i) {
+        args[i].matrixA = matrixA;
+        args[i].matrixB = matrixB;
+        args[i].matrixC = matrixC;
+    }
 
 #ifdef DEBUG
     for (int i = 0; i < N; i++) {
         for (int j = 0; j < N; j++) {
-            sys_print(STDOUT, "%i\t", args.matrixA[i * N + j]);
+            sys_print(STDOUT, "%i\t", matrixA[i * N + j]);
         }
         sys_print(STDOUT, "\n");
     }
     sys_print(STDOUT, "\n");
     for (int i = 0; i < N; i++) {
         for (int j = 0; j < N; j++) {
-            sys_print(STDOUT, "%i\t", args.matrixB[i * N + j]);
+            sys_print(STDOUT, "%i\t", matrixB[i * N + j]);
         }
         sys_print(STDOUT, "\n");
     }
 #endif
 
-    free(args.matrixA);
-    free(args.matrixB);
-    free(args.matrixC);
+    if (create_threads(threads, args, N) == -1){
+        sys_err("error creatin threads in use_thread");
+        return -1;
+    }
+
+    for (int i = 0; i < N; ++i){
+        pthread_join(threads[i], NULL);
+    }
+
+    free(matrixA);
+    free(matrixB);
+    free(matrixC);
     return 0;
 }
 
@@ -82,4 +99,21 @@ void matrix_from_csv(int fd, long *matrix, int N) {
     }
 
     free(buf);
+}
+
+int create_threads(pthread_t *thread_array, thread_arg_t *args, int thread_number){
+    for(int i = 0; i < thread_number; i++){
+        if(pthread_create(&thread_array[i], NULL, thread_callback, (void *) (&args[i]) )){
+            sys_err("error creating threads");
+            return -1;
+        }
+    }
+
+    return 0;
+}
+
+void * thread_callback(void * args){
+    thread_arg_t *arg = (thread_arg_t *) args; 
+    sys_print(STDOUT, "ciao\n%li\n%li\n%li\n", arg->matrixA[0], arg->matrixB[0], arg->matrixC[0]);
+    return NULL;
 }

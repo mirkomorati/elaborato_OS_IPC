@@ -40,4 +40,6 @@ void matrix_to_csv(int fd, long *matrix, int N);
 
 void matrix_from_csv(int fd, long *matrix, int N);
 
+void * thread_callback(void * args);
+
 #endif 
