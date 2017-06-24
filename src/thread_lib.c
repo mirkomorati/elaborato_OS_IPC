@@ -1,9 +1,11 @@
 #include "../headers/thread_lib.h"
 
 int use_thread(char *A_path, char *B_path, char *C_path, int N) {
-    thread_arg_t args[N];
-    pthread_t threads[N];
+    thread_arg_t args[N+1];
+    pthread_t threads[N+1];
     long *matrixA, *matrixB, *matrixC;
+    int *completed_rows;
+    pthread_mutex_t sum_mutex; 
 
     int A_fd, B_fd, C_fd;
 
@@ -22,17 +24,26 @@ int use_thread(char *A_path, char *B_path, char *C_path, int N) {
         return -1;
     }
 
+    if (pthread_mutex_init(&sum_mutex, NULL)){
+        sys_err("ERROR use_thread - mutex init");
+    }
+
     matrixA = (long *) malloc(sizeof(long) * N * N);
     matrixB = (long *) malloc(sizeof(long) * N * N);
     matrixC = (long *) malloc(sizeof(long) * N * N);
+    completed_rows = (int *) malloc(sizeof(int) * N);
 
     matrix_from_csv(A_fd, matrixA, N);
     matrix_from_csv(B_fd, matrixB, N);
 
-    for (int i = 0; i < N; ++i) {
+    for (int i = 0; i < N+1; ++i) {
         args[i].matrixA = matrixA;
         args[i].matrixB = matrixB;
         args[i].matrixC = matrixC;
+        args[i].role = (i == N) ? T_SUM : T_MULTIPLY;
+        args[i].role = (i < N) ? i : 0;
+        args[i].sum_mutex = &sum_mutex;
+        args[i].completed_rows = completed_rows;
     }
 
 #ifdef DEBUG
@@ -51,12 +62,12 @@ int use_thread(char *A_path, char *B_path, char *C_path, int N) {
     }
 #endif
 
-    if (create_threads(threads, args, N) == -1){
+    if (create_threads(threads, args, N + 1) == -1){
         sys_err("error creatin threads in use_thread");
         return -1;
     }
 
-    for (int i = 0; i < N; ++i){
+    for (int i = 0; i < N + 1; ++i){
         pthread_join(threads[i], NULL);
     }
 
@@ -114,6 +125,19 @@ int create_threads(pthread_t *thread_array, thread_arg_t *args, int thread_numbe
 
 void * thread_callback(void * args){
     thread_arg_t *arg = (thread_arg_t *) args; 
-    sys_print(STDOUT, "ciao\n%li\n%li\n%li\n", arg->matrixA[0], arg->matrixB[0], arg->matrixC[0]);
+    sys_print(STDOUT, "ciao, il mio ruolo è: %s\n", arg->role == T_SUM ? "SUM" : "MULTIPLY");
+
+    switch (arg->role){
+        case T_SUM: {
+            
+        }
+        break;
+        case T_MULTIPLY : {
+
+        }
+        break;
+        default:
+            sys_err("role not recognized!");
+    }
     return NULL;
 }
