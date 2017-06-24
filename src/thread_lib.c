@@ -3,7 +3,7 @@
 int use_thread(char *A_path, char *B_path, char *C_path, int N) {
     thread_arg_t args[N+1];
     pthread_t threads[N+1];
-    long *matrixA, *matrixB, *matrixC;
+    long *matrixA, *matrixB, *matrixC, *sum;
     int *completed_rows;
     pthread_mutex_t sum_mutex; 
 
@@ -32,6 +32,8 @@ int use_thread(char *A_path, char *B_path, char *C_path, int N) {
     matrixB = (long *) malloc(sizeof(long) * N * N);
     matrixC = (long *) malloc(sizeof(long) * N * N);
     completed_rows = (int *) malloc(sizeof(int) * N);
+    sum = (long *) malloc(sizeof(long));
+
 
     matrix_from_csv(A_fd, matrixA, N);
     matrix_from_csv(B_fd, matrixB, N);
@@ -42,9 +44,10 @@ int use_thread(char *A_path, char *B_path, char *C_path, int N) {
         args[i].matrixB = matrixB;
         args[i].matrixC = matrixC;
         args[i].role = (i == N) ? T_SUM : T_MULTIPLY;
-        args[i].role = (i < N) ? i : 0;
+        args[i].row = (i < N) ? i : 0;
         args[i].sum_mutex = &sum_mutex;
         args[i].completed_rows = completed_rows;
+        args[i].sum = sum;
     }
 
 #ifdef DEBUG
@@ -76,6 +79,7 @@ int use_thread(char *A_path, char *B_path, char *C_path, int N) {
     free(matrixB);
     free(matrixC);
     free(completed_rows);
+    free(sum);
     return 0;
 }
 
@@ -132,14 +136,13 @@ void * thread_callback(void * args){
 
     switch (arg->role){
         case T_SUM: {
-            int sum = 0;
             int completed = 0;
             while(completed < N){
                 for (int i = 0; i < N; ++i){
                     pthread_mutex_lock(arg->sum_mutex);
                     if (arg->completed_rows[i] == 1){
                         for (int j = 0; j < N; ++j){
-                            sum += arg->matrixC[(i * N) + j];
+                            *(arg->sum) += arg->matrixC[(i * N) + j];
                         }
                         completed++;
                     }   

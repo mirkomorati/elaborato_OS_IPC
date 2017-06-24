@@ -23,6 +23,7 @@ typedef struct {
 	long *matrixA;
 	long *matrixB;
 	long *matrixC;
+	long *sum;
 } thread_arg_t;
 
 /**
