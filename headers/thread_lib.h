@@ -15,6 +15,7 @@ typedef enum {
 } thread_role_t;
 
 typedef struct {
+    int thread_id;
 	pthread_mutex_t *sum_mutex;
 	int *completed_rows;
 	thread_role_t role;
