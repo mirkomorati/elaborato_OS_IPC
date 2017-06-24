@@ -186,7 +186,9 @@ void * thread_callback(void * args) {
                 sys_print(STDOUT, "THREAD %i\tMULTIPLY row %i col %i:\t%li\n", arg->thread_id, arg->row, j, res);
                 #endif
             }
+            pthread_mutex_lock(arg->sum_mutex);
             arg->completed_rows[arg->row] = 1;
+            pthread_mutex_unlock(arg->sum_mutex);
             free(row);
             free(col);
         }
