@@ -1,13 +1,19 @@
 /*!
- * \file        sem_lib.h
+ * \file	sem_lib.h
+ * 
  * Contiene i prototipi di alcune funzioni che risultano utili
  * nell'utilizzo dei semafori
+ * 
  */
 
 #ifndef SEM_LIB_H
 #define SEM_LIB_H
 #include "std_lib.h"
 
+/*!
+ * \brief 	Struttura che raccoglie l'insieme di tutti i semafori che vengono utilizzati 
+ * 			nella comunicazione inter processo
+ */
 typedef struct{
 	int queue_sem;
     int S_sem;

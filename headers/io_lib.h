@@ -12,19 +12,19 @@
 
 
 /**
- * @brief      Funzione che simula il comportamento della printf usando
- *             la syscall write
+ * @brief      	Funzione che simula il comportamento della printf usando
+ *             	la syscall write
  *
- * @param[in]  fd         File descriptor su cui scrivere
- * @param      str        Stringa di formattazione
- * @param[in]  ...        Argomenti da sostituire
+ * @param[in]  	fd         File descriptor su cui scrivere
+ * @param[in]  	str        Stringa di formattazione
+ * @param[in]  	...        Argomenti da sostituire
  */
 void sys_print(int fd, char *str, ...);
 
 /**
- * @brief      Funzione che simula il comportamento della perror
+ * @brief      	Funzione che simula il comportamento della perror
  *
- * @param      str   La stringa da stampare come errore
+ * @param[in]  	str   La stringa da stampare come errore
  */
 void sys_err(char *str);
 

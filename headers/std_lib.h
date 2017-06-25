@@ -1,9 +1,11 @@
 /*!
  * \file        std_lib.h
+ * 
  * Contiene tutti gli header delle librerie C utili al progetto
  * specificandone l'utilizzo. Possiamo includere direttamente questo
  * file in tutti i file dato che tanto verrà incluso una volta sola
  * grazie alla ifndef iniziale.
+ * 
  */
 
 #ifndef STD_LIB_H

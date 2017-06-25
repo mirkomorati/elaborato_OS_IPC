@@ -13,12 +13,15 @@
 #include "io_lib.h"
 
 /*!
- * @brief      Rappresenta il ruolo di un figlio
+ * @brief   Rappresenta il ruolo di un figlio
  *
- *             Il ruolo è variabile ed è parte di un comando che può essere
- *             inviato da un padre ad un figlio Può essere:
- *  - MULTIPLY: il figlio deve effettuare una moltiplicazione
- *  - SUM: 		il figlio deve effettuare una somma
+ *  Il ruolo è variabile ed è parte di un comando che può essere
+ *  inviato da un padre ad un figlio Può essere:
+ *             	
+ * 	* MULTIPLY: 	il figlio deve effettuare una moltiplicazione
+ *  
+ * 	* SUM: 			il figlio deve effettuare una somma
+ * 	
  */
 typedef enum {
 	MULTIPLY, 
@@ -27,9 +30,10 @@ typedef enum {
 } role_t;
 
 /*! 
- * \brief 		Comando inviato dal padre ai figli
+ * \brief 	Comando inviato dal padre ai figli
  * 
  * Rappresenta un comando inviato dal padre ad uno dei suoi figli
+ * 
  */
 typedef struct {
 	role_t role; //!< Ruolo che il figlio deve svolgere
@@ -45,10 +49,11 @@ typedef struct {
 } cmd_t;
 
 /*! 
- * \brief Messaggio dei figli al padre 
+ * \brief 	Messaggio dei figli al padre 
  * 
  * Rappresenta un messaggio per la coda di messaggi utilizzata dai 
  * figli per comunicare con il padre
+ * 
  */
 typedef struct {
 	long type;		//!< Tipo del messaggio

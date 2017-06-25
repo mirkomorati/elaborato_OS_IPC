@@ -8,7 +8,8 @@
 #include "io_lib.h"
 
 /*!
- * \brief 		Struttura che permette di liberare un'area di memoria condivisa
+ * \brief	Struttura che permette di liberare un'area di memoria condivisa
+ * 
  */
 typedef struct {
     int shmid;
@@ -17,7 +18,8 @@ typedef struct {
 
 
 /*!
- * \brief      Lista che contiene le memorie condivise
+ * \brief  	Lista che contiene le memorie condivise
+ * 
  */
 typedef struct sig_shmem_list {
 	sig_shmem_t obj;
@@ -25,8 +27,9 @@ typedef struct sig_shmem_list {
 } sig_shmem_list_t;
 
 /*!
- * \brief 		Permette di memorizzare i dati necessari all'eliminazione di 
- * 				un set di semafori.
+ * \brief	permette di memorizzare i dati necessari all'eliminazione di 
+ * 			un set di semafori.
+ * 			
  */
 typedef struct {
 	int semid;
@@ -34,9 +37,10 @@ typedef struct {
 } sig_sem_t;
 
 /*!
- * \brief 		Lista che verrà utilizzata per tenere traccia di tutti
- *              i semafori presenti da liberare alla terminazione
- *              del programma.
+ * \brief 	Lista che verrà utilizzata per tenere traccia di tutti
+ *          i semafori presenti da liberare alla terminazione
+ *          del programma
+ *          
  */
 typedef struct sig_sem_list {
 	sig_sem_t obj;
@@ -44,10 +48,11 @@ typedef struct sig_sem_list {
 } sig_sem_list_t;
 
 /*!
- * \brief 		Rappresenta una lista di interi, che verrà utilizzata per 
- * 				memorizzare tutti gli id di tutte le code di messaggi che 
- * 				verranno create dal programma, così che possano essere 
- * 				liberate prima della terminazione.
+ * \brief 	Rappresenta una lista di interi, che verrà utilizzata per 
+ * 			memorizzare tutti gli id di tutte le code di messaggi che 
+ * 			verranno create dal programma, così che possano essere 
+ * 			liberate prima della terminazione.
+ * 				
  */
 typedef struct sig_queue_list {
 	int obj;
@@ -57,27 +62,27 @@ typedef struct sig_queue_list {
 /*!
  * \brief      	Funzione che elimina tutte le memorie condivise del processo
  *
- * \param[in]  	sig   Il segnale
- * \param[in]   pid   Il pid del padre
+ * \param[in]  	sig  	Il segnale
+ * \param[in]   pid   	Il pid del padre
  */
 void sig_handler(int sig, int pid);
 
 /*!
- * @brief      Assegna il corretto handler ad ogni segnale
+ * @brief      	Assegna il corretto handler ad ogni segnale
  *
- * @param[in]  shm_list    La testa della lista della memoria condivisa da
- *                         rimuovere.
- * @param[in]  sem_list    La testa della lista dei semafori da rimuovere.
- * @param[in]  queue_list  La testa della lista delle code da rimuovere.
+ * @param[in]  	shm_list   	La testa della lista della memoria condivisa da
+ *                         	rimuovere.
+ * @param[in]  	sem_list    La testa della lista dei semafori da rimuovere.
+ * @param[in]  	queue_list  La testa della lista delle code da rimuovere.
  */
 void sig_init(sig_shmem_list_t *shm_list, sig_sem_list_t *sem_list, sig_queue_list_t *queue_list);
 
 /*!
- * @brief      Aggiunge gli oggetti alla lista della memoria condivisa da
- *             eliminare.
+ * @brief      	Aggiunge gli oggetti alla lista della memoria condivisa da
+ *             	eliminare.
  *
- * @param[in]  n          Numero di elementi
- * @param[in]  args  Gli oggetti
+ * @param[in]  	n       Numero di elementi
+ * @param[in]  	args  	Gli oggetti
  */
 void sig_add_shmem(int n, ...);
 
@@ -104,8 +109,7 @@ void sig_add_queue(int n, ...);
  * 				presente nella lista.
  *
  * \param[in]  	setting 	Se true il valore di arg viene valutato e 
- * 							inizializzato.
- * 							
+ * 							inizializzato.							
  * \param[in]	arg			La head della lista degli oggetti da rimuovere
  */
 void sig_free_memory(bool setting, sig_shmem_list_t *arg);

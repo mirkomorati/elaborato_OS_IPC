@@ -14,8 +14,10 @@
  * 
  * Il ruolo è fisso.
  * Può essere:
- *  - T_MULTIPLY: La thread si occupa delle moltiplicazioni di una riga
- *  - T_SUM:      La thread si occupa della somma
+ *  - T_MULTIPLY: 	La thread si occupa delle operazioni necessarie a 
+ *  			  	calcolare una riga della matrice C
+ *  - T_SUM:      	La thread si occupa della somma degli elementi della
+ *  			  	matrice C
  */
 typedef enum {
     T_MULTIPLY,
@@ -40,51 +42,51 @@ typedef struct {
 } thread_arg_t;
 
 /*!
- * \brief      Crea thread_number thread passando ad ogni thread gli argomenti corretti.
+ * \brief      	Crea thread_number thread passando ad ogni thread gli argomenti corretti.
  *
- * \param      thread_array  	L'array dove vengono salvati gli oggetti di tipo thread_t.
- * \param      args          	L'array contnente alla posizione i gli argomenti da passare all'array i
- * \param[in]  thread_number  	Il numero dei thread
+ * \param[out] 	thread_array  	L'array dove vengono salvati gli oggetti di tipo thread_t.
+ * \param[in]  	args          	L'array contnente alla posizione i gli argomenti da passare all'array i
+ * \param[in]  	thread_number  	Il numero dei thread
  *
- * \return     0 in caso di successo -1 altrimenti.
+ * \return     	0 in caso di successo -1 altrimenti.
  */
 int create_threads(pthread_t *thread_array, thread_arg_t *args, int thread_number);
 
 
 /*!
- * \brief      Punt di accesso per l'esecuzione del programma con le thread.
+ * \brief      	Punto di accesso per l'esecuzione del programma con le thread.
  *
- * \param      A_path  Path della matrice A
- * \param      B_path  Path della matrice B
- * \param      C_path  Path della matrice C
- * \param[in]  N       Dimensione delle matrici
+ * \param[in] 	A_path  Path della matrice A
+ * \param[in]  	B_path  Path della matrice B
+ * \param[in]  	C_path  Path della matrice C
+ * \param[in]  	N      	Dimensione delle matrici
  *
- * \return     Stato di uscita del programma.
+ * \return     	Stato di uscita del programma.
  */
 int use_thread(char *A_path, char *B_path, char *C_path, int N);
 
 /*!
- * \brief      Salva una matrice su file in formato csv. 
+ * \brief      	Salva una matrice su file in formato csv. 
  *
- * \param[in]  fd      File descriptor
- * \param      matrix  La matrice da salvare
- * \param[in]  N       Dimensione della matrice
+ * \param[in]  	fd      File descriptor
+ * \param[in]  	matrix  La matrice da salvare
+ * \param[in]  	N       Dimensione della matrice
  */
 void matrix_to_csv(int fd, long *matrix, int N);
 
 /**
- * \brief      Fa il parsing di una matrice salvata su file in formato csv.
+ * \brief      	Fa il parsing di una matrice salvata su file in formato csv.
  *
- * \param[in]  fd      File descriptor
- * \param      matrix  Matrice di long su cui salvarla.
- * \param[in]  N       Dimensione della matrice
+ * \param[in]  	fd      File descriptor
+ * \param[out] 	matrix  Matrice di long su cui salvarla.
+ * \param[in]  	N       Dimensione della matrice
  */
 void matrix_from_csv(int fd, long *matrix, int N);
 
 /**
- * \brief      Funzione eseguita dalle threads.
+ * \brief      	Funzione eseguita dalle threads.
  *
- * \param      args  Argomenti per la thread
+ * \param[in]  	args  	Argomenti per la thread
  */
 void *thread_callback(void *args);
 

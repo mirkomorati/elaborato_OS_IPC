@@ -7,7 +7,8 @@ static inline int first_free(char *a, int dim);
 
 int main(int argc, char **argv) {
     /*! 
-     * \struct Struttura da passare a getopt() per l'alias delle opzioni
+     * \brief   struttura da passare a getopt() per l'alias delle opzioni
+     * 
      */
     static struct option long_opt[] = {
         {"matrixA",   required_argument, 0, 'A'},

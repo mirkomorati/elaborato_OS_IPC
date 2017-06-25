@@ -8,6 +8,7 @@
 
 /*! 
  * \brief   Struttura per rappresentare una memoria condivisa
+ * 
  */
 typedef struct {
     char *path;     //!< Path del file contenente la matrice
@@ -22,7 +23,7 @@ typedef struct {
  *              shm_t, parsarlo e caricarlo in memoria condivisa
  *
  * \param[out]  M	Puntatore a un oggetto shm_t
- * \param       parse   Booleano per capire se la matrice dev'essere
+ * \param[in]  	parse   Booleano per capire se la matrice dev'essere
  *                      parsata o solo creata
  * \return      -1 in caso di errore, 0 altrimenti
  */
@@ -38,10 +39,10 @@ int shm_load(shm_t *M, bool parse);
 int shm_create(shm_t *M);
 
 /*!
- * \brief      Funzione per parsare il file contenente la matrice e caricarla
- *             in memoria condivisa
+ * \brief      	Funzione per parsare il file contenente la matrice e caricarla
+ *             	in memoria condivisa
  *
- * \param      M   Puntatore a un oggetto shm_t
+ * \param[in]  	M   Puntatore a un oggetto shm_t
  */
 void shmatrix_from_csv(shm_t *M);
 
@@ -49,7 +50,8 @@ void shmatrix_from_csv(shm_t *M);
  * @brief      Funzione per convertire la matrice caricata in memoria condivisa
  *             e salvarla su file in formato csv
  *
- * @param      M     La matrice da convertire
+ * @param[in]  M     La matrice da convertire
+ * 
  */     
 void shmatrix_to_csv(shm_t *M);
 #endif
