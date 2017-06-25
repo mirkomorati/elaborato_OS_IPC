@@ -1,8 +1,8 @@
 /*! 
  * \file 		msg_lib.h
- * Raccolta di funzioni e strutture dati per lo scambio di messaggi
  * 
- * Conterrà tutte le funzioni ed i dati di utilità per i messaggi scambiati tra padre e figli attraverso code di messaggi e pipe
+ * Raccolta di funzioni e strutture dati per lo scambio di messaggi
+ * Contiene tutte le funzioni ed i dati di utilità per i messaggi scambiati tra padre e figli attraverso code di messaggi e pipe
  */
 
 #ifndef MSG_LIB_H

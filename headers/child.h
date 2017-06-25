@@ -1,5 +1,8 @@
 /*!
- * \file        child.h
+ * @file child.h 
+ * 
+ * Contiene le funzioni eseguibili dai processi figli per
+ * manipolare l'aritmetica sulle matrici.
  */
 
 #ifndef CHILD_H

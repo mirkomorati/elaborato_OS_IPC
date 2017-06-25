@@ -1,5 +1,7 @@
 /*!
  * \file        ending_lib.h
+ * 
+ * Contiene le funzioni per gestire la terminazione corretta del programma.
  */
 
 #ifndef ENDING_LIB_H

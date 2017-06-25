@@ -1,5 +1,8 @@
 /*!
  * \file        shm_lib.h
+ * 
+ * Contiene funzioni utili alla creazione e gestione delle memorie condivise,
+ * caricamento e salvataggio in formato csv. 
  */
 
 #ifndef SHM_LIB_H

@@ -3,7 +3,6 @@
  * 
  * Contiene i prototipi di alcune funzioni che risultano utili
  * nell'utilizzo dei semafori
- * 
  */
 
 #ifndef SEM_LIB_H

@@ -1,5 +1,9 @@
 /*!
  * \file father.h
+ * 
+ * Contiene il main del programma e le funzioni necessarie alla gestione
+ * dei processi figli, creazione delle pipe, della coda di messaggi,
+ * dei semafori e delle memorie condivise.
  */
 
 #ifndef FATHER_H

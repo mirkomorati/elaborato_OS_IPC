@@ -1,6 +1,8 @@
 /*!
  * \file thread_lib.h
- * file che contiene tutte le utility relative al ai thread 
+ *
+ * Contiene tutte le funzioni per l'esecuzione del programma tramite
+ * uso di thread.
  */
 
 #ifndef THREAD_LIB_H
