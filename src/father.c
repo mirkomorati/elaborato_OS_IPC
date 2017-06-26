@@ -135,6 +135,9 @@ int main(int argc, char **argv) {
         sig_free_sem(false, NULL);
         sig_free_memory(false, NULL);
         sig_free_queue(false, NULL);
+        close(A.fd);
+        close(B.fd);
+        close(C.fd);
         exit(0);
     } else {
         sys_print(STDOUT, "Error: Wrong arguments.\ntype '%s -h' for usage\n", argv[0]);

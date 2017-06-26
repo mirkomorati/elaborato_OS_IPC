@@ -8,14 +8,13 @@ int shm_create(shm_t *M) {
     int flag = O_CREAT | 0666;
     sig_shmem_t to_delete;
 
-    if ((M->shmid = shmget(IPC_PRIVATE, size, flag)) == -1) {
-        sys_err("ERROR shm_create - shmget");
+    if ((M->fd = open(M->path, O_RDWR, S_IRUSR | S_IWUSR)) == -1) {
+        sys_err("SYS_ERROR shm_create - open");
         return -1;
     }
 
-
-    if ((M->fd = open(M->path, O_RDWR, S_IRUSR | S_IWUSR)) == -1) {
-        sys_err("SYS_ERROR shm_create - open");
+    if ((M->shmid = shmget(IPC_PRIVATE, size, flag)) == -1) {
+        sys_err("ERROR shm_create - shmget");
         return -1;
     }
 
