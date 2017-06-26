@@ -35,10 +35,9 @@ int shm_create(shm_t *M) {
 
 int shm_load(shm_t *M, bool parse) {
 	if(shm_create(M) == -1) {
-        sys_err("shm_create");
+        sys_err("ERROR shm_load - shm_create");
         return -1;
     }
-
     if (parse)
         shmatrix_from_csv(M);
 	return 0;
@@ -63,7 +62,7 @@ void shmatrix_from_csv(shm_t *M) {
     char *line, *value, *brkt, *brkb;
 
 #ifdef DEBUG
-    sys_print(STDOUT, "---PARSING %s\n", M->path);
+    sys_print(STDOUT, "---parsing %s ---\n", M->path);
 #endif
 
     int curr = lseek(M->fd, 0, SEEK_CUR);

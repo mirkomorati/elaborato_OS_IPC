@@ -82,7 +82,23 @@ int use_thread(char *A_path, char *B_path, char *C_path, int N) {
         pthread_join(threads[i], NULL);
     }
 
+    sys_print(STDOUT, "\n> Il risultato della moltiplicazione tra %s e %s è stato salvato in %s\n", A_path, B_path, C_path);
+
+        if (N < 20) {
+            for (int i = 0; i < N; i++) {
+                sys_print(STDOUT, "|");
+                for (int j = 0; j < N; j++) {
+                    sys_print(STDOUT, "%li", matrixC[i * N + j]);
+                    sys_print(STDOUT, j + 1 == N ? "|" : "\t");
+                }
+                sys_print(STDOUT, "\n");
+            }
+            sys_print(STDOUT, "\n");
+        }
+
     matrix_to_csv(C_fd, matrixC, N);
+
+        sys_print(STDOUT, "\n> La somma di tutti i suoi termini è: %li\n\n", *sum);
 
     free(matrixA);
     free(matrixB);
@@ -141,7 +157,7 @@ int create_threads(pthread_t *thread_array, thread_arg_t *args, int thread_numbe
 void * thread_callback(void * args) {
     thread_arg_t *arg = (thread_arg_t *) args;
     int N = arg->dimension; // per comodità nel codice.
-    sys_print(STDOUT, "THREAD ID: %i, ROLE: %s\n", arg->thread_id, arg->role == T_SUM ? "SUM" : "MULTIPLY");
+    sys_print(STDOUT, "> THREAD ID: %i, ROLE: %s\n", arg->thread_id, arg->role == T_SUM ? "SUM" : "MULTIPLY");
 
     switch (arg->role) {
     case T_SUM: {
@@ -161,7 +177,7 @@ void * thread_callback(void * args) {
             }
         }
 #ifdef DEBUG
-        sys_print(STDOUT, "THREAD %i\tSUM: %li\n", arg->thread_id, *(arg->sum));
+        sys_print(STDOUT, "THREAD %i\tSUM:\t\trow: %li\n", arg->thread_id, *(arg->sum));
 #endif
     }
     break;
@@ -184,7 +200,7 @@ void * thread_callback(void * args) {
 
             arg->matrixC[arg->row * N + j] = res;
 #ifdef DEBUG
-            sys_print(STDOUT, "THREAD %i\tMULTIPLY row %i col %i:\t%li\n", arg->thread_id, arg->row, j, res);
+            sys_print(STDOUT, "THREAD %i\tMULTIPLY\trow: %i, col: %i\n", arg->thread_id, arg->row, j);
 #endif
         }
         pthread_mutex_lock(arg->sum_mutex);

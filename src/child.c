@@ -13,13 +13,13 @@ int child(int child_id, shm_t **shm_array, int pipe_fd, int queue_id, lock_t *se
 			switch (cmd.role) {
 				case MULTIPLY:
 					#ifdef DEBUG
-					sys_print(STDOUT, "FIGLIO %i\tMULTIPLY\ti: %i, j: %i\n", child_id, cmd.data.c.i, cmd.data.c.j);
+					sys_print(STDOUT, "> Figlio %i\tMULTIPLY\trow: %i, col: %i\n", child_id, cmd.data.c.i, cmd.data.c.j);
 					#endif
 					multiply(cmd.data.c.i, cmd.data.c.j, shm_array);
 				break;
 				case SUM:
 					#ifdef DEBUG
-					sys_print(STDOUT, "FIGLIO %i\tSUM\t\trow: %i\n", child_id, cmd.data.row);
+					sys_print(STDOUT, "> Figlio %i\tSUM\t\trow: %i\n", child_id, cmd.data.row);
 					#endif
 					if (sum(cmd.data.row, shm_array, sem_ids) == -1) {
 						msg.success = false;
@@ -31,7 +31,7 @@ int child(int child_id, shm_t **shm_array, int pipe_fd, int queue_id, lock_t *se
 				break;
 				case END:
 					#ifdef DEBUG
-					sys_print(STDOUT, "FIGLIO %i\tEND\n", getpid());
+					sys_print(STDOUT, "> Figlio %i\tEND\n", getpid());
 					#endif
 					return 0;
 			}

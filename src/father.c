@@ -83,11 +83,10 @@ int main(int argc, char **argv) {
     }
 
     if (thread_flag) {
-        #ifdef DEBUG
-        sys_print(STDOUT, "---USING THREADS---\n");
-        #endif
+        sys_print(STDOUT, "--- USING THREADS ---\n");
         exit(use_thread(A.path, B.path, C.path, N));
     } else if (P != 0) {
+        sys_print(STDOUT, "--- USING PROCESSES ---\n");
         int pid_to_pipe[P];
         int status, wpid;
 
@@ -113,13 +112,9 @@ int main(int argc, char **argv) {
         }
 
         while((wpid = wait(&status)) > 0)
-            #ifdef DEBUG
-            sys_print(STDOUT, "Terminazione normale: il figlio %i ha terminato\n", wpid);
-            #else
-            ;
-            #endif
+            sys_print(STDOUT, "> Il figlio %i ha terminato\n", wpid);
 
-        sys_print(STDOUT, "\nIl risultato della moltiplicazione tra %s e %s è:\n\n", A.path, B.path);
+        sys_print(STDOUT, "\n> Il risultato della moltiplicazione tra %s e %s è stato salvato in %s\n", A.path, B.path, C.path);
 
         if (N < 20) {
             for (int i = 0; i < N; i++) {
@@ -135,8 +130,7 @@ int main(int argc, char **argv) {
         
         shmatrix_to_csv(&C);
 
-        sys_print(STDOUT, "--- La somma di tutti i suoi termini è: %li ---\n\n", S.shmaddr[0]);
-        sys_print(STDOUT, "Il risultato della moltiplicazione è stato salvato in %s\n\n", C.path);
+        sys_print(STDOUT, "\n> La somma di tutti i suoi termini è: %li\n\n", S.shmaddr[0]);
 
         sig_free_sem(false, NULL);
         sig_free_memory(false, NULL);
@@ -150,9 +144,7 @@ int main(int argc, char **argv) {
 
 
 int init(shm_t **shm_array, lock_t *sem_ids, int P) {
-    #ifdef DEBUG   
-    sys_print(STDOUT, "Loading matrix\n\n");
-    #endif
+    sys_print(STDOUT, "\n--- Loading matrix ---\n");
 
     if (shm_load(shm_array[0], true) == -1) {
         sys_err("ERROR shm_load A");
@@ -195,9 +187,7 @@ int make_child(shm_t **shm_array , lock_t *sem_ids, int P, int *pid_to_pipe, int
     int tmp_queue_id;
     int pids[P];
 
-    #ifdef DEBUG
-    sys_print(STDOUT, "creating pipes\n");
-    #endif
+    sys_print(STDOUT, "\n--- Creating pipes ---\n");
     
     for (int i = 0; i < P; ++i) {
         tmp_pipe[i] = (int *) malloc(2 * sizeof(int));
@@ -207,9 +197,7 @@ int make_child(shm_t **shm_array , lock_t *sem_ids, int P, int *pid_to_pipe, int
         }
     }
 
-    #ifdef DEBUG
-    sys_print(STDOUT, "creating queue\n");
-    #endif
+    sys_print(STDOUT, "\n--- Creating queue ---\n");
 
     if((tmp_queue_id =msgget(IPC_PRIVATE, (IPC_CREAT | IPC_EXCL | 0666))) == -1) {
         sys_err("ERROR make_child - creating queue");
@@ -218,9 +206,7 @@ int make_child(shm_t **shm_array , lock_t *sem_ids, int P, int *pid_to_pipe, int
     sig_add_queue(1, tmp_queue_id);
     *queue_id = tmp_queue_id;
     
-    #ifdef DEBUG
-    sys_print(STDOUT, "creating childs\n");
-    #endif
+    sys_print(STDOUT, "\n--- Creating childs ---\n");
 
     for (int i = 0; i < P; ++i) {
         if((pids[i] = fork()) < 0) {
@@ -234,13 +220,11 @@ int make_child(shm_t **shm_array , lock_t *sem_ids, int P, int *pid_to_pipe, int
         }
     }
 
-    #ifdef DEBUG
-    sys_print(STDOUT, "\n%i childs created:\n", P);
+    sys_print(STDOUT, "\n> %i childs created:\n", P);
     for (int i = 0; i < P; ++i) {
-        sys_print(STDOUT, "child %i:\tpid = %i\tpipe = (r:%i,w:%i)\n",i, pids[i], tmp_pipe[i][0], tmp_pipe[i][1]);
+        sys_print(STDOUT, "> child %i:\tpid = %i\tpipe = (r:%i,w:%i)\n",i, pids[i], tmp_pipe[i][0], tmp_pipe[i][1]);
     }
     sys_print(STDOUT, "\n");
-    #endif
 
     for (int i = 0; i < P; ++i) {
         free(tmp_pipe[i]);
@@ -251,6 +235,7 @@ int make_child(shm_t **shm_array , lock_t *sem_ids, int P, int *pid_to_pipe, int
 
 
 int run(int N, int P, int *pid_to_pipe, int queue, lock_t *sem_ids) {
+    sys_print(STDOUT, "--- Running ---\n\n");
     cmd_t *multiply_cmd_array = (cmd_t *) malloc(sizeof(cmd_t) * N * N);
     cmd_t *sum_cmd_array = (cmd_t *) malloc(sizeof(cmd_t) * N);
     int number_of_cmd = N * (N + 1);
@@ -307,6 +292,7 @@ int run(int N, int P, int *pid_to_pipe, int queue, lock_t *sem_ids) {
     }
 
     // ho finito tutti i messaggi da inviare ed ho ricevuto il riscontro da tutti.
+    sys_print(STDOUT, "--- Ending ---\n\n");
     for (int p = 0; p < P; ++p) {
         cmd.role = END;
         send_cmd(&cmd, pid_to_pipe[p], p, sem_ids->pipe_sem);
