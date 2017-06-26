@@ -17,7 +17,7 @@ matlab_cmd="$matlab_cmd exit;"
 
 echo -e "\n======================"
 echo "MATLAB WORKING"
-/Applications/MATLAB_R2017a.app/bin/matlab -nodesktop -nosplash -nojvm -sd ../../sample/m_in -r "$matlab_cmd" > /dev/null
+/Applications/MATLAB_R2016b.app/bin/matlab -nodesktop -nosplash -nojvm -sd ../../sample/m_in -r "$matlab_cmd" > /dev/null
 echo
 
 for i in `seq $lower $upper`; do

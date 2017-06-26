@@ -62,8 +62,6 @@ void sig_add_shmem(int n, ...){
 		if(n-i == 1) cur->next = NULL;
 	}
 	va_end(ap);
-
-    //debug_print_shm_list(list);
 }
 
 
@@ -106,8 +104,6 @@ void sig_add_sem(int n, ...){
 		if(n-i == 1) cur->next = NULL;
 	}
 	va_end(ap);
-
-	//debug_print_list(list);
 }
 
 
@@ -162,6 +158,7 @@ void sig_handler(int sig, int pid){
     }else if (sig != -1){
     	// siamo nella terminazione del figlio.
     	sig_shmdt(false, NULL);
+    	exit(sig);
     }
     else {
     	allowed_pid = pid;

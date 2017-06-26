@@ -39,6 +39,7 @@ int main(int argc, char **argv) {
                 write(fd, buffer, bytes);
             }
         }
+        close(fd);
     }
 
     return 0;
