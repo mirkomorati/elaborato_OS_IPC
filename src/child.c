@@ -21,7 +21,7 @@ int child(int child_id, shm_t **shm_array, int pipe_fd, int queue_id, lock_t *se
 					#ifdef DEBUG
 					sys_print(STDOUT, "FIGLIO %i\tSUM\t\trow: %i\n", child_id, cmd.data.row);
 					#endif
-					if (sum(cmd.data.row, shm_array, sem_ids)) {
+					if (sum(cmd.data.row, shm_array, sem_ids) == -1) {
 						msg.success = false;
 						if(send_msg(&msg, queue_id, sem_ids->queue_sem) == -1) {
 							sys_err("ERROR send_msg figlio");

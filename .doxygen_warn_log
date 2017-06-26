@@ -1,45 +1,33 @@
 /Users/mirko/Desktop/UNIVR/UNIVR 2016-2017/Sistemi Operativi/secondo semestre/elaborato_OS_IPC/headers/msg_lib.h:41: warning: Compound cmd_t::data_u::point_u is not documented.
 /Users/mirko/Desktop/UNIVR/UNIVR 2016-2017/Sistemi Operativi/secondo semestre/elaborato_OS_IPC/headers/msg_lib.h:40: warning: Compound cmd_t::data_u is not documented.
-/Users/mirko/Desktop/UNIVR/UNIVR 2016-2017/Sistemi Operativi/secondo semestre/elaborato_OS_IPC/headers/ending_lib.h:99: warning: argument 'args' of command @param is not found in the argument list of sig_add_queue(int n,...)
-/Users/mirko/Desktop/UNIVR/UNIVR 2016-2017/Sistemi Operativi/secondo semestre/elaborato_OS_IPC/headers/ending_lib.h:90: warning: argument 'args' of command @param is not found in the argument list of sig_add_sem(int n,...)
-/Users/mirko/Desktop/UNIVR/UNIVR 2016-2017/Sistemi Operativi/secondo semestre/elaborato_OS_IPC/headers/ending_lib.h:81: warning: argument 'args' of command @param is not found in the argument list of sig_add_shmem(int n,...)
-/Users/mirko/Desktop/UNIVR/UNIVR 2016-2017/Sistemi Operativi/secondo semestre/elaborato_OS_IPC/headers/father.h:29: warning: argument 'pipe_fd' of command @param is not found in the argument list of make_child(shm_t **shm_array, lock_t *sem_ids, int P, int *pid_to_pipe, int *queue_id)
-/Users/mirko/Desktop/UNIVR/UNIVR 2016-2017/Sistemi Operativi/secondo semestre/elaborato_OS_IPC/headers/io_lib.h:11: warning: Member BUF_SIZE (macro definition) of file io_lib.h is not documented.
-/Users/mirko/Desktop/UNIVR/UNIVR 2016-2017/Sistemi Operativi/secondo semestre/elaborato_OS_IPC/headers/msg_lib.h:108: warning: The following parameters of rcv_cmd(cmd_t *restrict cmd, const int fd, const int id, const int sem_id) are not documented:
-  parameter 'id'
-  parameter 'sem_id'
-/Users/mirko/Desktop/UNIVR/UNIVR 2016-2017/Sistemi Operativi/secondo semestre/elaborato_OS_IPC/headers/msg_lib.h:97: warning: The following parameters of send_cmd(const cmd_t *restrict cmd, const int fd, const int id, const int sem_id) are not documented:
-  parameter 'id'
-  parameter 'sem_id'
-/Users/mirko/Desktop/UNIVR/UNIVR 2016-2017/Sistemi Operativi/secondo semestre/elaborato_OS_IPC/headers/msg_lib.h:74: warning: The following parameters of send_msg(const msg_t *restrict msg, const int id, const int sem_id) are not documented:
-  parameter 'sem_id'
-/Users/mirko/Desktop/UNIVR/UNIVR 2016-2017/Sistemi Operativi/secondo semestre/elaborato_OS_IPC/headers/std_lib.h:31: warning: Member STDIN (macro definition) of file std_lib.h is not documented.
-/Users/mirko/Desktop/UNIVR/UNIVR 2016-2017/Sistemi Operativi/secondo semestre/elaborato_OS_IPC/headers/std_lib.h:32: warning: Member STDOUT (macro definition) of file std_lib.h is not documented.
-/Users/mirko/Desktop/UNIVR/UNIVR 2016-2017/Sistemi Operativi/secondo semestre/elaborato_OS_IPC/headers/std_lib.h:33: warning: Member STDERR (macro definition) of file std_lib.h is not documented.
+/Users/mirko/Desktop/UNIVR/UNIVR 2016-2017/Sistemi Operativi/secondo semestre/elaborato_OS_IPC/headers/io_lib.h:12: warning: Member BUF_SIZE (macro definition) of file io_lib.h is not documented.
+/Users/mirko/Desktop/UNIVR/UNIVR 2016-2017/Sistemi Operativi/secondo semestre/elaborato_OS_IPC/headers/std_lib.h:30: warning: Member STDIN (macro definition) of file std_lib.h is not documented.
+/Users/mirko/Desktop/UNIVR/UNIVR 2016-2017/Sistemi Operativi/secondo semestre/elaborato_OS_IPC/headers/std_lib.h:31: warning: Member STDOUT (macro definition) of file std_lib.h is not documented.
+/Users/mirko/Desktop/UNIVR/UNIVR 2016-2017/Sistemi Operativi/secondo semestre/elaborato_OS_IPC/headers/std_lib.h:32: warning: Member STDERR (macro definition) of file std_lib.h is not documented.
 /Users/mirko/Desktop/UNIVR/UNIVR 2016-2017/Sistemi Operativi/secondo semestre/elaborato_OS_IPC/headers/msg_lib.h:44: warning: Member c (variable) of class cmd_t::data_u is not documented.
 /Users/mirko/Desktop/UNIVR/UNIVR 2016-2017/Sistemi Operativi/secondo semestre/elaborato_OS_IPC/headers/msg_lib.h:45: warning: Member row (variable) of class cmd_t::data_u is not documented.
 /Users/mirko/Desktop/UNIVR/UNIVR 2016-2017/Sistemi Operativi/secondo semestre/elaborato_OS_IPC/headers/msg_lib.h:42: warning: Member i (variable) of class cmd_t::data_u::point_u is not documented.
 /Users/mirko/Desktop/UNIVR/UNIVR 2016-2017/Sistemi Operativi/secondo semestre/elaborato_OS_IPC/headers/msg_lib.h:43: warning: Member j (variable) of class cmd_t::data_u::point_u is not documented.
-/Users/mirko/Desktop/UNIVR/UNIVR 2016-2017/Sistemi Operativi/secondo semestre/elaborato_OS_IPC/headers/sem_lib.h:18: warning: Member queue_sem (variable) of class lock_t is not documented.
-/Users/mirko/Desktop/UNIVR/UNIVR 2016-2017/Sistemi Operativi/secondo semestre/elaborato_OS_IPC/headers/sem_lib.h:19: warning: Member S_sem (variable) of class lock_t is not documented.
-/Users/mirko/Desktop/UNIVR/UNIVR 2016-2017/Sistemi Operativi/secondo semestre/elaborato_OS_IPC/headers/sem_lib.h:20: warning: Member pipe_sem (variable) of class lock_t is not documented.
-/Users/mirko/Desktop/UNIVR/UNIVR 2016-2017/Sistemi Operativi/secondo semestre/elaborato_OS_IPC/headers/ending_lib.h:58: warning: Member obj (variable) of class sig_queue_list is not documented.
-/Users/mirko/Desktop/UNIVR/UNIVR 2016-2017/Sistemi Operativi/secondo semestre/elaborato_OS_IPC/headers/ending_lib.h:59: warning: Member next (variable) of class sig_queue_list is not documented.
-/Users/mirko/Desktop/UNIVR/UNIVR 2016-2017/Sistemi Operativi/secondo semestre/elaborato_OS_IPC/headers/ending_lib.h:46: warning: Member obj (variable) of class sig_sem_list is not documented.
-/Users/mirko/Desktop/UNIVR/UNIVR 2016-2017/Sistemi Operativi/secondo semestre/elaborato_OS_IPC/headers/ending_lib.h:47: warning: Member next (variable) of class sig_sem_list is not documented.
-/Users/mirko/Desktop/UNIVR/UNIVR 2016-2017/Sistemi Operativi/secondo semestre/elaborato_OS_IPC/headers/ending_lib.h:35: warning: Member semid (variable) of class sig_sem_t is not documented.
-/Users/mirko/Desktop/UNIVR/UNIVR 2016-2017/Sistemi Operativi/secondo semestre/elaborato_OS_IPC/headers/ending_lib.h:36: warning: Member semnum (variable) of class sig_sem_t is not documented.
-/Users/mirko/Desktop/UNIVR/UNIVR 2016-2017/Sistemi Operativi/secondo semestre/elaborato_OS_IPC/headers/ending_lib.h:25: warning: Member obj (variable) of class sig_shmem_list is not documented.
-/Users/mirko/Desktop/UNIVR/UNIVR 2016-2017/Sistemi Operativi/secondo semestre/elaborato_OS_IPC/headers/ending_lib.h:26: warning: Member next (variable) of class sig_shmem_list is not documented.
-/Users/mirko/Desktop/UNIVR/UNIVR 2016-2017/Sistemi Operativi/secondo semestre/elaborato_OS_IPC/headers/ending_lib.h:15: warning: Member shmid (variable) of class sig_shmem_t is not documented.
-/Users/mirko/Desktop/UNIVR/UNIVR 2016-2017/Sistemi Operativi/secondo semestre/elaborato_OS_IPC/headers/ending_lib.h:16: warning: Member shmaddr (variable) of class sig_shmem_t is not documented.
-/Users/mirko/Desktop/UNIVR/UNIVR 2016-2017/Sistemi Operativi/secondo semestre/elaborato_OS_IPC/headers/thread_lib.h:32: warning: Member thread_id (variable) of class thread_arg_t is not documented.
-/Users/mirko/Desktop/UNIVR/UNIVR 2016-2017/Sistemi Operativi/secondo semestre/elaborato_OS_IPC/headers/thread_lib.h:33: warning: Member sum_mutex (variable) of class thread_arg_t is not documented.
-/Users/mirko/Desktop/UNIVR/UNIVR 2016-2017/Sistemi Operativi/secondo semestre/elaborato_OS_IPC/headers/thread_lib.h:34: warning: Member completed_rows (variable) of class thread_arg_t is not documented.
-/Users/mirko/Desktop/UNIVR/UNIVR 2016-2017/Sistemi Operativi/secondo semestre/elaborato_OS_IPC/headers/thread_lib.h:35: warning: Member role (variable) of class thread_arg_t is not documented.
-/Users/mirko/Desktop/UNIVR/UNIVR 2016-2017/Sistemi Operativi/secondo semestre/elaborato_OS_IPC/headers/thread_lib.h:36: warning: Member row (variable) of class thread_arg_t is not documented.
-/Users/mirko/Desktop/UNIVR/UNIVR 2016-2017/Sistemi Operativi/secondo semestre/elaborato_OS_IPC/headers/thread_lib.h:37: warning: Member dimension (variable) of class thread_arg_t is not documented.
-/Users/mirko/Desktop/UNIVR/UNIVR 2016-2017/Sistemi Operativi/secondo semestre/elaborato_OS_IPC/headers/thread_lib.h:38: warning: Member matrixA (variable) of class thread_arg_t is not documented.
-/Users/mirko/Desktop/UNIVR/UNIVR 2016-2017/Sistemi Operativi/secondo semestre/elaborato_OS_IPC/headers/thread_lib.h:39: warning: Member matrixB (variable) of class thread_arg_t is not documented.
-/Users/mirko/Desktop/UNIVR/UNIVR 2016-2017/Sistemi Operativi/secondo semestre/elaborato_OS_IPC/headers/thread_lib.h:40: warning: Member matrixC (variable) of class thread_arg_t is not documented.
-/Users/mirko/Desktop/UNIVR/UNIVR 2016-2017/Sistemi Operativi/secondo semestre/elaborato_OS_IPC/headers/thread_lib.h:41: warning: Member sum (variable) of class thread_arg_t is not documented.
+/Users/mirko/Desktop/UNIVR/UNIVR 2016-2017/Sistemi Operativi/secondo semestre/elaborato_OS_IPC/headers/sem_lib.h:17: warning: Member queue_sem (variable) of class lock_t is not documented.
+/Users/mirko/Desktop/UNIVR/UNIVR 2016-2017/Sistemi Operativi/secondo semestre/elaborato_OS_IPC/headers/sem_lib.h:18: warning: Member S_sem (variable) of class lock_t is not documented.
+/Users/mirko/Desktop/UNIVR/UNIVR 2016-2017/Sistemi Operativi/secondo semestre/elaborato_OS_IPC/headers/sem_lib.h:19: warning: Member pipe_sem (variable) of class lock_t is not documented.
+/Users/mirko/Desktop/UNIVR/UNIVR 2016-2017/Sistemi Operativi/secondo semestre/elaborato_OS_IPC/headers/ending_lib.h:60: warning: Member obj (variable) of class sig_queue_list is not documented.
+/Users/mirko/Desktop/UNIVR/UNIVR 2016-2017/Sistemi Operativi/secondo semestre/elaborato_OS_IPC/headers/ending_lib.h:61: warning: Member next (variable) of class sig_queue_list is not documented.
+/Users/mirko/Desktop/UNIVR/UNIVR 2016-2017/Sistemi Operativi/secondo semestre/elaborato_OS_IPC/headers/ending_lib.h:48: warning: Member obj (variable) of class sig_sem_list is not documented.
+/Users/mirko/Desktop/UNIVR/UNIVR 2016-2017/Sistemi Operativi/secondo semestre/elaborato_OS_IPC/headers/ending_lib.h:49: warning: Member next (variable) of class sig_sem_list is not documented.
+/Users/mirko/Desktop/UNIVR/UNIVR 2016-2017/Sistemi Operativi/secondo semestre/elaborato_OS_IPC/headers/ending_lib.h:37: warning: Member semid (variable) of class sig_sem_t is not documented.
+/Users/mirko/Desktop/UNIVR/UNIVR 2016-2017/Sistemi Operativi/secondo semestre/elaborato_OS_IPC/headers/ending_lib.h:38: warning: Member semnum (variable) of class sig_sem_t is not documented.
+/Users/mirko/Desktop/UNIVR/UNIVR 2016-2017/Sistemi Operativi/secondo semestre/elaborato_OS_IPC/headers/ending_lib.h:27: warning: Member obj (variable) of class sig_shmem_list is not documented.
+/Users/mirko/Desktop/UNIVR/UNIVR 2016-2017/Sistemi Operativi/secondo semestre/elaborato_OS_IPC/headers/ending_lib.h:28: warning: Member next (variable) of class sig_shmem_list is not documented.
+/Users/mirko/Desktop/UNIVR/UNIVR 2016-2017/Sistemi Operativi/secondo semestre/elaborato_OS_IPC/headers/ending_lib.h:17: warning: Member shmid (variable) of class sig_shmem_t is not documented.
+/Users/mirko/Desktop/UNIVR/UNIVR 2016-2017/Sistemi Operativi/secondo semestre/elaborato_OS_IPC/headers/ending_lib.h:18: warning: Member shmaddr (variable) of class sig_shmem_t is not documented.
+/Users/mirko/Desktop/UNIVR/UNIVR 2016-2017/Sistemi Operativi/secondo semestre/elaborato_OS_IPC/headers/thread_lib.h:34: warning: Member thread_id (variable) of class thread_arg_t is not documented.
+/Users/mirko/Desktop/UNIVR/UNIVR 2016-2017/Sistemi Operativi/secondo semestre/elaborato_OS_IPC/headers/thread_lib.h:35: warning: Member sum_mutex (variable) of class thread_arg_t is not documented.
+/Users/mirko/Desktop/UNIVR/UNIVR 2016-2017/Sistemi Operativi/secondo semestre/elaborato_OS_IPC/headers/thread_lib.h:36: warning: Member completed_rows (variable) of class thread_arg_t is not documented.
+/Users/mirko/Desktop/UNIVR/UNIVR 2016-2017/Sistemi Operativi/secondo semestre/elaborato_OS_IPC/headers/thread_lib.h:37: warning: Member role (variable) of class thread_arg_t is not documented.
+/Users/mirko/Desktop/UNIVR/UNIVR 2016-2017/Sistemi Operativi/secondo semestre/elaborato_OS_IPC/headers/thread_lib.h:38: warning: Member row (variable) of class thread_arg_t is not documented.
+/Users/mirko/Desktop/UNIVR/UNIVR 2016-2017/Sistemi Operativi/secondo semestre/elaborato_OS_IPC/headers/thread_lib.h:39: warning: Member dimension (variable) of class thread_arg_t is not documented.
+/Users/mirko/Desktop/UNIVR/UNIVR 2016-2017/Sistemi Operativi/secondo semestre/elaborato_OS_IPC/headers/thread_lib.h:40: warning: Member matrixA (variable) of class thread_arg_t is not documented.
+/Users/mirko/Desktop/UNIVR/UNIVR 2016-2017/Sistemi Operativi/secondo semestre/elaborato_OS_IPC/headers/thread_lib.h:41: warning: Member matrixB (variable) of class thread_arg_t is not documented.
+/Users/mirko/Desktop/UNIVR/UNIVR 2016-2017/Sistemi Operativi/secondo semestre/elaborato_OS_IPC/headers/thread_lib.h:42: warning: Member matrixC (variable) of class thread_arg_t is not documented.
+/Users/mirko/Desktop/UNIVR/UNIVR 2016-2017/Sistemi Operativi/secondo semestre/elaborato_OS_IPC/headers/thread_lib.h:43: warning: Member sum (variable) of class thread_arg_t is not documented.

@@ -19,31 +19,30 @@
 
 
 /*!
- * \brief      	Inizializza la memoria condivisa ed i semafori
+ * @brief      Inizializza la memoria condivisa ed i semafori
  *
- * \param      	shm_array  	L'array delle memorie condivise da creare
- * \param      	sem_ids    	ID dei semafori da inizializzare
- * \param[in]  	P          	Numero di processi
+ * @param      shm_array  L'array delle memorie condivise da creare
+ * @param      sem_ids    ID dei semafori da inizializzare
+ * @param[in]  P          Numero di processi
  *
- * \return     	0 in caso di successo, -1 altrimenti
+ * @return     0 in caso di successo, -1 altrimenti
  */
 int init(shm_t **shm_array, lock_t *sem_ids, int P);
 
 /*!
- * \brief      	Crea P figli del padre ed inizializza gli strumenti per
- *             	permettere la comunicazione tra padre e figli.
+ * @brief      Crea P figli del padre ed inizializza gli strumenti per
+ *             permettere la comunicazione tra padre e figli.
  *
- * \param[in]  	shm_array 		L'array contenente i puntatori alle zone di memoria
- *                          	condivisa.
- * \param[in]  	sem_ids      	ID dei semafori.
- * \param[in]  	P            	Il numero di figli da creare.
- * \param[in]  	pid_to_pipe 	Array per associare al pid la pipe corrispondente.
- * \param[out] 	queue_id     	In questo indirizzo viene salvato l'identificativo
- *                          	della coda da cui leggere le comunicazioni dei
- *                          	figli.
- * \param[out] 	pipe_fd      	In questo puntatore viene salvato il file descriptor per scrivere sulla pipe.
+ * @param[in]  shm_array    L'array contenente i puntatori alle zone di memoria
+ *                          condivisa.
+ * @param[in]  sem_ids      ID dei semafori.
+ * @param[in]  P            Il numero di figli da creare.
+ * @param[in]  pid_to_pipe  Array per associare al pid la pipe corrispondente.
+ * @param[out] queue_id     In questo indirizzo viene salvato l'identificativo
+ *                          della coda da cui leggere le comunicazioni dei
+ *                          figli.
  *
- * \return     	0 in caso di riuscita, -1 altrimenti
+ * @return     0 in caso di riuscita, -1 altrimenti
  */
 int make_child(shm_t **shm_array, lock_t *sem_ids, int P, int *pid_to_pipe, int *queue_id);
 

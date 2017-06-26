@@ -170,6 +170,7 @@ int init(shm_t **shm_array, lock_t *sem_ids, int P) {
         sys_err("ERROR shm_load S");
         return -1;
     }
+    // Inizializzo la somma a 0
     shm_array[3]->shmaddr[0] = 0;
     
     if ((sem_ids->queue_sem = sem_create(1, 1)) == -1) {
@@ -252,12 +253,13 @@ int make_child(shm_t **shm_array , lock_t *sem_ids, int P, int *pid_to_pipe, int
 int run(int N, int P, int *pid_to_pipe, int queue, lock_t *sem_ids) {
     cmd_t *multiply_cmd_array = (cmd_t *) malloc(sizeof(cmd_t) * N * N);
     cmd_t *sum_cmd_array = (cmd_t *) malloc(sizeof(cmd_t) * N);
-    generate_cmd_array(multiply_cmd_array, sum_cmd_array, N);
     int number_of_cmd = N * (N + 1);
     int completed_row[N];
     cmd_t cmd;
     char p_free[P];
     int i, j;
+
+    generate_cmd_array(multiply_cmd_array, sum_cmd_array, N);
 
     for (i = 0; i < P; ++i) {
         p_free[i] = 1;
@@ -279,7 +281,7 @@ int run(int N, int P, int *pid_to_pipe, int queue, lock_t *sem_ids) {
                 i++;
                 p_free[p] = 0;
             } else if ((j < (N * N))) {
-                // a questo punto o ho finito le moltiplicazioni (dubito) o non ho finito le moltiplicazioni per la riga
+                // a questo punto o ho finito le moltiplicazioni o non ho finito le moltiplicazioni per la riga
                 send_cmd(&multiply_cmd_array[j], pid_to_pipe[p], p, sem_ids->pipe_sem);
                 j++;
                 p_free[p] = 0;

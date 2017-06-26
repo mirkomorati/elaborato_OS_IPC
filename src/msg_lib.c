@@ -3,7 +3,7 @@
 #include "../headers/sem_lib.h"
 
 
-int send_cmd(const cmd_t * restrict cmd, const int fd,const int id, const int sem_id) {
+int send_cmd(const cmd_t * restrict cmd, const int fd, const int id, const int sem_id) {
 	if (cmd != NULL) {
 		sem_inc(sem_id, id);
 		size_t size = sizeof(*cmd);

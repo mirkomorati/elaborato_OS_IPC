@@ -64,10 +64,12 @@ typedef struct {
 
 /*!
  * \brief      	Mette il messaggio msg nella coda di messaggi che devono
- * 				essere letti dal padre L'operazione è gestita da semafori
+ * 				essere letti dal padre. L'operazione è gestita da semafori
  *
  * \param[in]  	msg   	Il messaggio da inviare
  * \param[in]	id		ID della coda di messaggi
+ * \param[in]   id		ID del figlio
+ * \param[in]	sem_id	ID del semaforo
  *
  * \return     	0 in caso di successo, -1 altrimenti
  */
@@ -76,7 +78,6 @@ int send_msg(const msg_t * restrict msg, const int id, const int sem_id);
 
 /*!
  * \brief      	Preleva un messaggio dalla coda di messaggi diretti al padre
- * 				L'operazione è gestita da semafori
  *
  * \param[out]  msg   	Puntatore all'oggetto in cui salvare il messaggio
  * \param[in]	id 		ID della coda di messaggi
@@ -91,6 +92,8 @@ int rcv_msg(msg_t * restrict msg, const int id);
  *				
  * \param[in]  	cmd		Il comando da inviare
  * \param[in] 	fd    	File descriptor della pipe
+ * \param[in]   id		Id del figlio
+ * \param[in]	sem_id	Id del semaforo
  *
  * \return    	0 in caso di successo, -1 altrimenti
  */
@@ -102,6 +105,8 @@ int send_cmd(const cmd_t * restrict cmd, const int fd, const int id, const int s
  * 
  * \param[out]  cmd		Puntatore all'oggetto in cui salvare il comando
  * \param[in]  	fd		File descriptor della pipe
+ * \param[in]   id		Id del figlio
+ * \param[in]	sem_id	Id del semaforo
  *
  * \return    	0 in caso di successo, -1 altrimenti
  */

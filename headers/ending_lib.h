@@ -84,7 +84,7 @@ void sig_init(sig_shmem_list_t *shm_list, sig_sem_list_t *sem_list, sig_queue_li
  *             	eliminare.
  *
  * @param[in]  	n       Numero di elementi
- * @param[in]  	args  	Gli oggetti
+ * @param[in]  	...  	Gli oggetti
  */
 void sig_add_shmem(int n, ...);
 
@@ -93,7 +93,7 @@ void sig_add_shmem(int n, ...);
  * 				che gli vengono passati come parametri.
  *
  * \param[in] 	n       Numero di elementi
- * \param[in]  	args 	Gli oggetti
+ * \param[in]  	... 	Gli oggetti
  */
 void sig_add_sem(int n, ...);
 
@@ -102,7 +102,7 @@ void sig_add_sem(int n, ...);
  * 				eliminare.
  *
  * \param[in] 	n       Numero di elementi
- * \param[in]  	args 	Elementi.
+ * \param[in]  	... 	Elementi.
  */
 void sig_add_queue(int n, ...);
 
