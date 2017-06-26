@@ -176,6 +176,7 @@ void sig_init(sig_shmem_list_t *shm_list, sig_sem_list_t *sem_list, sig_queue_li
     signal(SIGKILL, (void (*)(int))sig_handler);
     signal(SIGTERM, (void (*)(int))sig_handler);
     signal(SIGSEGV, (void (*)(int))sig_handler);
+    signal(SIGABRT, (void (*)(int))sig_handler);
 
     sig_handler(-1, getpid());
 
