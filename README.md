@@ -1,7 +1,7 @@
 # elaborato_OS_IPC
-
-Elaborato di Sistemi Operativi sulla comunicazione interprocesso. 
-Studenti:
+## Comunicazione interprocesso
+Elaborato per la parte di laboratorio del corso di Sistemi Operativi 2016/2017. 
+Autori:
 
 - [Mirko Morati](https://github.com/mirkomorati)
 - [Noè Murr](https://github.com/NoeMurr)
